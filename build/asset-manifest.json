@@ -1,0 +1,27 @@
+{
+  "files": {
+    "main.css": "/static/css/main.d8ec1095.chunk.css",
+    "main.js": "/static/js/main.fc323a81.chunk.js",
+    "main.js.map": "/static/js/main.fc323a81.chunk.js.map",
+    "runtime-main.js": "/static/js/runtime-main.c5df5b83.js",
+    "runtime-main.js.map": "/static/js/runtime-main.c5df5b83.js.map",
+    "static/js/2.2b3a69c4.chunk.js": "/static/js/2.2b3a69c4.chunk.js",
+    "static/js/2.2b3a69c4.chunk.js.map": "/static/js/2.2b3a69c4.chunk.js.map",
+    "index.html": "/index.html",
+    "precache-manifest.4aa18effa55a5fd3072aff28dc956acd.js": "/precache-manifest.4aa18effa55a5fd3072aff28dc956acd.js",
+    "service-worker.js": "/service-worker.js",
+    "static/css/main.d8ec1095.chunk.css.map": "/static/css/main.d8ec1095.chunk.css.map",
+    "static/media/Background.png": "/static/media/Background.89c9d520.png",
+    "static/media/ExperimentImage.png": "/static/media/ExperimentImage.89cb85fe.png",
+    "static/media/background.png": "/static/media/background.67cfa76e.png",
+    "static/media/background2.png": "/static/media/background2.8fdf8b2b.png",
+    "static/media/loginBackground.png": "/static/media/loginBackground.d61af71f.png",
+    "static/media/signupBackground.png": "/static/media/signupBackground.817ecbf6.png"
+  },
+  "entrypoints": [
+    "static/js/runtime-main.c5df5b83.js",
+    "static/js/2.2b3a69c4.chunk.js",
+    "static/css/main.d8ec1095.chunk.css",
+    "static/js/main.fc323a81.chunk.js"
+  ]
+}
