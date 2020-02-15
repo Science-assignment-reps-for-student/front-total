@@ -1,0 +1,11 @@
+export const homeworkURL = "http://54.180.174.253/t-bone/homework";
+export const refreshAccessTokenURL = "http://54.180.174.253/chuckflap/auth";
+export const LoginServerURL = "http://54.180.174.253/chuckflap/auth";
+export const teamHomeworkURL = "http://54.180.174.253/tenderloin/admin/homework/team";
+export const personalHomeworkURL = "http://54.180.174.253/tenderloin/admin/homework/personal";
+export const experimentHomeworkURL = "http://54.180.174.253/tenderloin/admin/homework/experiment";
+export const getUserInfoURL = "http://54.180.174.253/chuckflap/user";
+export const getFileCodeURL = "http://54.180.174.253:3000/t-bone/files";
+export const personalFileDownloadURL = "http://54.180.174.253:3000/t-bone/single";
+export const teamFileDownloadURL = "http://54.180.174.253/t-bone/multi";
+export const allFileDownloadURL = "http://54.180.174.253/t-bone/file-zip";
