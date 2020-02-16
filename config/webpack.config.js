@@ -679,9 +679,17 @@ module.exports = function(webpackEnv) {
     devServer: {
       historyApiFallback: true,
       proxy: {
-        "/api/": {
+        "/chuckflap/": {
           changeOrigin: true,
           target: "https://www.dsm-scarfs.hs.kr"
+        },
+        "/tenderloin/": {
+          changeOrigin: true,
+          target: "https:www.dsm-scarfs.hs.kr"
+        },
+        "/t-bone/": {
+          changeOrigin: true,
+          target: "https:www.dsm-scars.hs.kr"
         }
       }
     }
