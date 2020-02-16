@@ -673,23 +673,21 @@ module.exports = function(webpackEnv) {
       tls: 'empty',
       child_process: 'empty',
     },
-    // Turn off performance processing because we utilize
-    // our own hints via the FileSizeReporter
     performance: false,
     devServer: {
       historyApiFallback: true,
       proxy: {
         "/chuckflap/": {
           changeOrigin: true,
-          target: "https://www.dsm-scarfs.hs.kr"
+          target: "https://dsm-scarfs.hs.kr"
         },
         "/tenderloin/": {
           changeOrigin: true,
-          target: "https:www.dsm-scarfs.hs.kr"
+          target: "https://dsm-scarfs.hs.kr"
         },
         "/t-bone/": {
           changeOrigin: true,
-          target: "https:www.dsm-scars.hs.kr"
+          target: "https://dsm-scars.hs.kr"
         }
       }
     }
