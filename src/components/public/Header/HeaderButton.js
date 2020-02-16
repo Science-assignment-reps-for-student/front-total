@@ -5,7 +5,6 @@ import * as S from '../style/PublicStyle'
 const HeaderButton = ({ children, page, history, actions }) => {
 
     const [isHover,hoverChange] = useState(false);
-    console.log(actions)
     const { refreshTokenChange, accessTokenChange } = actions;
 
     const pages = {
