@@ -65,6 +65,7 @@ const Main = ({ state, actions }) => {
         pageBackground.current.style.backgroundPosition = '0% 0%';
         pageBackground.current.style.backgroundImage = `url(${Background})`;
     }, []);
+    
     return (
         <>
             <S.MainBackground page={page} ref={pageBackground}>

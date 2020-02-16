@@ -20,8 +20,8 @@ const TaskContext = createContext({
 const TaskProvider = ({ children }) => {
     const [accessToken, accessTokenChange] = useState(localStorage.getItem("accessToken"));
     const [refreshToken, refreshTokenChange] = useState(localStorage.getItem("refreshToken"));
-    const [wooServer, setWooServer] = useState("https://54.180.174.253/t-bone");
-    const [limServer, setLimServer] = useState("https://54.180.174.253/chuckflap");
+    const [wooServer, setWooServer] = useState("//54.180.174.253/t-bone");
+    const [limServer, setLimServer] = useState("//54.180.174.253/chuckflap");
 
     const value = {
         state: {
