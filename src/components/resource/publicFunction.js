@@ -6,20 +6,20 @@ export const refreshAccessToken = (refreshToken,actions,refreshAccessTokenURL)=>
             "Authorization": refreshToken,
           },
     }
-    axios.put(refreshAccessTokenURL,{},refreshHeader)
-    .then((e)=> {
-        const accessTokenBuffer = e.data.accessToken;
-        const refreshTokenBuffer = e.data.refreshToken;
-        setLocalStorage(accessTokenBuffer,refreshTokenBuffer);
-        setContext(accessTokenBuffer,refreshTokenBuffer,actions);
-    })
+    // axios.put(refreshAccessTokenURL,{},refreshHeader)
+    // .then((e)=> {
+    //     const accessTokenBuffer = e.data.accessToken;
+    //     const refreshTokenBuffer = e.data.refreshToken;
+    //     setLocalStorage(accessTokenBuffer,refreshTokenBuffer);
+    //     setContext(accessTokenBuffer,refreshTokenBuffer,actions);
+    // })
 }
 
 export const setLocalStorage = (accessToken,refreshToken) => {
     localStorage.setItem('accessToken',accessToken);
     localStorage.setItem('refreshToken',refreshToken);
 };
-
+    
 export const setContext = (accessToken,refreshToken,actions) => {
     const { accessTokenChange, refreshTokenChange } = actions;
     accessTokenChange(accessToken);
@@ -122,14 +122,14 @@ export const getIsExpiration = (err) => {
 }
 
 export const getAccessTokenUsingRefresh = (state, actions) => {
-    axios.put(state.limServer, {
-        "headers": {
-            "Authorization": state.refreshToken,
-        },
-    }).then((e) => {
-        localStorage.setItem("accessToken", e.data.accessToken);
-        localStorage.setItem("refreshToken", e.data.refreshToken);
-        actions.accessTokenChange(e.data.accessToken);
-        actions.refreshTokenChange(e.data.refreshToken);
-    })
+    // axios.put(state.limServer, {
+    //     "headers": {
+    //         "Authorization": state.refreshToken,
+    //     },
+    // }).then((e) => {
+    //     localStorage.setItem("accessToken", e.data.accessToken);
+    //     localStorage.setItem("refreshToken", e.data.refreshToken);
+    //     actions.accessTokenChange(e.data.accessToken);
+    //     actions.refreshTokenChange(e.data.refreshToken);
+    // })
 };
