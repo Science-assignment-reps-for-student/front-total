@@ -11,7 +11,7 @@ const HomeWorkList = ({ state, actions, homework, setHomework, history }) => {
             var dd = this.getDate();
           
             return [
-                this.getFullYear(),``
+                this.getFullYear(),
                 (mm > 9 ? '' : '0') + mm,
                 (dd > 9 ? '' : '0') + dd
             ].join('.');
