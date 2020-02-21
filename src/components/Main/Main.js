@@ -35,13 +35,13 @@ const Main = ({ state, actions, taskActions }) => {
         }
     }, [state.logged, page]);
 
-    useEffect(() => {
-        pageBackground.current.style.backgroundPosition = '0% 0%';
-        pageBackground.current.style.backgroundImage = `url(${Background})`;
-    }, []);
+    // useEffect(() => {
+    //     pageBackground.current.style.backgroundPosition = '0% 0%';
+    //     pageBackground.current.style.backgroundImage = `url(${Background})`;
+    // }, []);
     useEffect(() => {
         if (state.logged) {
-            pageBackground.current.style.backgroundPosition = `${page === 2 ? 'center -108vh' : 'center 100vh'}`;
+            pageBackground.current.style.backgroundImage = page === 1 ? `url(${Background})` : `url(${Background2})`;
             pageBackground.current.style.transition = '1000ms linear';
             setTimeout(() => {
                 try {
