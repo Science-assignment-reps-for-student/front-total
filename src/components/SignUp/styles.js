@@ -17,8 +17,8 @@ export const LOGINSIGNUPWrapper = styled.div`
     width: 1166px;
     height: 533px;
     position: relative;
-    top: ${props => props.sliding === true ? '50%' : '100%'};
-    left: ${props => props.sliding === true ? '50%' : '100%'};
+    top: 50%;
+    left: 50%;
     transform: translate(-50%, -50%);
     display: flex;
     transition: all 0.5s linear;

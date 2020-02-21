@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useCallback } from 'react';
 import * as S from './styles';
 import blackXButton from './img/blackXButton.png';
 import checkIcon from './img/checkIcon.png';
@@ -6,7 +6,6 @@ import ApiDefault from '../utils';
 
 const SignUp = ({modalOn, setModalOn}) => {
     const [page, setPage] = useState(1);
-    const [sliding, setSliding] = useState(false);
     const [isPaint, setIsPaint] = useState(false);
     const [signupInfo, setSignupInfo] = useState({
         name: "",
@@ -17,11 +16,6 @@ const SignUp = ({modalOn, setModalOn}) => {
         password: "",
         chkPassword: "",
     });
-    useEffect(() => {
-        setTimeout(() => {
-            setSliding(true);
-        }, 1)
-    }, []);
     const onChange = useCallback((e) => {
         setSignupInfo({
             ...signupInfo,
@@ -91,7 +85,7 @@ const SignUp = ({modalOn, setModalOn}) => {
     }, [signupInfo.email]);
     return (
         <S.ModalBackground>
-            <S.LOGINSIGNUPWrapper sliding={sliding}>
+            <S.LOGINSIGNUPWrapper>
                 <S.SignUpLeftBlock>
                     <h1>WELCOME</h1>
                     <h4>SCARFS</h4>

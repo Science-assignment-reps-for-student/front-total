@@ -4,16 +4,10 @@ import blackXButton from '../SignUp/img/blackXButton.png';
 import ApiDefault from '../utils';
 
 const Login = ({ state, actions, modalOn, setModalOn, taskActions }) => {
-    const [sliding, setSliding] = useState(false);
     const [loginInfo, setLoginInfo] = useState({
         email: null,
         password: null
     });
-    useEffect(() => {
-        setTimeout(() => {
-            setSliding(true);
-        }, 1)
-    }, []);
     const onChange = useCallback(e => {
         setLoginInfo({
             ...loginInfo,
@@ -43,7 +37,7 @@ const Login = ({ state, actions, modalOn, setModalOn, taskActions }) => {
 
     return (
         <S.ModalBackground>
-            <S.LOGINSIGNUPWrapper sliding={sliding}>             
+            <S.LOGINSIGNUPWrapper>             
                 <S.LoginLeftBlock>
                     <S.MainWrapper>
                         <h1>LOGIN</h1>
