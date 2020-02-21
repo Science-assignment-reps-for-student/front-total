@@ -236,19 +236,21 @@ export const NextButtonBlock = styled.footer`
     align-items: center;
     > div {
         height: 17px;
-        width: 220px;
+        width: auto;
         display: flex;
         justify-content: space-between;
         > img {
             width: 17px;
-            height: 17px;                
+            height: 17px;     
+            margin-right: 8px;           
         }
         > p {
             margin: 0;
             font-family: 'Roboto';
             font-size: 15px;
             color: #F8F8F8;
-            line-height: 15px;
+            height: 17px;
+            line-height: 17px;
         }
     }
     > h1 {
