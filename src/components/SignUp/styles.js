@@ -236,7 +236,7 @@ export const NextButtonBlock = styled.footer`
     align-items: center;
     > div {
         height: 17px;
-        width: 194px;
+        width: 220px;
         display: flex;
         justify-content: space-between;
         > img {
@@ -248,7 +248,7 @@ export const NextButtonBlock = styled.footer`
             font-family: 'Roboto';
             font-size: 15px;
             color: #F8F8F8;
-            line-height: 21px;
+            line-height: 15px;
         }
     }
     > h1 {
