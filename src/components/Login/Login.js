@@ -17,7 +17,7 @@ const Login = ({ state, actions, modalOn, setModalOn, taskActions }) => {
     const submitLogin = useCallback(async (e) => {
         e.preventDefault();
         try {
-            if (loginInfo.email === null || loginInfo.password === null) throw new Error("Check it out!");
+            if (loginInfo.email === null || loginInfo.password === null || loginInfo.email.indexOf(" ") !== -1 || loginInfo.password.indexOf(" ") !== -1) throw new Error("Check it out!");
             const auth = await ApiDefault.post('auth', {
                 userEmail: loginInfo.email,
                 userPw: loginInfo.password
