@@ -36,6 +36,7 @@ const TaskGuide = ({ state, taskActions, setHomework, setHomeworkDataInState }) 
     const setCurPage = useCallback((current) => pageDispatch({ type: "curPage", curPage: current }), []);
     const setBottomList = useCallback((bottom) => pageDispatch({ type: "bottomList", bottomList: bottom }), []);
     const homeworkRequest = useCallback(() => {
+        if (typeof accessToken === "object") return;
         axios.get(`${limServer}/homework`, {
             headers: {
                 "Authorization": accessToken,
@@ -46,7 +47,7 @@ const TaskGuide = ({ state, taskActions, setHomework, setHomeworkDataInState }) 
         }).catch((error) => {
             if (typeof error.response === "undefined") return;
             const code = error.response.status;
-            if (code === 403 || code === 404)
+            if (code === 404)
                 history.push("/");
             else if (code === 410)
                 getAccessTokenUsingRefresh(state, taskActions);
@@ -128,7 +129,7 @@ const TaskGuide = ({ state, taskActions, setHomework, setHomeworkDataInState }) 
                                     <th className="title">제목</th>
                                     <th className="creationDate">작성일</th>
                                     <th className="dueDate">기한</th>
-                                    <th className="member">팀원</th>
+                                    <th className="member">동료평가</th>
                                     <th className="submissionStatus">제출여부</th>
                                 </tr>
                                 {createList()}

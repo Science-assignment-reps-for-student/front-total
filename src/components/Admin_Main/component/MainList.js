@@ -45,11 +45,15 @@ const MainList = ({ studentList, text, contentId, state, actions }) => {
         if(contentId){
             axios.get(`${getFileCodeURL}/${contentId}`,header)
             .then((e)=> {
-                const codeList = e.data.file;
+                const codeList = e.data.file_info;
                 personalFileDownload(codeList,number);
             })
             .catch((e)=> {
-                getIsExpiration(e) ? refreshAccessToken(refreshToken,actions,refreshAccessTokenURL) : alert("네트워크를 확인해 주세요.");
+                if(e.response.status === 404){
+                    alert("파일이 없습니다.")
+                } else {
+                    getIsExpiration(e) ? refreshAccessToken(refreshToken,actions,refreshAccessTokenURL) : alert("네트워크를 확인해 주세요.");
+                }
             })
         }
     }

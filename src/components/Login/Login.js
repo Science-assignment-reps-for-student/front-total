@@ -3,7 +3,7 @@ import * as S from '../SignUp/styles';
 import blackXButton from '../SignUp/img/blackXButton.png';
 import ApiDefault from '../utils';
 
-const Login = ({ state, actions, modalOn, setModalOn }) => {
+const Login = ({ state, actions, modalOn, setModalOn, taskActions }) => {
     const [sliding, setSliding] = useState(false);
     const [loginInfo, setLoginInfo] = useState({
         email: null,
@@ -23,6 +23,7 @@ const Login = ({ state, actions, modalOn, setModalOn }) => {
     const submitLogin = useCallback(async (e) => {
         e.preventDefault();
         try {
+            if (loginInfo.email === null || loginInfo.password === null) throw new Error("Check it out!");
             const auth = await ApiDefault.post('auth', {
                 userEmail: loginInfo.email,
                 userPw: loginInfo.password
@@ -31,6 +32,8 @@ const Login = ({ state, actions, modalOn, setModalOn }) => {
             localStorage.setItem('refreshToken', auth.data.refreshToken);
             actions.setAccessToken(auth.data.accessToken);
             actions.setRefreshToken(auth.data.refreshToken);
+            taskActions.accessTokenChange(auth.data.accessToken);
+            taskActions.refreshTokenChange(auth.data.refreshToken);
             actions.setLogged(true);
             setModalOn({ ...modalOn, login: false });
         } catch (error) {

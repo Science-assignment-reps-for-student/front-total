@@ -2,6 +2,7 @@ import React, { useCallback, useEffect, useState } from 'react';
 import { withRouter, useHistory } from 'react-router-dom';
 import { getAccessTokenUsingRefresh } from '../../../resource/publicFunction';
 import * as Styled from '../Styled';
+import close from '../../img/X.png';
 import axios from 'axios';
 
 const TaskTeamModal = ({ state, taskActions, onClickToggleModal, setMembers, members, getUserInfo, allMembers, teamRequestGet }) => {
@@ -32,6 +33,7 @@ const TaskTeamModal = ({ state, taskActions, onClickToggleModal, setMembers, mem
         }, 500);
     }, []);
     const memberRequest = useCallback((requestType, member) => {
+        if (typeof accessToken === "object") return;
         axios({
             url: `${limServer}/member/${member.uuid}?teamId=${members.teamId}`,
             method: requestType,
@@ -45,7 +47,7 @@ const TaskTeamModal = ({ state, taskActions, onClickToggleModal, setMembers, mem
             if (typeof error.response === "undefined") return;
             const code = error.response.status;
             if (code === 400)
-                alert("팀 수정은 팀장만 할 수 있습니다.");
+                alert("이미 팀에 가입된 학생입니다.");
             else if (code === 403)
                 history.push("/");
             else if (code === 410)
@@ -66,13 +68,17 @@ const TaskTeamModal = ({ state, taskActions, onClickToggleModal, setMembers, mem
         })
         return selectedMemebers;
     }, [members, memberRequest]);
-    const paintModalFilter = useCallback((uuid) => {
+    const uuidFilter = useCallback((uuid) => {
         if (typeof members.members !== "object") return;
         return members.members.some((member) => member.uuid === uuid);
     }, [members]);
+    const sameClassFilter = useCallback(({ userNumber }) => {
+        if (typeof members.members !== "object" || my.userNumber === undefined) return;
+        return my.userNumber.toString()[1] === userNumber.toString()[1];
+    }, [my]);
     const getAllMembersList = useCallback(() => {
         const list = allMembers
-            .filter((member) => (member.userNumber !== my.userNumber) && !paintModalFilter(member.uuid))
+            .filter((member) => (member.userNumber !== my.userNumber) && !uuidFilter(member.uuid) && sameClassFilter(member))
             .map((member, i) => {
                 return (
                     <li
@@ -121,6 +127,7 @@ const TaskTeamModal = ({ state, taskActions, onClickToggleModal, setMembers, mem
                         <div className="editer--members">
                             <div>
                                 <h4>팀원</h4>
+                                <img src={close} alt="close" onClick={onClickToggleModal} />
                             </div>
                             <div>
                                 <ul>
@@ -128,9 +135,7 @@ const TaskTeamModal = ({ state, taskActions, onClickToggleModal, setMembers, mem
                                     {getSelectedMembers(members.members)}
                                 </ul>
                             </div>
-                            <button onClick={() => {
-                                onClickToggleModal();
-                            }}>팀원 수정</button>
+                            <button onClick={onClickToggleModal}>팀원 수정</button>
                         </div>
                     </div>
                 </Styled.TaskTeamModal>

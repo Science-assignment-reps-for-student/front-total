@@ -674,22 +674,22 @@ module.exports = function(webpackEnv) {
       child_process: 'empty',
     },
     performance: false,
-    devServer: {
-      historyApiFallback: true,
-      proxy: {
-        "/chuckflap/": {
-          changeOrigin: true,
-          target: "https://dsm-scarfs.hs.kr"
-        },
-        "/tenderloin/": {
-          changeOrigin: true,
-          target: "https://dsm-scarfs.hs.kr"
-        },
-        "/t-bone/": {
-          changeOrigin: true,
-          target: "https://dsm-scars.hs.kr"
-        }
-      }
-    }
+    // devServer: {
+    //   historyApiFallback: true,
+    //   proxy: {
+    //     "/chuckflap/": {
+    //       changeOrigin: true,
+    //       target: "https://dsm-scarfs.hs.kr"
+    //     },
+    //     "/tenderloin/": {
+    //       changeOrigin: true,
+    //       target: "https://dsm-scarfs.hs.kr"
+    //     },
+    //     "/t-bone/": {
+    //       changeOrigin: true,
+    //       target: "https://dsm-scars.hs.kr"
+    //     }
+    //   }
+    // }
   };
 };

@@ -45,6 +45,7 @@ const List = ({ state, data, setHomeworkDataInState }) => {
                     <Link 
                         to={`/task/${id}`} 
                         onClick={() => {
+                            if (typeof accessToken === "object") return;
                             setHomeworkDataInState(wooServer, accessToken, id);
                         }}
                     >

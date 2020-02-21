@@ -1,7 +1,7 @@
 import styled from 'styled-components'
 
 export const HomeworkDiv = styled.div`
-    width: 1220px;
+    width: 70%;
     height: 95vh;
     background-color:white;
     padding: 50px;
@@ -12,6 +12,7 @@ export const HomeworkDiv = styled.div`
     }
     > div{
         display: flex;
+        width: 100%;
     }
 `
 
@@ -43,7 +44,7 @@ export const HomeworkButton = styled.div`
 `
 
 export const HomeworkMain = styled.div`
-    width: 743px;
+    width: 70%;
     margin-right: 50px;
     > h2 {
         margin-bottom: 12px;
@@ -106,7 +107,7 @@ export const HomeworkDropdownContent = styled.div`
 `
 
 export const HomeworkTitleInput = styled.input`
-    width: 656px;
+    width: 88%;
     height: 90%;
     font-size: 25px;
     font-weight: 600;
@@ -115,39 +116,37 @@ export const HomeworkTitleInput = styled.input`
 `
 
 export const HomeworkDay = styled.div`
-    width: 240px;
+    width: 85%;
     height: 25px;
     font-size: 14px;
     font-weight: 600;
     display: flex;
-    justify-content: center;
+    justify-content: space-around;
     align-items: center;
     border: 1px solid #858585;
     box-sizing: border-box;
-    padding-left: 20px;
     background: white;
     overflow-wrap: break-word;
     margin-left: 10px;
+    max-width: 230px;
 `
 
 export const HomeworkDayInput = styled.input`
-    width: 160px;
+    width: 69%;
     height: 90%;
     outline: none;
     border: none;
     font-size: 14px;
     font-weight: 600;
-    margin-left: 10px;
 `
 
 
 export const HomeworkFile = styled.div`
     cursor: default;
-    width: 340px;
+    width:100%;
     height: 80px;
     display: flex;
     flex-wrap: wrap;
-    justify-content: center;
     align-items: center;
     border: 1px solid #E1E1E1;
     overflow-y: scroll;
@@ -158,6 +157,9 @@ export const HomeworkFile = styled.div`
         display: none;
     }
     > div {
+        display: flex;
+        justify-content: center;
+        width: 100%;
         > img {
             width: 11px;
             height: 11px;
@@ -170,6 +172,8 @@ export const HomeworkFile = styled.div`
         display: flex;
         align-items: center;
         margin: 2px;
+        width: auto;
+        overflow-wrap: break-word; 
         
         > span {
             font-size: 13px;
@@ -183,7 +187,7 @@ export const HomeworkFile = styled.div`
 `
 
 export const HomeworkExplain = styled.textarea`
-    width: 743px;
+    width: 100%;
     height: 451px;
     border: 1px solid #858585;
     resize: none;
@@ -195,7 +199,7 @@ export const HomeworkExplain = styled.textarea`
 `
 
 export const HomeworkNav = styled.div`
-    width: 340px;
+    width: 30%;
     font-size: 14px;
     font-weight: 600;
     > p {
@@ -210,12 +214,14 @@ export const HomeworkLine = styled.div`
 `
 
 export const HomeworkCheckBox = styled.div`
-    font-size: 14px;
+    font-size: 12px;
     font-weight: 600;
     margin-top: 10px;
     margin-bottom: 10px;
     display: flex;
     align-items: center;
+    display: flex;
+    justify-content: center;
 `
 
 export const HomeworkFileLabel = styled.div`

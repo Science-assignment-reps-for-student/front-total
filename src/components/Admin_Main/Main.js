@@ -2,7 +2,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { Header, BackgroundWhite } from '../public';
 import * as S from './style/MainStyle';
 import { MainContent, MainNav } from './component';
-import { refreshAccessTokenURL, personalHomeworkURL, teamHomeworkURL, getUserInfoURL, experimentHomeworkURL, allFileDownloadURL, getFileCodeURL } from '../resource/serverURL';
+import { refreshAccessTokenURL, personalHomeworkURL, teamHomeworkURL, getUserInfoURL, experimentHomeworkURL, allFileDownloadURL, getFileCodeURL, excelFileDownloadURL } from '../resource/serverURL';
 import { refreshAccessToken, getUserInfo, getIsExpiration } from '../resource/publicFunction';
 import { withRouter } from 'react-router-dom'
 import axios from 'axios';
@@ -86,12 +86,6 @@ const AdminMain = ({ state, actions, history }) => {
         })
     },[]);
 
-    useEffect(()=> {
-        if(isLoaded){   
-            getPersonalHomework(personalHomeworkURL,header,checked,data,content);
-        }
-    },[refreshToken]);
-
     const allFileDownload = (contentId) => {
         const fileHeader = {
             headers: {
@@ -111,9 +105,17 @@ const AdminMain = ({ state, actions, history }) => {
             })
         })
         .catch((e)=> {
-            getIsExpiration(e) 
-            ? refreshAccessToken(refreshToken,actions,refreshAccessTokenURL) 
-            : alert("네트워크를 확인해 주세요.");
+            try{
+                if(e.response.status === 404){
+                    alert("파일이 없습니다");
+                } else {
+                    getIsExpiration(e) 
+                    ? refreshAccessToken(refreshToken,actions,refreshAccessTokenURL) 
+                    : alert("네트워크를 확인해 주세요.");
+                }
+            } catch{
+                alert("네트워크를 확인해 주세요.")
+            }
         })
     }
 
@@ -131,6 +133,7 @@ const AdminMain = ({ state, actions, history }) => {
                 contentId={homework_id}
                 fileDownload={allFileDownload}
                 created_at={created_at}
+                getExcelFile={getExcelFile}
                 />);
             return contentData;
         });
@@ -189,7 +192,6 @@ const AdminMain = ({ state, actions, history }) => {
         })
     }
 
-
     useEffect(()=> {
         if(isLoaded){
             const keys = Object.keys(data);
@@ -242,6 +244,48 @@ const AdminMain = ({ state, actions, history }) => {
         }
     };
 
+    const getExcelFile = (homework_num) => {
+        axios.get(`${getFileCodeURL}/${homework_num}`,header)
+        .then((e)=> {
+            const { file_excel_name } = e.data;
+            axios.get(`${excelFileDownloadURL}/${homework_num}`,{
+                headers: {
+                    "Authorization": `Bearer ${accessToken}`
+                },
+                responseType: "blob"
+            }
+            ).then((e)=> {
+                const excelFile = e.data;
+                const link = document.createElement("a");
+                link.href = URL.createObjectURL(excelFile);
+                link.download = file_excel_name;
+                link.click()
+            })
+            .catch((e)=> {
+                try{
+                    if(e.response.status === 404){
+                        alert("과제가 끝나지 않아, 엑셀이 없습니다.");
+                    } else {
+                        refreshAccessToken(refreshToken,actions,refreshAccessTokenURL);
+                    }
+                } catch {
+                    alert("네트워크를 확인해 주세요.");
+                }
+            })
+        })
+        .catch((e)=> {
+            try{
+                if(e.response.status === 404){
+                    alert("파일이 없습니다.");
+                } else {
+                    refreshAccessToken(refreshToken,actions,refreshAccessTokenURL);
+                }
+            } catch {
+                alert("네트워크를 확인해 주세요.")
+            }
+        })
+    }
+
     return (
         <>
             <Header/>
@@ -259,7 +303,7 @@ const AdminMain = ({ state, actions, history }) => {
                             </S.MainLoadingContent>
                         }
                     </div>
-                    <div>
+                    <div className="MainNavDiv">
                         <MainNav typeChange={typeChange} checkedChange={checkedChange} checked={checked} type={homeworkType}/>
                     </div>
                 </S.MainDiv>

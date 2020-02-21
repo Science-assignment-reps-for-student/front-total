@@ -1,6 +1,6 @@
 import React, { useState, useCallback } from 'react'
 import { Route, Switch, withRouter, useHistory } from 'react-router-dom';
-import { PeerEvaluation, Task, TaskGuide, AdminLogin, Homework, AdminMain, Main } from './components';
+import { PeerEvaluation, Task, TaskGuide, AdminLogin, Homework, AdminMain, Main, QnA } from './components';
 import { AuthConsumer, AuthProvider } from './context/Auth';
 import { TaskProvider, TaskConsumer } from './context/AppContext';
 import { AccessTokenProvider, AccessTokenConsumer } from './context/AccessTokenContext';
@@ -33,6 +33,7 @@ const App = () => {
         }
     }, []);
     const getUserInfo = useCallback((limServer, accessToken) => {
+        if (typeof accessToken === "object") return;
         return axios.get(`${limServer}/user`, {
             headers: {
                 "Content-Type": "application/json",
@@ -50,6 +51,14 @@ const App = () => {
                             return (
                                 <>
                                     <Global />
+                                    <Route
+                                        path="/qna"
+                                        render={() =>
+                                            <QnA 
+                                            
+                                            />
+                                        }
+                                    />
                                     <Route 
                                         path="/task/:homeworkId/evaluation"
                                         render={() => 
@@ -111,7 +120,7 @@ const App = () => {
                                     <AuthProvider>
                                         <AuthConsumer>
                                             {
-                                                ({ state, actions }) => <Route exact path="/" render={() => <Main state={state} actions={actions} />} />
+                                                ({ state, actions }) => <Route exact path="/" render={() => <Main state={state} actions={actions} taskActions={taskActions} />} />
                                             }
                                         </AuthConsumer> 
                                     </AuthProvider>

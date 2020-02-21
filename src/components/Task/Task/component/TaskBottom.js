@@ -1,23 +1,46 @@
 import React, { useRef, useState, useCallback, useEffect } from 'react';
-import { withRouter, useHistory } from 'react-router-dom';
+import { withRouter, useHistory, Link } from 'react-router-dom';
 import { getAccessTokenUsingRefresh } from '../../../resource/publicFunction';
 import * as Styled from '../Styled';
 import featherPaperclip from '../../img/featherPaperclip.png';
 import plus from '../../img/plus.png';
 import axios from 'axios';
 
-const TaskBottom = ({ state, taskActions, homeworkData, members, setMembers, homeworkId, teamRequestGet, onClickToggleModal }) => {
+const TaskBottom = ({ state, taskActions, homeworkData, members, setMembers, getUserInfo, homeworkId, teamRequestGet, onClickToggleModal }) => {
     const history = useHistory();
     const { wooServer, limServer, accessToken } = state;
     const { homework_type } = homeworkData;
     const fileInput = useRef(null);
     const teamTitleInput = useRef(null);
     const [files, setFiles] = useState([]);
+    const [userInfo, setUserInfo] = useState({});
+    const [listDatas, setListDatas] = useState([]);
 
+    const homeworkRequest = useCallback(() => {
+        if (typeof accessToken === "object") return;
+        axios.get(`${limServer}/homework`, {
+            headers: {
+                "Authorization": accessToken,
+                "Content-Type": "application/json",
+            }
+        }).then((response) => {
+            setListDatas(response.data);
+        }).catch((error) => {
+            if (typeof error.response === "undefined") return;
+            const code = error.response.status;
+            if (code === 404)
+                history.push("/");
+            else if (code === 410)
+                getAccessTokenUsingRefresh(state, taskActions);
+        })
+    }, [setListDatas, state]);
     const addFileList = useCallback(() => {
         const fileName = fileInput.current.files[0].name;
         const lastIdxOfDot = fileName.lastIndexOf(".");
-        if (fileName.slice(lastIdxOfDot, fileName.length) !== ".hwp") throw "Invalid file extenstion";
+        if (fileName.slice(lastIdxOfDot, fileName.length) !== ".hwp") {
+            alert("파일명은 \'.hwp\' 만 가능합니다.");
+            throw "Invalid file extenstion";
+        }
         files.map((file) => { if (file.name === fileName) throw "Duplicate filename."; })
         setFiles([...files, fileInput.current.files[0]]);
     }, [files, fileInput]);
@@ -28,16 +51,36 @@ const TaskBottom = ({ state, taskActions, homeworkData, members, setMembers, hom
         copy.splice(removeIdx, 1);
         setFiles(copy);
     }, [files, fileInput]);
+    const modifyHomeworkReuqest = useCallback((fd) => {
+        axios.put(`${wooServer}/${homework_type === 1 ? "multi" : "single"}/${homeworkId}`, fd, {
+            headers: {
+                "Authorization": `Bearer ${accessToken}`,
+                "Content-Type": "multipart/form-data",
+            }
+        }).then(() => {
+            alert("숙제 수정을 완료하였습니다.");
+        }).catch((error) => {
+            const code = error.response.status;
+            if (code === 412)
+                alert("숙제가 제출되지 않았습니다. 숙제를 먼저 제출하여주십시오.");
+        })
+    }, []);
     const onClickSubmitFiles = useCallback(() => {
         if (files.length === 0) return alert("파일을 1개 이상 추가해주세요.");
         let fd = new FormData();
         files.map((file) => {
             fd.append("file[]", file);
         });
+        if (typeof accessToken === "object") return;
         axios.post(`${wooServer}/${homework_type === 1 ? "multi" : "single"}/${homeworkId}`, fd, {
             headers: {
                 "Authorization": `Bearer ${accessToken}`,
                 "Content-Type": "multipart/form-data",
+            }
+        }).then(() => {
+            window.alert("숙제 제출을 완료하였습니다.");
+            if (homework_type !== 0) {
+                history.push(`/task/${homeworkId}/evaluation`);
             }
         }).catch((error) => {
             if (typeof error.response === "undefined") return;
@@ -46,8 +89,9 @@ const TaskBottom = ({ state, taskActions, homeworkData, members, setMembers, hom
                 history.push("/");
             else if (code === 403)
                 alert("팀장만이 숙제를 제출할 수 있습니다.");
-            else if (code === 409)
-                alert("숙제를 이미 제출하였습니다.");
+            else if (code === 409 &&
+                window.confirm("숙제를 이미 제출하였습니다.\n과제를 수정하시겠습니까?"))
+                modifyHomeworkReuqest(fd);
             else if (code === 410)
                 getAccessTokenUsingRefresh(state, taskActions);
             else if (code === 415)
@@ -58,6 +102,7 @@ const TaskBottom = ({ state, taskActions, homeworkData, members, setMembers, hom
     const createTeamRequest = useCallback(() => {
         if (teamTitleInput.current.value.trim() === "")
             return alert("팀 명을 입력해주세요.");
+        if (typeof accessToken === "object") return;
         axios({
             method: "POST",
             url: `${limServer}/team`,
@@ -81,6 +126,7 @@ const TaskBottom = ({ state, taskActions, homeworkData, members, setMembers, hom
     }, [homeworkId, state, teamTitleInput]);
     const deleteTeamRequest = useCallback(() => {
         if (!window.confirm("정말로 팀을 삭제하시겠습니까?")) return;
+        if (typeof accessToken === "object") return;
         axios({
             method: "DELETE",
             url: `${limServer}/team/${members.teamId}`,
@@ -92,7 +138,7 @@ const TaskBottom = ({ state, taskActions, homeworkData, members, setMembers, hom
         }).catch((error) => {
             if (typeof error.response === "undefined") return;
             const code = error.response.status;
-            if (code === 400) 
+            if (code === 400)
                 alert("팀장만이 팀 삭제를 할 수 있습니다.");
             else if (code === 403)
                 history.push("/");
@@ -101,11 +147,19 @@ const TaskBottom = ({ state, taskActions, homeworkData, members, setMembers, hom
         })
     }, [state, members]);
 
+
     useEffect(() => {
-        if (homeworkData.homework_type === 1 || homeworkData.homework_type === 2) {
+        getUserInfo(limServer, accessToken)
+            .then((response) => {
+                setUserInfo(response.data);
+            })
+        homeworkRequest();
+    }, []);
+    useEffect(() => {
+        if (homeworkData.homework_type !== 0) {
             teamRequestGet();
         }
-    }, [homeworkData, homeworkId]);
+    }, [homeworkData, homeworkId, history]);
 
     return (
         <Styled.TaskBottom className="task-bottom">
@@ -113,21 +167,29 @@ const TaskBottom = ({ state, taskActions, homeworkData, members, setMembers, hom
                 <div className="task-bottom-left">
                     <div className="show--title">
                         <h4>팀원</h4>
-                        {Object.keys(members).length === 0 ?
-                            <>
-                                <input type="text" ref={teamTitleInput} placeholder="팀 명을 입력해주세요." />
-                                <button onClick={createTeamRequest}>
-                                    <img src={plus} alt="plus-member" />
-                                    <span>팀 생성</span>
-                                </button>
-                            </> :
-                            <>
-                                <button onClick={deleteTeamRequest}>팀 삭제</button>
-                                <button onClick={onClickToggleModal}>
-                                    <img src={plus} alt="plus-member" />
-                                    <span>팀원 추가</span>
-                                </button>
-                            </>
+                        {
+                            (listDatas.some((data) => (data.id === +homeworkId && data.submissionStatus)) ?
+                            (homework_type !== 0 && homeworkId !== "undefined") && <Link to={`/task/${homeworkId}/evaluation`}>평가하러 가기</Link> : 
+                            Object.keys(members).length === 0 ?
+                                <>
+                                    <input type="text" ref={teamTitleInput} placeholder="팀 명을 입력해주세요." />
+                                    <button onClick={createTeamRequest}>
+                                        <img src={plus} alt="plus-member" />
+                                        <span>팀 생성</span>
+                                    </button>
+                                </> :
+                                <>
+                                    {userInfo.userNumber === members.leaderNumber &&
+                                        <>
+                                            <button onClick={deleteTeamRequest}>팀 삭제</button>
+                                            <button onClick={onClickToggleModal}>
+                                                <img src={plus} alt="plus-member" />
+                                                <span>팀원 추가</span>
+                                            </button>
+                                        </>
+                                    }
+                                </>
+                            )
                         }
                     </div>
                     <div className="show--list">

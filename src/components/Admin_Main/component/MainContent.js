@@ -1,10 +1,10 @@
-import React, { useCallback } from 'react';
+import React from 'react';
 import * as S from '../style/MainStyle';
 import { MainClass, MainTeamClass, MainExperimentClass } from '../component';
 import { edit, excel, download } from '../imgs';
 import { withRouter } from 'react-router-dom';
 
-const MainContent = ({ checked, title, classData, type, contentId, history, fileDownload, created_at }) => {
+const MainContent = ({ checked, title, classData, type, contentId, history, fileDownload, created_at, getExcelFile }) => {
 
     const classDataKey = Object.keys(classData);
     const filteredData = classDataKey.filter((e)=> checked[e]);
@@ -111,9 +111,9 @@ const MainContent = ({ checked, title, classData, type, contentId, history, file
         <S.MainContent>
             <div className="wrapper">
                 <h2>{getTitle(type,title)}</h2>
-                <div>
+                <div className="buttonWrapper">
                     <S.MainFixButton onClick={()=> {history.push(`/Admin/revise/${contentId}`)}}><img src={edit} alt=""/>수정</S.MainFixButton>
-                    <S.MainFixButton><img src={excel} alt=""/>엑셀</S.MainFixButton>
+                    <S.MainFixButton><img src={excel} alt="" onClick={() => {getExcelFile(contentId)}}/>엑셀</S.MainFixButton>
                     <S.MainFixButton onClick={()=>{fileDownload(contentId)}}><img src={download} alt=""/>파일</S.MainFixButton>
                 </div>
             </div>

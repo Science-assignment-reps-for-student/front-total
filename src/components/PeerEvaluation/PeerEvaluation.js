@@ -34,9 +34,12 @@ const peerReducer = (state, action) => {
 
 const PeerEvaluation = ({ state, taskActions, members, setMembers, getUserInfo, homeworkData, setHomeworkDataInState }) => {
     const history = useHistory();
+    const { homework_type } = homeworkData;
     const { limServer, wooServer, accessToken } = state;
     const { homeworkId } = useParams();
     const [my, setMy] = useState({});
+
+    let [test, setTest] = useState();
     const [evaluationData, setEvaluationData] = useState({
         type: 0,
         title: "[팀] 정우영의 전구공장",
@@ -64,51 +67,63 @@ const PeerEvaluation = ({ state, taskActions, members, setMembers, getUserInfo, 
             }
         ],
         peerStudents: (!(members.members === undefined) && members.leaderNumber === my.userNumber) ?
-        members.members :
-        members.members === undefined ? [] : [...Array.from(members.members).filter((member) => member.userNumber !== my.number), { uuid: my.uuid, userNumber: my.userNumber, userName: my.userName }]
+            members.members :
+            members.members === undefined ?
+                [] :
+                [
+                    ...Array.from(members.members).filter((member) => member.userNumber !== my.number),
+                    { uuid: members.leaderId, userNumber: members.leaderNumber, userName: members.leaderName }
+                ]
     });
 
     useEffect(() => {
         if (members.members === undefined) return;
         else {
-            if (members.leaderNumber === my.userNumber) {
-                const copy = { ...evaluationData };
+            const copy = { ...evaluationData };
+            if (+members.leaderNumber === +my.userNumber) {
                 copy.peerStudents = members.members;
                 setEvaluationData(copy);
             } else {
-                const copy = { ...evaluationData };
-                copy.peerStudents = [...Array.from(members.members).filter((member) => member.userNumber !== my.number), { uuid: my.uuid, userNumber: my.userNumber, userName: my.userName }]
+                copy.peerStudents = [
+                    ...Array.from(members.members).filter((member) => +member.userNumber !== +my.userNumber),
+                    { uuid: members.leaderId, userNumber: members.leaderNumber, userName: members.leaderName }
+                ];
                 setEvaluationData(copy);
             }
         }
-    }, [members.members]);
+    }, [members, members.members, my]);
 
     const [seflState, selfDispatch] = useReducer(selfReducer, {
         scientificAccuracy: 0,
         communication: 0,
         attitude: 0
     });
-    const [peerState, peerDispatch] = useReducer(peerReducer, evaluationData.peerStudents.map(() => {
-        return {
-            cooperation: 0,
-            communication: 0,
-        };
-    }));
-    
+    const [peerState, setPeerState] = useState([]);
+    useEffect(() => {
+        if (Object.keys(members).length === 0) return;
+        else {
+            setPeerState(members.members.map(() => {
+                return { cooperation: 0, communication: 0 };
+            }));
+        }
+    }, [members]);
+    const peerStateChange = useCallback((e) => {
+        const score = e.target.dataset.score, type = e.target.dataset.type, num = e.target.dataset.num, copy = [...peerState];
+        copy[num][type] = +score;
+        setPeerState(copy);
+    }, [peerState]);
+
     const selfReducerHandler = useCallback((e) => {
         selfDispatch({ type: e.target.dataset.type, score: e.target.dataset.score })
     }, [selfDispatch]);
-    const peerReducerHandler = useCallback((e) => {
-        peerDispatch({ type: e.target.dataset.type, score: e.target.dataset.score, num: e.target.dataset.num })
-    }, [peerDispatch]);
     const getSelfList = useCallback(() => {
         const list = evaluationData.selfData.map((data, i) => {
             return (
                 <li key={i}>
                     <InputList
-                        type={evaluationData.selfType[i]}
                         title={data.title}
                         subTitle={data.subTitle}
+                        type={evaluationData.selfType[i]}
                         selfReducerHandler={selfReducerHandler}
                         i={i}
                     />
@@ -125,12 +140,12 @@ const PeerEvaluation = ({ state, taskActions, members, setMembers, getUserInfo, 
                     {evaluationData.peerData.map((data, j) => {
                         return (
                             <InputList
-                                type={evaluationData.peerType[j]}
-                                title={data.title}
-                                subTitle={data.subTitle}
                                 i={i}
                                 key={j}
-                                peerReducerHandler={peerReducerHandler}
+                                title={data.title}
+                                subTitle={data.subTitle}
+                                type={evaluationData.peerType[j]}
+                                peerStateChange={peerStateChange}
                             />
                         )
                     })}
@@ -138,7 +153,7 @@ const PeerEvaluation = ({ state, taskActions, members, setMembers, getUserInfo, 
             )
         });
         return list;
-    }, [evaluationData]);
+    }, [evaluationData, my, members]);
     const submitSelfEvaluation = useCallback(() => {
         axios({
             method: "POST",
@@ -153,19 +168,23 @@ const PeerEvaluation = ({ state, taskActions, members, setMembers, getUserInfo, 
                 communication: seflState.communication,
                 attitude: seflState.attitude,
             }
-        }).then((response) => {
-            if (response.status === 200) {
-                alert("자기 평가가 성공적으로 제출되었습니다.");
+        }).then(() => {
+            if (+homework_type === 0) {
+                alert("평가가 성공적으로 제출되었습니다.");
+            } else {
+                submitPeerEvaluation();
+                alert("평가를 성공적으로 제출하였습니다.");
             }
-        }).catch((error) => {
-            if (typeof error.response === "undefined") return;
-            const code = error.response.status;
-            if (code === 400)
-                return alert("자기 평가를 이미 완료하였습니다.");
-            else if (code === 410)
-                getAccessTokenUsingRefresh(state, taskActions);
         })
-    }, [homeworkId, state]);
+            .catch((error) => {
+                if (typeof error.response === "undefined") return;
+                const code = error.response.status;
+                if (code === 400)
+                    return alert("자기 평가를 이미 완료하였습니다.");
+                else if (code === 410)
+                    getAccessTokenUsingRefresh(state, taskActions);
+            })
+    }, [homeworkId, state, seflState]);
     const submitPeerEvaluation = useCallback(() => {
         evaluationData.peerStudents.map((student, i) => {
             axios({
@@ -181,10 +200,6 @@ const PeerEvaluation = ({ state, taskActions, members, setMembers, getUserInfo, 
                     cooperation: peerState[i].cooperation,
                     communication: peerState[i].communication,
                 }
-            }).then((response) => {
-                if (response.status === 200) {
-                    alert("동료 평가가 성공적으로 제출되었습니다.");
-                }
             }).catch((error) => {
                 if (typeof error.response === "undefined") return;
                 const code = error.response.status;
@@ -194,7 +209,7 @@ const PeerEvaluation = ({ state, taskActions, members, setMembers, getUserInfo, 
                     getAccessTokenUsingRefresh(state, taskActions);
             })
         })
-    }, [homeworkId, state]);
+    }, [homeworkId, state, peerState]);
     const teamRequestGet = useCallback(() => {
         if (typeof homeworkId === "undefined") return;
         axios.get(`${limServer}/team?homeworkId=${homeworkId}`, {
@@ -220,59 +235,58 @@ const PeerEvaluation = ({ state, taskActions, members, setMembers, getUserInfo, 
         })
     }, []);
     useEffect(() => {
-        if (Object.keys(homeworkData).length === 0) {
+        if (Object.keys(homeworkData).length === 0)
             setHomeworkDataInState(wooServer, accessToken, homeworkId);
-        }
-        if (homeworkData.homework_type === 1 || homeworkData.homework_type === 2) {
+        if (homeworkData.homework_type !== 0)
             teamRequestGet();
-        }
     }, [homeworkData]);
 
     return (
-    <>
-    <Header />
-        <Styled.PeerEvaluation>
-            <div>
-                <h2>{evaluationData.title}</h2>
-                <section>
-                    <div className="evaluation-title">
-                        <h3>동료평가</h3>
-                        <span>{my.userNumber} {my.userName}</span>
-                    </div>
-                    <div className="evaluation-self">
-                        <h4>1. 자신의 활동을 스스로 평가해 봅시다.</h4>
-                        <ul>
-                            <li>
-                                <ul className="evaluation-level"><li>상(3)</li><li>중(2)</li><li>하(1)</li></ul>
-                            </li>
-                            {getSelfList()}
-                        </ul>
-                    </div>
-                    <div className="evaluation-peer">
-                        <h4>2. 자신이 속한 모둠 활동을 평가해 봅시다.</h4>
-                        <ul>
-                            <li>
-                                <ul className="evaluation-level"><li>상(3)</li><li>중(2)</li><li>하(1)</li></ul>
-                            </li>
-                            <li>
-                                {getPeerList()}
-                            </li>
-                        </ul>
-                    </div>
-                    <div className="evaluation-submit">
-                        <button onClick={() => {
-                            if (seflState.scientificAccuracy === 0 || seflState.communication === 0 || seflState.attitude === 0)
-                                return alert("자기 평가를 다시 한번 확인해주세요.");
-                            if (peerState.some((data) => data.cooperation === 0 || data.communication === 0))
-                                return alert("동료 평가를 다시 한번 확인해주세요.");
-                            if (!window.confirm("정말 제출하시겠습니까?")) return;
-                            submitSelfEvaluation();
-                            submitPeerEvaluation();
-                        }}>제출하기</button>
-                    </div>
-                </section>
-            </div>
-        </Styled.PeerEvaluation>
+        <>
+            <Header />
+            <Styled.PeerEvaluation>
+                <div>
+                    <h2>{evaluationData.title}</h2>
+                    <section>
+                        <div className="evaluation-title">
+                            <h3>동료평가</h3>
+                            <span>{my.userNumber} {my.userName}</span>
+                        </div>
+                        <div className="evaluation-self">
+                            <h4>1. 자신의 활동을 스스로 평가해 봅시다.</h4>
+                            <ul>
+                                <li>
+                                    <ul className="evaluation-level"><li>상(3)</li><li>중(2)</li><li>하(1)</li></ul>
+                                </li>
+                                {getSelfList()}
+                            </ul>
+                        </div>
+                        {homework_type !== 0 &&
+                            <div className="evaluation-peer">
+                                <h4>2. 자신이 속한 모둠 활동을 평가해 봅시다.</h4>
+                                <ul>
+                                    <li>
+                                        <ul className="evaluation-level"><li>상(3)</li><li>중(2)</li><li>하(1)</li></ul>
+                                    </li>
+                                    <li>
+                                        {getPeerList()}
+                                    </li>
+                                </ul>
+                            </div>
+                        }
+                        <div className="evaluation-submit">
+                            <button onClick={() => {
+                                if (seflState.scientificAccuracy === 0 || seflState.communication === 0 || seflState.attitude === 0)
+                                    return alert("자기 평가를 다시 한번 확인해주세요.");
+                                if (peerState.some((data) => data.cooperation === 0 || data.communication === 0))
+                                    return alert("동료 평가를 다시 한번 확인해주세요.");
+                                if (!window.confirm("정말 제출하시겠습니까?")) return;
+                                submitSelfEvaluation();
+                            }}>제출하기</button>
+                        </div>
+                    </section>
+                </div>
+            </Styled.PeerEvaluation>
         </>
     )
 };

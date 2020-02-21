@@ -1,4 +1,4 @@
-import React, { createContext, useState } from 'react';
+import React, { createContext, useState, useEffect } from 'react';
 import ApiDefault from '../components/utils';
 
 const AuthContext = createContext({ 
@@ -16,6 +16,7 @@ const AuthProvider = ({ children }) => {
     const [accessToken, setAccessToken] = useState(localStorage.getItem('accessToken'));
     const [refreshToken, setRefreshToken] = useState(localStorage.getItem('refreshToken'));
     const IssuingToken = async () => {
+        if (refreshToken === null) return;
         try {
             const putAuth = await ApiDefault.put('/auth', undefined, {
                 headers: { Authorization: refreshToken }
@@ -24,15 +25,12 @@ const AuthProvider = ({ children }) => {
             localStorage.setItem('refreshToken', putAuth.data.refreshToken);
             setAccessToken(putAuth.data.accessToken);
             setRefreshToken(putAuth.data.refreshToken);
-            return 'success';
-        } catch (e) {
-            throw new Error(e.response.status);
-        }
+        } catch { }
     };
-    React.useEffect(() => {
-        IssuingToken().then(res => {
+    
+    useEffect(() => {
+        IssuingToken().then(_ => {
             setLogged(true);
-        }).catch(e => {
         })
     }, []);
 

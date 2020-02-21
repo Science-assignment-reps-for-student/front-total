@@ -38,7 +38,7 @@ const HomeworkFile = ({ file,fileChange }) => {
                     {
                         file.length ? 
                         file.map((e)=>{
-                            return <HomeworkFileContent file={file} key={e.file_name ? e.file_name : e.name}>
+                            return <HomeworkFileContent>
                                 { e.file_name ? e.file_name : e.name }
                             </HomeworkFileContent>
                         }) : 

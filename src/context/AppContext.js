@@ -20,8 +20,8 @@ const TaskContext = createContext({
 const TaskProvider = ({ children }) => {
     const [accessToken, accessTokenChange] = useState(localStorage.getItem("accessToken"));
     const [refreshToken, refreshTokenChange] = useState(localStorage.getItem("refreshToken"));
-    const [wooServer, setWooServer] = useState("https://dsm-scarfs.hs.kr/t-bone");
-    const [limServer, setLimServer] = useState("https://dsm-scarfs.hs.kr/chuckflap");
+    const [wooServer, setWooServer] = useState("https://api.dsm-scarfs.hs.kr/t-bone");
+    const [limServer, setLimServer] = useState("https://api.dsm-scarfs.hs.kr/chuckflap");
 
     const value = {
         state: {

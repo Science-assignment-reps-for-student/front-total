@@ -1,74 +1,103 @@
-import styled from 'styled-components'
+import styled from 'styled-components';
 
-
-export const MainDiv = styled.div`
-    padding: 30px;
+export const MainDiv = styled.div`  
+    width: 98vw;
+    padding: 1vw;
     display:flex;
     &::-webkit-scrollbar {
         display: none;
     }   
     > div{
+        width: 80%;
         height: 88vh;
         overflow-y: scroll;
+        overflow-x: hidden;
         > h1 {
-            margin-bottom: 15px;
+            margin-bottom: 25px;
+        }
+    }
+    > .MainNavDiv {
+        width: 20%;
+        &::-webkit-scrollbar {
+            display: none;
         }
     }
 `
 
 export const MainContent = styled.div`
-    width: 1450px;
-    height: 80vh;
+    width: 100%;
+    height: 75vh;
     > h2 {
         margin: 10px;
     }
     > div {
         display: flex;
+        width:100%;
+        height: 90%;
         flex-wrap: wrap;
-        /* justify-content: space-around; */
+        justify-content: space-around;
         > div{
+            width: 48%;
+            height: 50%;
+            margin: 0 1% 0 1%;
             > h2 {
                 margin: 10px;
             }
         }
+        > .buttonWrapper {
+            width: 25%;
+            margin: 0;
+            display: flex;
+            justify-content: space-around;
+        }
     }
     > .wrapper {
-        margin: 6px;
+        margin: 5px;
+        height: auto;
         display: flex;
-        justify-content: space-between;
         align-items: center;
+        justify-content: space-between;
     }
 `
 
 export const MainClass = styled.div`
-    width: 690px;
-    height: 281px;
+    width: 100%;
+    height: 85%;
     background: white;
     border: 1px solid #D5D5D5;
     border-radius: 3px;
-    margin: 10px;
     > h3 {
-        margin: 10px;
+        box-sizing: border-box;
+        padding: 10px;
+        height: 15%;
         display: flex;
         justify-content: space-between;
-        > span 
+        align-items: center;
+        > span {
             text-align: right;
         }
     }
     > div{
-        height: 235px;
+        width: 100%;
+        height: 85%;
         display: flex;
+        > div {
+        
+        }
+        > .secondDiv {
+            width: 33%;
+        }
     }
 `
 
 export const MainClassCount = styled.div`
-    width: 460px;
+    width: 67%;
     height: 100%;
     display: flex;
     flex-wrap: wrap;
     > div{
         width: 50%;
-        height: 99%;
+        height: 100%;
         > p {
             font-size: 20px;
             font-weight: 600;
@@ -84,7 +113,7 @@ export const MainClassCount = styled.div`
 `
 
 export const MainClassCountBar = styled.div`
-    width: 189px;
+    width: 80%;
     height: 4px;
     margin: 20px;
     margin-top: 0px;
@@ -92,7 +121,7 @@ export const MainClassCountBar = styled.div`
 `
 
 export const MainClassCoutColoredBar = styled.div`
-    width: ${props => 189 / props.max * props.count }px;
+    width: ${props => 100 / props.max * props.count }%;
     height: 4px;
     background: ${props => props.count >= props.max ? "#FF6F61" : "#0073AA"};
 `
@@ -102,6 +131,10 @@ export const MainListContent = styled.tr`
     height: ${props => props.isHeader ? 35 : 25}px;
     &:nth-child(odd){
         background-color: #F5F5F5;
+    }
+    cursor: pointer;
+    > td {
+        width: 33%;
     }
 `
 
@@ -129,10 +162,12 @@ export const MainButton = styled.button`
 `
 
 export const MainNav = styled.div`
-    width: 350px;
-    height: 800px;
+    height: 100%;
     padding-top: 58px;
     box-sizing: border-box;
+    &::-webkit-scrollbar {
+        display: none;
+    }
     > #bar {
         width: 100%;
         height: 1px;
@@ -156,12 +191,11 @@ export const MainClassCheckbox = styled.div`
 
 export const MainFixButton = styled.button`
     width: 100px;
-    height: 40px;
+    height: 35px;
     font-weight: 600;
     font-size: 15px;
     color: black;
     border: none;
-    margin-right: 50px;
     background-color: white;
     border: 1px solid black;
     border-radius: 3px;
@@ -173,7 +207,7 @@ export const MainFixButton = styled.button`
 `
 
 export const MainLoadingContent = styled.div`
-    width: 1450px;
+    width: 100%;
     height: 80vh;
     display: flex;
     justify-content: center;
@@ -232,8 +266,11 @@ export const MainLoadingContent = styled.div`
 `
 
 export const MainList = styled.div`
-    width: 230px;
-    height: 99%;
+    &::-webkit-scrollbar {
+    display: none;
+    }
+    width: 100%;
+    height: 100%;
     overflow-y: scroll;
     border-left: 1px solid #858585;
     > table {
@@ -244,10 +281,17 @@ export const MainList = styled.div`
     > p {
         font-size: 15px;
         font-weight: 600;
+        margin: 2px;
     }
 `
 
 export const MainTeamListContent = styled.tr`
-    background-color: ${props => props.color}
+    background-color: ${props => props.color};
+    > .status {
+        width: 34%;
+    }
+    > .team {
+        width: 66%;
+    }
 `
 

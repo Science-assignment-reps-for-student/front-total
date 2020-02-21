@@ -6,8 +6,8 @@ const MainTeamListContent = ({ teamList, submit, teamName, count, getFileCode })
     return (
         <>
             <S.MainTeamListContent color={color} onClick={()=> {getFileCode(teamName)}}>
-                <td colSpan={2}><b>{teamName}</b></td>
-                <td>{submit > 0 ? submit === 1 ? "O" : "△" : "X"}</td>
+                <td className="team" colSpan={2}><b>{teamName}</b></td>
+                <td className="status">{submit > 0 ? submit === 1 ? "✔️" : "⚠️" : "❌"}</td>
             </S.MainTeamListContent>
             {
                 teamList.map((info)=> {

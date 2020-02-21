@@ -61,7 +61,7 @@ const MainTeamClass = ({ num, title, studentList, teamList, contentId, deadline,
                             </AccessTokenConsumer>
                         </div>
                     </S.MainClassCount>
-                    <div>
+                    <div className="secondDiv">
                         <AccessTokenConsumer>
                                 {
                                     ({ state }) => {

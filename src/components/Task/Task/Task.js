@@ -15,7 +15,8 @@ const Task = ({ state, taskActions, members, setMembers, getUserInfo, homeworkDa
 
     const onClickToggleModal = useCallback(() => setModal(!modal), [modal]);
     const teamRequestGet = useCallback(() => {
-        if (typeof homeworkId === "undefined" || homeworkId === "undefined") return;
+        if (homeworkId === "undefined") return;
+        if (typeof accessToken === "object") return;
         else {
             axios.get(`${limServer}/team?homeworkId=${homeworkId}`, {
                 headers: {
@@ -29,12 +30,15 @@ const Task = ({ state, taskActions, members, setMembers, getUserInfo, homeworkDa
                 const code = error.response.status;
                 if (code === 403)
                     history.push("/");
+                else if (code === 404)
+                    setMembers([]);
                 else if (code === 410)
                     getAccessTokenUsingRefresh(state, taskActions);
             })
         }
     }, [homeworkId, state, setMembers]);
     const getAllStudentsRequest = useCallback(() => {
+        if (typeof accessToken === "object") return;
         axios.get(`${limServer}/search?query=`, {
             "headers": {
                 "Content-Type": "multipart/form-data",
@@ -57,6 +61,7 @@ const Task = ({ state, taskActions, members, setMembers, getUserInfo, homeworkDa
     }, []);
     useEffect(() => {
         if (Object.keys(homeworkData).length === 0) {
+            if (typeof accessToken === "object") return;
             setHomeworkDataInState(wooServer, accessToken, homeworkId);
         }
     }, [homeworkId]);
@@ -68,6 +73,7 @@ const Task = ({ state, taskActions, members, setMembers, getUserInfo, homeworkDa
                 <div>
                     <TaskTop
                         state={state}
+                        members={members}
                         homeworkId={homeworkId}
                         getUserInfo={getUserInfo}
                         homeworkData={homeworkData}
@@ -77,6 +83,7 @@ const Task = ({ state, taskActions, members, setMembers, getUserInfo, homeworkDa
                         members={members}
                         setMembers={setMembers}
                         homeworkId={homeworkId}
+                        getUserInfo={getUserInfo}
                         homeworkData={homeworkData}
                         teamRequestGet={teamRequestGet}
                         onClickToggleModal={onClickToggleModal}

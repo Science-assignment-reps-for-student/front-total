@@ -38,7 +38,7 @@ const MainClass = ({ num, title, studentList, deadline, contentId, created_at })
                             </S.MainClassCountBar>
                         </div>
                     </S.MainClassCount>
-                    <div>
+                    <div className="secondDiv">
                         <AccessTokenConsumer>
                             {
                                 ({ state, actions }) => {

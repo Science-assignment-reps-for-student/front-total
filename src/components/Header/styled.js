@@ -11,7 +11,6 @@ const TaskHaeder = styled.header`
     background-image: url(${Background});
     background-size: cover;
     background-repeat: no-repeat;
-    background-position: 10% 8%;
     z-index: 100;
     overflow: hidden;
     > div {

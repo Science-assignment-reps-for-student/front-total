@@ -61,7 +61,7 @@ const MainExperimentClass = ({ num, title, studentList, teamList, contentId, dea
                             </AccessTokenConsumer>
                         </div>
                     </S.MainClassCount>
-                    <div>
+                    <div className="secondDiv">
                         <AccessTokenConsumer>
                                 {
                                     ({ state }) => {

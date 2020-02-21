@@ -12,19 +12,19 @@ const HomeworkNav = ({ NavInfo, NavInfoChange }) => {
             <p>반 정보</p>
             <S.HomeworkLine/>
             <S.HomeworkCheckBox>
-                1반
+                <span>1반</span>
             <HomeworkDay dateChange={dateChange} num={1} date={date} />
             </S.HomeworkCheckBox>
             <S.HomeworkCheckBox>
-                2반
+                <span>2반</span>
                 <HomeworkDay dateChange={dateChange} num={2} date={date}/>
             </S.HomeworkCheckBox>
             <S.HomeworkCheckBox>
-                3반
+                <span>3반</span>
                 <HomeworkDay dateChange={dateChange} num={3} date={date}/>
             </S.HomeworkCheckBox>
             <S.HomeworkCheckBox>
-                4반
+                <span>4반</span>
                 <HomeworkDay dateChange={dateChange} num={4} date={date}/>
             </S.HomeworkCheckBox>
             <S.HomeworkLine/>

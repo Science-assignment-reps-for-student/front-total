@@ -14,7 +14,7 @@ const HomeworkDay = ({ dateChange, num, date }) => {
 
     return (
         <S.HomeworkDay>
-            종료 : 
+            종료: 
             <S.HomeworkDayInput onChange={inputChange} value={date[num]} type="date"/>
         </S.HomeworkDay>
     )

@@ -6,7 +6,7 @@ import ExperimentImage from '../../img/ExperimentImage.png';
 import featherPaperclip from '../../img/featherPaperclip.png';
 import axios from 'axios';
 
-const TaskTop = ({ state, taskActions, getUserInfo, homeworkData }) => {
+const TaskTop = ({ state, taskActions, members, getUserInfo, homeworkData }) => {
     const history = useHistory();
     const { wooServer, limServer, accessToken } = state;
     const { homeworkId } = useParams();
@@ -38,6 +38,7 @@ const TaskTop = ({ state, taskActions, getUserInfo, homeworkData }) => {
         return `${year}.${month}.${date} ${hours}:${minutes}`;
     }, []);
     const getHomeworkFiles = useCallback(() => {
+        if (typeof accessToken === "object") return;
         if (typeof file_info === "object" && file_info.length !== 0) {
             file_info.map((info) => {
                 const { file_name, file_id } = info;
@@ -62,6 +63,8 @@ const TaskTop = ({ state, taskActions, getUserInfo, homeworkData }) => {
                         getAccessTokenUsingRefresh(state, taskActions);
                 })
             });
+        } else {
+            alert("첨부파일이 없습니다.");
         }
     }, [history, state, homeworkData]);
 
@@ -77,10 +80,10 @@ const TaskTop = ({ state, taskActions, getUserInfo, homeworkData }) => {
             <div className="task-header">
                 <div>
                     <h1>[{homework_type === 0 ? "개인" : (homework_type === 1 ? "팀" : "실험")}] {homework_title}</h1>
-                    {homework_type !== 0 && homeworkId !== "undefined" && <Link to={`/task/${homeworkId}/evaluation`}>평가하러 가기!</Link>}
                 </div>
                 <nav>
                     <ul>
+                        {(homework_type !== 0 && members.teamName !== undefined) && <li>팀 이름: {members.teamName}</li>}
                         <li>dino7795</li>
                         <li><span>작성일</span> {getFullTime(created_at)}</li>
                     </ul>

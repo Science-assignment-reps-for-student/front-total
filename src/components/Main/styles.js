@@ -1,6 +1,4 @@
 import styled from 'styled-components';
-import Background from './img/background.png';
-import Background2 from './img/background2.png';
 import scrollDown from './img/scrollButton.png';
 import scrollUp from './img/scrollUpButton.png';
 export const MainBackground = styled.div`
@@ -22,12 +20,8 @@ export const MainBackground = styled.div`
             justify-content: space-between;
             align-items: flex-end;
             margin: 0 auto;
-            > h2 {
-                font-family: 'Eras-ITC';
-                display: flex;
-                color: ${({ page }) => page === 1 ? '#ffffff' : '#000000'};
-                transition: linear 300ms;
-                margin: 0%;
+            > img {
+                width: 100px;
             }
             > ul {
                 margin: 0;
@@ -41,7 +35,7 @@ export const MainBackground = styled.div`
                         font-family: 'Roboto';
                         font-weight: 600;
                         color: ${({ page }) => page === 1 ? '#ffffff' : '#000000'};
-                        transition: linear 300ms;
+                        transition: 1000ms linear;
                     }
                     & ~ & {
                         margin-left: 24px;
@@ -373,6 +367,10 @@ export const HomeWorkBoardWrapper = styled.div`
                 flex: 1;
             }
             overflow: hidden;
+            a {
+                color: black;
+                text-decoration: none;
+            }
         }
     }
 `;

@@ -275,6 +275,10 @@ const TaskBottom = styled.div`
             }
         }
     }
+    a {
+        color: black;
+        text-decoration: none;
+    }
 `;
 
 const TaskTeamModal = styled.div`
@@ -369,10 +373,18 @@ const TaskTeamModal = styled.div`
             position: relative;
             width: 350px;
             > div:first-child {
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
                 padding: 12px 24px;
                 border-radius: 0 4px 0 0;
                 font-size: 20px;
                 background-color: #F8F8F8;
+                > img {
+                    width: 16px;
+                    height: 16px;
+                    cursor: pointer;
+                }
             }
             > div:nth-child(2) {
                 max-height: 340px;
