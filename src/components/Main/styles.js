@@ -1,6 +1,7 @@
 import styled from 'styled-components';
 import scrollDown from './img/scrollButton.png';
 import scrollUp from './img/scrollUpButton.png';
+
 export const MainBackground = styled.div`
     width: 100vw;
     height: 100vh;
