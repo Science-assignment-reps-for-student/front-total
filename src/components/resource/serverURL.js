@@ -1,6 +1,8 @@
 export const LoginServerURL = "https://api.dsm-scarfs.hs.kr/chuckflap/auth";
 export const getUserInfoURL = "https://api.dsm-scarfs.hs.kr/chuckflap/user";
 export const refreshAccessTokenURL = "https://api.dsm-scarfs.hs.kr/chuckflap/auth";
+export const getChattingURL = "https://api.dsm-scarfs.hs.kr/chuckflap/message";
+export const socketURL = "https://api.dsm-scarfs.hs.kr/chuckflap/socket";
 
 export const getFileCodeURL = "https://api.dsm-scarfs.hs.kr/t-bone/files";
 export const homeworkURL = "https://api.dsm-scarfs.hs.kr/t-bone/homework";

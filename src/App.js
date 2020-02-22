@@ -1,6 +1,6 @@
 import React, { useState, useCallback } from 'react'
 import { Route, Switch, withRouter, useHistory } from 'react-router-dom';
-import { PeerEvaluation, Task, TaskGuide, AdminLogin, Homework, AdminMain, Main, QnA } from './components';
+import { PeerEvaluation, Task, TaskGuide, AdminLogin, Homework, AdminMain, Main, QnA, AdminChatting } from './components';
 import { AuthConsumer, AuthProvider } from './context/Auth';
 import { TaskProvider, TaskConsumer } from './context/AppContext';
 import { AccessTokenProvider, AccessTokenConsumer } from './context/AccessTokenContext';
@@ -110,6 +110,7 @@ const App = () => {
                                                     <Route path="/Admin/Login" render={()=> <AdminLogin actions={actions}/>}/>
                                                     <Route path="/Admin/Make" render={() => <Homework state={state} actions={actions} type="Make"/>}/>
                                                     <Route path="/Admin/revise/:homeworkNum" render={() => <Homework state={state} actions={actions} type="Fix"/>}/>
+                                                    <Route path="/Admin/Chatting" render={()=> <AdminChatting state={state} actions={actions}/>}/>
                                                     <Route exact path="/Admin" render={()=> <AdminMain state={state} actions={actions}/>}/>
                                                 </>
                                                 );
