@@ -13,6 +13,8 @@ import scrollDown2 from './img/scrollDown2.png';
 import loginButton from './img/loginButton.png';
 import logoutButton from './img/logOutButton.png';
 import signUpButton from './img/signUpButton.png';
+import signupBackground from '../SignUp//img/signupBackground.png';
+import loginBackground from '../Login/img/loginBackground.png';
 
 const Main = ({ state, actions, taskActions }) => {
     const scrollButon = useRef();
