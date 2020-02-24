@@ -1,9 +1,10 @@
-import React from 'react'
-import * as S from '../style/PublicStyle'
+import React from 'react';
+import * as S from '../style/PublicStyle';
+import { backgroundWhite } from '../imgs'
 
-const BackgroundWhite = ({children}) => {
+const BackgroundWhite = ({ children, img }) => {
     return (
-        <S.BackgroundWhite>
+        <S.BackgroundWhite src={img ? backgroundWhite : ""}>
             {children}
         </S.BackgroundWhite>
     )
