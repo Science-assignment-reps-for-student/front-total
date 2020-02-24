@@ -26,6 +26,20 @@ export const setContext = (accessToken,refreshToken,actions) => {
     refreshTokenChange(refreshToken);
 }
 
+export const isDayOver = (date) => {
+    const nowDate = new Date();
+    const interval = nowDate - date;
+    const milisecondToDay = interval / (60 * 60 * 24 * 1000);
+    const milisecondToHour = interval / (60 * 60 * 1000);
+    if(milisecondToDay > 1){
+        return reparseDate(date)
+    } else if(milisecondToHour > 1){
+        return `${Math.floor(milisecondToHour)}시간 전`;
+    } else {
+        return '1시간 이내';
+    }
+}
+
 export const parseDate = (date) => {
     return Date.parse(new Date(date));
 }
