@@ -269,6 +269,7 @@ export const MainList = styled.div`
     &::-webkit-scrollbar {
     display: none;
     }
+    box-sizing: border-box;
     width: 100%;
     height: 100%;
     overflow-y: scroll;

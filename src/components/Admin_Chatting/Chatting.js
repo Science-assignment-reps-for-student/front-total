@@ -6,45 +6,30 @@ import { Stomp } from '@stomp/stompjs';
 import SockJS from 'sockjs-client';
 import axios from 'axios';
 import { getChattingURL, socketURL } from '../resource/serverURL';
-import { reparseDate } from '../resource/publicFunction';
+import { reparseDate, isDayOver } from '../resource/publicFunction';
+import { useParams } from 'react-router-dom';
 
 const Chatting = ({ state, actions }) => {
-
-    const userId = 18;
     const { accessToken, refreshToken }  = state;
     const header = {
         headers: {
             "Authorization": accessToken,
         }
     }
+    const { userId } = useParams();
     const [inputValue, valueChange] = useState("");
     const [stomp, stompChange] = useState();
     const [message, messageChange] = useState([]);
     const [buffer, bufferChange] = useState();
-    const scrollDiv = useRef();
+    const [isLoaded, loadChange] = useState(false);
     const endPoint = useRef();
+    const input = useRef();
 
     
     useEffect(()=> {
-        axios.get(`${getChattingURL}/${userId}`,header)
+        getChatting()
         .then((e)=> {   
-            const messageBuffer = e.data;
-            const socket = new SockJS(socketURL);
-            const stomp = Stomp.over(socket);
-            messageChange(messageBuffer);
-            stompChange(stomp);
-            stomp.connect({},()=> {getSubscribe(stomp)});
-        })
-        .catch((e)=> {
-            try{
-                if(e.response.status){
-                    
-                } else {
-
-                }
-            } catch {
-                alert("네트워크를 확인해 주세요.");
-            }
+            setSocketConnect(e);
         })
     },[]);
 
@@ -58,13 +43,44 @@ const Chatting = ({ state, actions }) => {
         if(message.length > 0){
             endPoint.current.scrollIntoView();
         }
-    },[message])
+    },[message]);
+
+    const setSocketConnect = (e) => {
+        const socket = new SockJS(socketURL);
+        const stomp = Stomp.over(socket);
+        stompChange(stomp);
+        const messageBuffer = e.data;
+        messageChange(messageBuffer);
+        stomp.connect({},()=> {
+            getSubscribe(stomp);
+            loadChange(true);
+        });
+    }
+
+    const getChatting = () => new Promise((resolve,reject)=> {
+        axios.get(`${getChattingURL}/${userId}`,header)
+        .then((e) => {
+            resolve(e);
+        })
+        .catch((e)=> {
+            try{
+                if(e.response.status){
+                    
+                } else {
+
+                }
+            } catch {
+                alert("네트워크를 확인해 주세요.");
+            }
+            reject(e);
+        })
+    })
 
 
     const getSubscribe = (stomp) => {
         return stomp.subscribe(`/receive/${userId}`, function(msg) {
             const data = msg.body;  
-            const parsedData = JSON.parse(data)
+            const parsedData = JSON.parse(data);
             bufferChange(parsedData);
         });
     }
@@ -79,7 +95,7 @@ const Chatting = ({ state, actions }) => {
                     <div>
                         {messageType ? "" : "1212오준상"}
                         <S.ChattingBubble type={messageType}>{message}</S.ChattingBubble>
-                        <span>{reparseDate(messageTime)}</span>
+                        <span>{isDayOver(messageTime)}</span>
                     </div>
                 </S.ChattingTalk>
             );
@@ -95,8 +111,8 @@ const Chatting = ({ state, actions }) => {
         } else {
             const data = {
                 "token": state.accessToken,
-                "message": inputValue
-            };
+                "message": inputValue,
+            };  
             const stringedData = JSON.stringify(data);
             stomp.send(`/send/${userId}`,{}, stringedData);
             valueChange("");
@@ -119,7 +135,7 @@ const Chatting = ({ state, actions }) => {
             <Header/>
             <S.ChattingMain>
                 <S.ChattingSubHeader>1212 오준상</S.ChattingSubHeader>
-                <div ref={scrollDiv} className="wrapper">
+                <div className="wrapper">
                     <div>
                         {setMessage()}
                         <div ref={endPoint}/>

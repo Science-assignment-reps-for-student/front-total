@@ -34,6 +34,9 @@ export const ChattingBubble = styled.div`
     font-weight: 600;
     padding: 12px;
     border-radius: 50px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 `
 
 export const ChattingTalk = styled.div`
