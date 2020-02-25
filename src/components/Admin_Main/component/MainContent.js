@@ -113,7 +113,7 @@ const MainContent = ({ checked, title, classData, type, contentId, history, file
                 <h2>{getTitle(type,title)}</h2>
                 <div className="buttonWrapper">
                     <S.MainFixButton onClick={()=> {history.push(`/Admin/revise/${contentId}`)}}><img src={edit} alt=""/>수정</S.MainFixButton>
-                    <S.MainFixButton><img src={excel} alt="" onClick={() => {getExcelFile(contentId)}}/>엑셀</S.MainFixButton>
+                    {type === 0 ? "" : <S.MainFixButton onClick={() => {getExcelFile(contentId)}}><img src={excel} alt=""/>엑셀</S.MainFixButton>}
                     <S.MainFixButton onClick={()=>{fileDownload(contentId)}}><img src={download} alt=""/>파일</S.MainFixButton>
                 </div>
             </div>

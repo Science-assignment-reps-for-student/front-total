@@ -1,23 +1,59 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import * as S from './style/ChattingListStyle';
 import { Header } from '../public/Header';
 import { BackgroundWhite } from '../public/Background';
 import { ListComponent } from './components';
 import axios from 'axios';
-import { getUserURL } from '../resource/serverURL';
+import { messageURL, refreshAccessTokenURL } from '../resource/serverURL';
+import { isDayOver, getIsExpiration, refreshAccessToken } from '../resource/publicFunction';
 
 const ChattingList = ({ actions, state }) => {
     const { accessToken, refreshToken } = state;
+    const [messageList, listChange] = useState([]);
+    const [page, pageChange] = useState(0)
     const header = {
         headers: {
             "Authorization": accessToken,
         },
     };
 
-    axios.get(`${getUserURL}?query=''`,header)
-    .then((e)=> {
-        console.log(e);
-    });
+    useEffect(()=> {
+        axios.get(messageURL,header)
+        .then((e)=> {
+            const list = e.data;
+            listChange(list);
+        })
+        .catch((e)=> {
+            getIsExpiration(e) 
+            ? refreshAccessToken(refreshToken,actions,refreshAccessTokenURL) 
+            : alert("네트워크를 확인해 주세요.");
+        })
+    },[]);
+
+    const setMessageList = () => {
+        const buffer = [];
+        messageList.map((data)=> {
+            const {
+            message,
+            messageTime,
+            show,
+            userId,
+            userName,
+            userNumber
+        } = data;
+        buffer.push(<ListComponent name={userName} number={userNumber} userId={userId} isNew={!show} text={message} date={isDayOver(messageTime)}/>)
+            return data;
+        });
+        return buffer;
+    }
+
+    const setButton = () => {
+        let buffer = [];
+        for(let i=1; i <= Math.ceil(messageList.length / 7); i++){
+            buffer.push(<div>{i}</div>)
+        }
+        return buffer;
+    }
 
     return (
         <>
@@ -26,36 +62,18 @@ const ChattingList = ({ actions, state }) => {
             <S.ChattingListBackground>
                 <h2>Q&A</h2>
                 <hr/>
-                <div>
+                <div className="wrapper">
                     <S.ChattingListBody>
                         <h1>Q&A</h1>
                         <div>
-                            <table>
-                                <tbody>
-                                    <tr>
-                                        <th className="new"/>
-                                        <th className="number">학번</th>
-                                        <th className="name">이름</th>
-                                        <th className="message">메세지</th>
-                                        <th className="date">최근 날짜</th>
-                                    </tr>
-                                    <ListComponent isNew={true} number={1212} name="오준상" text="안녕" date="2020-02-22"/>
-                                    <ListComponent number={1212} name="오준상" text="안녕" date="2020-02-22"/>
-                                    <ListComponent number={1212} name="오준상" text="안녕" date="2020-02-22"/>
-                                    <ListComponent number={1212} name="오준상" text="안녕" date="2020-02-22"/>
-                                    <ListComponent number={1212} name="오준상" text="안녕" date="2020-02-22"/>
-                                    <ListComponent number={1212} name="오준상" text="안녕" date="2020-02-22"/>
-                                    <ListComponent number={1212} name="오준상" text="안녕" date="2020-02-22"/>
-                                    <ListComponent number={1212} name="오준상" text="안녕" date="2020-02-22"/>
-                                    <ListComponent number={1212} name="오준상" text="안녕" date="2020-02-22"/>
-                                    <ListComponent number={1212} name="오준상" text="안녕" date="2020-02-22"/>
-                                    <ListComponent number={1212} name="오준상" text="안녕" date="2020-02-22"/>
-                                    <ListComponent number={1212} name="오준상" text="안녕" date="2020-02-22"/>
-                                </tbody>
-                            </table>
-                        </div>
+                            <ListComponent name="이름" number="학번" date="최근 날짜" text="최근 대화" isHeader={true}/>
+                            {messageList.length >= 1 ? setMessageList() : "" }
+                        </div>  
                     </S.ChattingListBody>
                 </div>
+                <S.ChattingListButton>
+                    {setButton()}
+                </S.ChattingListButton>
             </S.ChattingListBackground>
         </>
     )

@@ -8,7 +8,7 @@ export const ChattingListBackground = styled.div`
     > h2 {
         margin: 5px 0px 25px 0px;
     }
-    > div {
+    > .wrapper {
         display: flex;
         justify-content: center;
         align-items: center;
@@ -24,55 +24,49 @@ export const ChattingListBody = styled.div`
         margin-bottom: 20px;
     }
     > div { 
+        width: 100%;
+        height: 90%;
+        border: 1px solid #858585;
+        border-top: 3px solid #858585;
+    }
+`
+
+export const ChattingListComponent = styled.div`
     width: 100%;
-    height: 90%;
-    border: 1px solid #858585;
-    border-top: 3px solid #858585;
+    height: 12.5%;
+    border-bottom: 1px solid #858585;
+    box-sizing: border-box;
     display: flex;
-    overflow-y: scroll; 
-        > table {
-            background-color: white;
-            width: 100%;
-            overflow-y: scroll;
-            > tbody {
-                > tr {
-                    border-top: 1px solid #858585;
-                    border-bottom: 1px solid #858585;
-                    cursor: pointer;
-                    > td, th {
-                        padding: 25px;
-                        text-align: center;
-                        > div {
-                            width: 18px;
-                            height: 18px;
-                            border-radius: 9px;
-                            background-color: #FF5700;
-                            position: absolute;
-                            z-index: 100;
-                        }
-                    }
-                    > .number {
-                        width: 14%;
-                    }
-                    > .name {
-                        width: 14%;
-                    }
-                    > .message {
-                        width: 40%;
-                    }
-                    > .date {
-                        width: 30%;
-                    }
-                    > .new { 
-                        padding: 0;
-                        z-index: 100;
-                        position: absolute;
-                        display: flex;
-                        justify-content: center;
-                        margin-top: 20px;
-                    }
-                }
-            }
-        }
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    font-weight: ${props => props.isHeader ? "600" : ""};
+    > div {
+        width: 20%;
+        text-align: center;
+    }
+    > .alarm {
+        width: 17px;
+        height: 17px;
+        background-color: #FF5700;
+        border-radius: 9px;
+        position: absolute;
+        transform: translate(-505px);
+    }
+    > .text {
+        width: 40%;
+    }
+`
+
+
+export const ChattingListButton = styled.div`
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    > div {
+        padding: 5px;
+        margin: 1px;
+        border: 1px solid #858585;
     }
 `

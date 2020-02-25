@@ -28,17 +28,25 @@ export const setContext = (accessToken,refreshToken,actions) => {
 
 export const isDayOver = (date) => {
     const nowDate = new Date();
+    const currentDate = new Date(date);
+    console.log(Date.parse(nowDate) - Date.parse(currentDate));
+    console.log(nowDate, currentDate);
     const interval = nowDate - date;
-    const milisecondToDay = interval / (60 * 60 * 24 * 1000);
-    const milisecondToHour = interval / (60 * 60 * 1000);
+    const milisecondToDay = Math.ceil(interval / (60 * 60 * 24 * 1000));
+    const milisecondToHour = Math.ceil(interval / (60 * 60 * 1000));
+    const milisecondTominutes = Math.ceil(interval / (60 * 1000));
     if(milisecondToDay > 1){
         return reparseDate(date)
     } else if(milisecondToHour > 1){
-        return `${Math.floor(milisecondToHour)}시간 전`;
+        const hour = currentDate.getHours();
+        const minute = currentDate.getMinutes();
+        const AMPM = hour > 12 ? "오후" : "오전";
+        const AMPMHour = hour > 12 ? hour - 12 : hour;
+        return `${AMPM} ${AMPMHour}:${minute}`;
     } else {
-        return '1시간 이내';
+        return `${milisecondTominutes}전`;
     }
-}
+}   
 
 export const parseDate = (date) => {
     return Date.parse(new Date(date));

@@ -5,8 +5,8 @@ import { enter } from './img';
 import { Stomp } from '@stomp/stompjs';
 import SockJS from 'sockjs-client';
 import axios from 'axios';
-import { getChattingURL, socketURL } from '../resource/serverURL';
-import { reparseDate, isDayOver } from '../resource/publicFunction';
+import { messageURL, socketURL, refreshAccessTokenURL, getUserInfoURL } from '../resource/serverURL';
+import { reparseDate, isDayOver, getIsExpiration, refreshAccessToken } from '../resource/publicFunction';
 import { useParams } from 'react-router-dom';
 
 const Chatting = ({ state, actions }) => {
@@ -22,14 +22,17 @@ const Chatting = ({ state, actions }) => {
     const [message, messageChange] = useState([]);
     const [buffer, bufferChange] = useState();
     const [isLoaded, loadChange] = useState(false);
+    const [userData, userDataChange] = useState();
     const endPoint = useRef();
-    const input = useRef();
 
     
     useEffect(()=> {
-        getChatting()
-        .then((e)=> {   
-            setSocketConnect(e);
+        getUserInfo()
+        .then(()=> {
+            getChatting()
+            .then((e)=> {   
+                setSocketConnect(e);
+            })
         })
     },[]);
 
@@ -58,31 +61,45 @@ const Chatting = ({ state, actions }) => {
     }
 
     const getChatting = () => new Promise((resolve,reject)=> {
-        axios.get(`${getChattingURL}/${userId}`,header)
+        axios.get(`${messageURL}/${userId}`,header)
         .then((e) => {
             resolve(e);
         })
         .catch((e)=> {
-            try{
-                if(e.response.status){
-                    
-                } else {
-
-                }
-            } catch {
-                alert("네트워크를 확인해 주세요.");
-            }
+            getIsExpiration(e) 
+            ? refreshAccessToken(refreshToken,actions,refreshAccessTokenURL) 
+            : alert("네트워크를 확인해 주세요.");
             reject(e);
         })
     })
 
+    const getUserInfo = () => new Promise((resolve,reject) => {
+        axios.get(`${getUserInfoURL}/${userId}`, header)
+        .then((e)=> {
+            const data = e.data;
+            userDataChange(data);
+            resolve(data);
+        })
+    });
+
 
     const getSubscribe = (stomp) => {
         return stomp.subscribe(`/receive/${userId}`, function(msg) {
-            const data = msg.body;  
+            const data = msg.body;
             const parsedData = JSON.parse(data);
+            const messageId = parsedData.messageId;
+            readMessage(messageId);
             bufferChange(parsedData);
         });
+    }
+
+    const readMessage = (messageId) => {
+        axios.post(`${messageURL}/${messageId}`,{},header)
+        .catch((e)=> {
+            getIsExpiration(e) 
+            ? refreshAccessToken(refreshToken,actions,refreshAccessTokenURL) 
+            : alert("네트워크를 확인해 주세요.");
+        })
     }
 
     const setMessage = () => {
@@ -93,7 +110,7 @@ const Chatting = ({ state, actions }) => {
             buffer.push(
                 <S.ChattingTalk type={messageType} key={count}>
                     <div>
-                        {messageType ? "" : "1212오준상"}
+                        {messageType ? "" : userData.userName}
                         <S.ChattingBubble type={messageType}>{message}</S.ChattingBubble>
                         <span>{isDayOver(messageTime)}</span>
                     </div>
@@ -106,7 +123,8 @@ const Chatting = ({ state, actions }) => {
     }
 
     const sendMessage = () => {
-        if(inputValue.length <= 0){
+        console.log(inputValue.length <= 0,isLoaded)
+        if(inputValue.length <= 0 || !isLoaded){
             return;
         } else {
             const data = {
@@ -134,7 +152,7 @@ const Chatting = ({ state, actions }) => {
         <>
             <Header/>
             <S.ChattingMain>
-                <S.ChattingSubHeader>1212 오준상</S.ChattingSubHeader>
+                <S.ChattingSubHeader>{userData ? `${userData.userNumber} ${userData.userName}` : "로딩중..."}</S.ChattingSubHeader>
                 <div className="wrapper">
                     <div>
                         {setMessage()}
