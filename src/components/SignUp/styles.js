@@ -17,8 +17,8 @@ export const LOGINSIGNUPWrapper = styled.div`
     width: 1166px;
     height: 533px;
     position: relative;
-    top: ${props => props.sliding === true ? '50%' : '100%'};
-    left: ${props => props.sliding === true ? '50%' : '100%'};
+    top: 50%;
+    left: 50%;
     transform: translate(-50%, -50%);
     display: flex;
     transition: all 0.5s linear;
@@ -236,19 +236,21 @@ export const NextButtonBlock = styled.footer`
     align-items: center;
     > div {
         height: 17px;
-        width: 194px;
+        width: auto;
         display: flex;
         justify-content: space-between;
         > img {
             width: 17px;
-            height: 17px;                
+            height: 17px;     
+            margin-right: 8px;           
         }
         > p {
             margin: 0;
             font-family: 'Roboto';
             font-size: 15px;
             color: #F8F8F8;
-            line-height: 21px;
+            height: 17px;
+            line-height: 17px;
         }
     }
     > h1 {

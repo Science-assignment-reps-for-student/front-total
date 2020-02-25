@@ -1,12 +1,15 @@
 import styled from 'styled-components';
 import scrollDown from './img/scrollButton.png';
 import scrollUp from './img/scrollUpButton.png';
+import Background from './img/background.png';
+
 export const MainBackground = styled.div`
     width: 100vw;
     height: 100vh;
     background-size: cover;
     background-repeat: no-repeat;
     background-position: 0vw 0vh;
+    background-image: url(${Background});
     background-color: ${props => props.page === 1 ? '#000000' : '#ffffff'};
     > header {
         height: 9%;

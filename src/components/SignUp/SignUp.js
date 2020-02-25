@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useCallback } from 'react';
 import * as S from './styles';
 import blackXButton from './img/blackXButton.png';
 import checkIcon from './img/checkIcon.png';
@@ -6,7 +6,6 @@ import ApiDefault from '../utils';
 
 const SignUp = ({modalOn, setModalOn}) => {
     const [page, setPage] = useState(1);
-    const [sliding, setSliding] = useState(false);
     const [isPaint, setIsPaint] = useState(false);
     const [signupInfo, setSignupInfo] = useState({
         name: "",
@@ -17,11 +16,6 @@ const SignUp = ({modalOn, setModalOn}) => {
         password: "",
         chkPassword: "",
     });
-    useEffect(() => {
-        setTimeout(() => {
-            setSliding(true);
-        }, 1)
-    }, []);
     const onChange = useCallback((e) => {
         setSignupInfo({
             ...signupInfo,
@@ -31,7 +25,7 @@ const SignUp = ({modalOn, setModalOn}) => {
     const onSubmit = useCallback(e => {
         e.preventDefault();
         if (page === 1) {
-             if (!signupInfo.name || !signupInfo.studentNumber || !signupInfo.email || !signupInfo.emailCode) return alert('모든 입력칸은 빈칸일 수 없습니다.');
+             if (!signupInfo.name || !signupInfo.studentNumber || !signupInfo.email || !signupInfo.emailCode || signupInfo.name.indexOf(" ") !== -1 || signupInfo.studentNumber.indexOf(" ") !== -1 || signupInfo.email.indexOf(" ") !== -1 || signupInfo.emailCode.indexOf(" ") !== -1) return alert('모든 입력칸은 빈칸일 수 없습니다.');
             let form = new FormData();
             form.append('email', signupInfo.email);
             form.append('code', signupInfo.emailCode);
@@ -57,7 +51,7 @@ const SignUp = ({modalOn, setModalOn}) => {
                 }
             })
         } else if (page === 2) {
-            if (!signupInfo.personalCode || ! signupInfo.password || !signupInfo.chkPassword) return alert('모든 입력칸은 빈칸일 수 없습니다.');
+            if (!signupInfo.personalCode || ! signupInfo.password || !signupInfo.chkPassword || signupInfo.personalCode.indexOf(" ") !== -1 || signupInfo.password.indexOf(" ") !== -1 || signupInfo.chkPassword.indexOf(" ") !== -1) return alert('모든 입력칸은 빈칸일 수 없습니다.');
             if (signupInfo.password !== signupInfo.chkPassword) return alert('비밀번호가 일치하지 않습니다.');
             ApiDefault.post('user', {
                 "userEmail": signupInfo.email,
@@ -91,7 +85,7 @@ const SignUp = ({modalOn, setModalOn}) => {
     }, [signupInfo.email]);
     return (
         <S.ModalBackground>
-            <S.LOGINSIGNUPWrapper sliding={sliding}>
+            <S.LOGINSIGNUPWrapper>
                 <S.SignUpLeftBlock>
                     <h1>WELCOME</h1>
                     <h4>SCARFS</h4>
