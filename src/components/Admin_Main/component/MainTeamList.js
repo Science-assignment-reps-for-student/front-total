@@ -2,7 +2,7 @@ import React, { useCallback } from 'react';
 import * as S from '../style/MainStyle';
 import { MainTeamListContent } from '../component';
 import axios from 'axios';
-import { getFileCodeURL, refreshAccessTokenURL, teamFileDownloadURL } from '../../resource/serverURL';
+import { getFileCodeURL, refreshAccessTokenURL, teamFileDownloadURL } from '../../resource/serverURL.js';
 import { refreshAccessToken, getIsExpiration } from '../../resource/publicFunction';
 
 const MainTeamList = ({ teamList, text, state, actions, contentId }) => {

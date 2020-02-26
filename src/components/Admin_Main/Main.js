@@ -2,7 +2,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { Header, BackgroundWhite } from '../public';
 import * as S from './style/MainStyle';
 import { MainContent, MainNav } from './component';
-import { refreshAccessTokenURL, personalHomeworkURL, teamHomeworkURL, getUserInfoURL, experimentHomeworkURL, allFileDownloadURL, getFileCodeURL, excelFileDownloadURL } from '../resource/serverURL';
+import { refreshAccessTokenURL, personalHomeworkURL, teamHomeworkURL, getUserInfoURL, experimentHomeworkURL, allFileDownloadURL, getFileCodeURL, excelFileDownloadURL } from '../resource/serverURL.js';
 import { refreshAccessToken, getUserInfo, getIsExpiration } from '../resource/publicFunction';
 import { withRouter } from 'react-router-dom'
 import axios from 'axios';
