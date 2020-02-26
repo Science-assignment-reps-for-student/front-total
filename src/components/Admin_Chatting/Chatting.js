@@ -6,10 +6,12 @@ import { Stomp } from '@stomp/stompjs';
 import SockJS from 'sockjs-client';
 import axios from 'axios';
 import { messageURL, socketURL, refreshAccessTokenURL, getUserInfoURL } from '../resource/serverURL';
-import { reparseDate, isDayOver, getIsExpiration, refreshAccessToken } from '../resource/publicFunction';
+import { isDayOver, getIsExpiration, refreshAccessToken } from '../resource/publicFunction';
 import { useParams } from 'react-router-dom';
+import { ChattingBubble } from './components'
 
 const Chatting = ({ state, actions }) => {
+    
     const { accessToken, refreshToken }  = state;
     const header = {
         headers: {
@@ -80,8 +82,7 @@ const Chatting = ({ state, actions }) => {
             userDataChange(data);
             resolve(data);
         })
-    });
-
+    })
 
     const getSubscribe = (stomp) => {
         return stomp.subscribe(`/receive/${userId}`, function(msg) {
@@ -108,13 +109,7 @@ const Chatting = ({ state, actions }) => {
         message.map((data)=> {
             const { messageType, messageTime, message } = data;
             buffer.push(
-                <S.ChattingTalk type={messageType} key={count}>
-                    <div>
-                        {messageType ? "" : userData.userName}
-                        <S.ChattingBubble type={messageType}>{message}</S.ChattingBubble>
-                        <span>{isDayOver(messageTime)}</span>
-                    </div>
-                </S.ChattingTalk>
+                <ChattingBubble messageType={messageType} count={count} message={message} userData={userData} messageTime={messageTime}/>
             );
             count++;
             return data;
@@ -123,7 +118,6 @@ const Chatting = ({ state, actions }) => {
     }
 
     const sendMessage = () => {
-        console.log(inputValue.length <= 0,isLoaded)
         if(inputValue.length <= 0 || !isLoaded){
             return;
         } else {

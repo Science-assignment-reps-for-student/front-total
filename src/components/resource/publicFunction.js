@@ -29,8 +29,6 @@ export const setContext = (accessToken,refreshToken,actions) => {
 export const isDayOver = (date) => {
     const nowDate = new Date();
     const currentDate = new Date(date);
-    console.log(Date.parse(nowDate) - Date.parse(currentDate));
-    console.log(nowDate, currentDate);
     const interval = nowDate - date;
     const milisecondToDay = Math.ceil(interval / (60 * 60 * 24 * 1000));
     const milisecondToHour = Math.ceil(interval / (60 * 60 * 1000));
@@ -44,7 +42,7 @@ export const isDayOver = (date) => {
         const AMPMHour = hour > 12 ? hour - 12 : hour;
         return `${AMPM} ${AMPMHour}:${minute}`;
     } else {
-        return `${milisecondTominutes}전`;
+        return `${milisecondTominutes}분 전`;
     }
 }   
 

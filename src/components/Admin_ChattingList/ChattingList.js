@@ -32,25 +32,28 @@ const ChattingList = ({ actions, state }) => {
 
     const setMessageList = () => {
         const buffer = [];
-        messageList.map((data)=> {
-            const {
-            message,
-            messageTime,
-            show,
-            userId,
-            userName,
-            userNumber
-        } = data;
-        buffer.push(<ListComponent name={userName} number={userNumber} userId={userId} isNew={!show} text={message} date={isDayOver(messageTime)}/>)
-            return data;
-        });
+        for(let i = page * 7;i < page * 7 + 7;i++){
+            if(messageList[i]){
+                const {
+                    message,
+                    messageTime,
+                    show,
+                    userId,
+                    userName,
+                    userNumber
+                } = messageList[i];
+                buffer.push(<ListComponent name={userName} number={userNumber} userId={userId} isNew={!show} text={message} date={isDayOver(messageTime)}/>)
+            } else {
+                break;
+            }
+        }
         return buffer;
     }
 
     const setButton = () => {
         let buffer = [];
         for(let i=1; i <= Math.ceil(messageList.length / 7); i++){
-            buffer.push(<div>{i}</div>)
+            buffer.push(<div onClick={()=> {pageChange(i-1)}}>{i}</div>)
         }
         return buffer;
     }
