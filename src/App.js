@@ -6,7 +6,6 @@ import { TaskProvider, TaskConsumer } from './context/AppContext';
 import { AccessTokenProvider, AccessTokenConsumer } from './context/AccessTokenContext';
 import Global from './styled';
 import axios from 'axios';
-import './index.css';
 
 const App = () => {
     const history = useHistory();
