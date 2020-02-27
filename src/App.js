@@ -54,7 +54,9 @@ const App = () => {
                                         path="/qna"
                                         render={() =>
                                             <QnA 
-                                            
+                                                state={state}
+                                                getUserInfo={getUserInfo}
+                                                taskActions={taskActions}
                                             />
                                         }
                                     />

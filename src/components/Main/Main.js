@@ -17,7 +17,7 @@ import signupBackground from '../SignUp/img/signupBackground.png';
 import loginBackground from '../Login/img/loginBackground.png';
 
 const Main = ({ state, actions, taskActions }) => {
-    console.log(1);
+    console.log(2);
     const scrollButon = useRef();
     const pageBackground = useRef();
     const homeWorkStateBlock = useRef();
@@ -75,7 +75,7 @@ const Main = ({ state, actions, taskActions }) => {
                         <img src={logo} alt="logo" />
                         <ul>
                             <li><Link to="/task">과제</Link></li>
-                            <li><Link to="/">QnA</Link></li>
+                            <li><Link to="/qna">QnA</Link></li>
                         </ul>
                     </div>
                 </header>
@@ -129,6 +129,8 @@ const Main = ({ state, actions, taskActions }) => {
                                         localStorage.clear();
                                         actions.setAccessToken(null);
                                         actions.setRefreshToken(null);
+                                        taskActions.accessTokenChange(null);
+                                        taskActions.refreshTokenChange(null);
                                         actions.setLogged(false);
                                     }
                                 }} />
