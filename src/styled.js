@@ -11,7 +11,7 @@ const Global = createGlobalStyle`
     fieldset, form, label, legend,
     table, caption, tbody, tfoot, thead, tr, th, td,
     article, aside, canvas, details, embed,
-    figure, figcaption, footer, header, hgroup, p, 
+    figure, figcaption, footer, header, hgroup, p,
     menu, nav, output, ruby, section, summary,
     time, mark, audio, video {
         margin: 0;
@@ -39,6 +39,9 @@ const Global = createGlobalStyle`
     table {
         border-collapse: collapse;
         border-spacing: 0;
+    }
+    hr {
+        margin: 0;
     }
 `;
 
