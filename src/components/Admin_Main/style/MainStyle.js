@@ -14,6 +14,7 @@ export const MainDiv = styled.div`
         overflow-x: hidden;
         > h1 {
             margin-bottom: 25px;
+            font-size: 32px;
         }
     }
     > .MainNavDiv {
@@ -27,21 +28,22 @@ export const MainDiv = styled.div`
 export const MainContent = styled.div`
     width: 100%;
     height: 75vh;
-    > h2 {
-        margin: 10px;
-    }
     > div {
         display: flex;
         width:100%;
         height: 90%;
         flex-wrap: wrap;
         justify-content: space-around;
+        > h2 {
+            font-size: 20px;
+        }
         > div{
             width: 48%;
             height: 50%;
             margin: 0 1% 0 1%;
             > h2 {
                 margin: 10px;
+                font-size:20px;
             }
         }
         > .buttonWrapper {
@@ -73,6 +75,7 @@ export const MainClass = styled.div`
         display: flex;
         justify-content: space-between;
         align-items: center;
+        font-size: 15px;
         > span {
             text-align: right;
         }
@@ -104,7 +107,7 @@ export const MainClassCount = styled.div`
             margin: 20px;
             margin-bottom: 10px;
             > span {
-                font-size: 30px;
+                font-size: 20px;
                 font-weight: 600;
                 margin-left: 30px;
             }
