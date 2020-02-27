@@ -4,7 +4,7 @@ import background from './imgs/background.png';
 import axios from 'axios';
 import { withRouter } from 'react-router-dom';
 import { setLocalStorage, setContext } from '../resource/publicFunction';
-import { LoginServerURL } from '../resource/serverURL';
+import { LoginServerURL } from '../resource/serverURL.js';
 
 const AdminLogin = ({ actions, history }) => {
     const [id,idChange] = useState();

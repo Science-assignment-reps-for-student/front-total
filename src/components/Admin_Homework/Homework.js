@@ -3,7 +3,7 @@ import { Header, BackgroundBlack } from '../public';
 import * as S from './style/HomeworkStyle';
 import { HomeworkNav, HomeworkButtonBar, HomeworkMain } from './component';
 import axios from 'axios';
-import { homeworkURL, refreshAccessTokenURL, getUserInfoURL } from '../resource/serverURL';
+import { homeworkURL, refreshAccessTokenURL, getUserInfoURL } from '../resource/serverURL.js';
 import { refreshAccessToken, parseDate, reparseDate, isDataAllow, isAllFile, getUserInfo, getIsExpiration } from '../resource/publicFunction';
 import { withRouter, useParams } from 'react-router-dom';
 
