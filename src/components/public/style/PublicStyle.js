@@ -21,6 +21,9 @@ export const BackgroundWhite = styled.div`
     background-color: #F5F5F5;
     z-index: -1;
     min-height: 95vh;
+    background-image: url(${props => props.src});
+    background-repeat:no-repeat;
+    background-position:center;
 `
 
 export const Header = styled.div`

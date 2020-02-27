@@ -297,7 +297,7 @@ const AdminMain = ({ state, actions, history }) => {
                         {
                             getArrowHomework(homeworkType, content).length > 0 && isLoaded ? getArrowHomework(homeworkType,content) : 
                             <S.MainLoadingContent>
-                                <div className="loadingio-spinner-gear-navzgsfup8"><div class="ldio-dlvqi1wu39l">
+                                <div className="loadingio-spinner-gear-navzgsfup8"><div className="ldio-dlvqi1wu39l">
                                 <div><div></div><div></div><div></div><div></div><div></div><div></div></div>
                                 </div></div>
                             </S.MainLoadingContent>

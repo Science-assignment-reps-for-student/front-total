@@ -10,7 +10,7 @@ const HeaderButton = ({ children, page, history, actions }) => {
     const pages = {
         main: () => { history.push('/Admin') },
         make: () => { history.push('/Admin/Make') },
-        qna: () => { history.push('/QnA') },
+        qna: () => { history.push('/Admin/ChattingList') },
         revise: () => { history.push('/Admin/revise') },
         logout: () => { 
             refreshTokenChange("");

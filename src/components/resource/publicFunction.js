@@ -26,6 +26,26 @@ export const setContext = (accessToken,refreshToken,actions) => {
     refreshTokenChange(refreshToken);
 }
 
+export const isDayOver = (date) => {
+    const nowDate = new Date();
+    const currentDate = new Date(date);
+    const interval = nowDate - date;
+    const milisecondToDay = Math.ceil(interval / (60 * 60 * 24 * 1000));
+    const milisecondToHour = Math.ceil(interval / (60 * 60 * 1000));
+    const milisecondTominutes = Math.ceil(interval / (60 * 1000));
+    if(milisecondToDay > 1){
+        return reparseDate(date)
+    } else if(milisecondToHour > 1){
+        const hour = currentDate.getHours();
+        const minute = currentDate.getMinutes();
+        const AMPM = hour > 12 ? "오후" : "오전";
+        const AMPMHour = hour > 12 ? hour - 12 : hour;
+        return `${AMPM} ${AMPMHour}:${minute}`;
+    } else {
+        return `${milisecondTominutes}분 전`;
+    }
+}   
+
 export const parseDate = (date) => {
     return Date.parse(new Date(date));
 }

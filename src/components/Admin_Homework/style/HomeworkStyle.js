@@ -9,6 +9,7 @@ export const HomeworkDiv = styled.div`
     > h1 {
         font-weight: 600;
         margin-bottom: 24px;
+        font-size: 30px;
     }
     > div{
         display: flex;
