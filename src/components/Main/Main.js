@@ -14,10 +14,10 @@ import loginButton from './img/loginButton.png';
 import logoutButton from './img/logOutButton.png';
 import signUpButton from './img/signUpButton.png';
 import signupBackground from '../SignUp/img/signupBackground.png';
-import loginBackground from '../Login/img/loginBackground.png';
+import loginBackground from '../SignUp/img/loginBackground.png';
 
 const Main = ({ state, actions, taskActions }) => {
-    console.log(2);
+    console.log(3);
     const scrollButon = useRef();
     const pageBackground = useRef();
     const homeWorkStateBlock = useRef();
@@ -37,11 +37,6 @@ const Main = ({ state, actions, taskActions }) => {
             } catch { }
         }
     }, [state.logged, page]);
-
-    // useEffect(() => {
-    //     pageBackground.current.style.backgroundPosition = '0% 0%';
-    //     pageBackground.current.style.backgroundImage = `url(${Background})`;
-    // }, []);
     useEffect(() => {
         if (state.logged) {
             pageBackground.current.style.backgroundImage = page === 1 ? `url(${Background})` : `url(${Background2})`;
