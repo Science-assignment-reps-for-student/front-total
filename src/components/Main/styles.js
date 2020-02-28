@@ -364,8 +364,8 @@ export const HomeWorkBoardWrapper = styled.div`
         span {
             font-family: 'Roboto';
             width: 110px;
-            height: 67px;
-            line-height: 67px;
+            height: 60px;
+            line-height: 60px;
             &:nth-child(2) {                
                 flex: 1;
             }
@@ -412,31 +412,29 @@ export const PaginationWrapper = styled.footer`
         padding: 0;
         display: flex;
         justify-content: space-between;
-        > li {
-            margin: 0;
-            list-style: none;
-            text-align: center;
-            line-height: 30px;
-            width: 30px;
-            height: 30px;
-            cursor: pointer;
-            > a {
-                text-decoration: none;
-                color: #858585;
-            }
-        }
     }
 `;
 
 export const PaginationItemBlock = styled.li`
+    display: block;
+    width: 30px;
+    height: 30px;
+    box-sizing: border-box;
+    font-family: Roboto;
+    cursor: pointer;
     ${({ activeStyle }) => activeStyle ? {
-        display: 'block',
-        width: '30px',
-        height: '30px',
         border: '1px solid #2E2E2E',
-        backgroundColor: '#ffffff',
-        boxSizing: 'border-box',
-        color: '#1A1A1A',
-        fontFamily: 'Roboto'
-    } : ''}
+        backgroundColor: '#ffffff'
+    } : {
+        border: '1px solid transparent'
+    }};
+    border-color: none;
+    > span {
+        display: block;
+        width: 28px;
+        height: 28px;
+        text-align: center;
+        line-height: 28px;
+        color: ${({ activeStyle }) => activeStyle ? '#1A1A1A' : '#858585'}
+    }
 `;
