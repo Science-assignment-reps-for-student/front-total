@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 import signupBackground from './img/signupBackground.png';
-import loginBackground from '../Login/img/loginBackground.png';
+import loginBackground from './img/loginBackground.png';
 
 export const ModalBackground = styled.div`
     width: 100vw;
@@ -22,9 +22,9 @@ export const LOGINSIGNUPWrapper = styled.div`
     transform: translate(-50%, -50%);
     display: flex;
     transition: all 0.5s linear;
-    `;
+`;
     
-    export const SignUpLeftBlock = styled.div`
+export const SignUpLeftBlock = styled.div`
     width: 583px;
     height: 533px;
     background-image: url(${signupBackground});
@@ -173,6 +173,7 @@ export const LoginLeftBlock = styled.div`
 export const LoginRightBlock = styled.div`
     width: 583px;
     height: 533px;
+    background-color: yellow;
     background-image: url(${loginBackground});
     display: flex;
     flex-direction: column;

@@ -16,21 +16,6 @@ const HomeWorkBoardList = ({ state, homework }) => {
             if (index >= (nowPage * 8) || index < (nowPage - 1) * 8) return false;
             let isTeam = null;
             let isImportant = (new Date(data['homework_deadline']).getTime() - new Date().getTime()) < 1 * 24 * 60 * 60 * 1000 * 2 ? true : false;
-            const getTeam = () => {
-                ApiDefault.get('team', {
-                    params: {
-                        homeworkId: data.id
-                    },
-                    headers: {
-                        Authorization: state.accessToken
-                    }
-                }).then(_ => {
-                    isTeam = true;
-                }).catch(_ => {
-                    isTeam = false;
-                })
-            };
-            getTeam();
             return <HomeworkBoardItem data={data} key={data.id} isTeam={isTeam} isImportant={isImportant} />;
         })
         return list;
