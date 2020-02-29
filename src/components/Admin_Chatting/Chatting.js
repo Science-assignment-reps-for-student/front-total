@@ -10,6 +10,8 @@ import { isDayOver, getIsExpiration, refreshAccessToken } from '../resource/publ
 import { useParams } from 'react-router-dom';
 import { ChattingBubble } from './components'
 
+let isOut = false;
+
 const Chatting = ({ state, actions }) => {
     
     const { accessToken, refreshToken }  = state;
@@ -21,6 +23,7 @@ const Chatting = ({ state, actions }) => {
     const { userId } = useParams();
     const [inputValue, valueChange] = useState("");
     const [stomp, stompChange] = useState();
+    const [socket, socketChange] = useState();
     const [message, messageChange] = useState([]);
     const [buffer, bufferChange] = useState();
     const [isLoaded, loadChange] = useState(false);
@@ -29,11 +32,12 @@ const Chatting = ({ state, actions }) => {
 
     
     useEffect(()=> {
+        isOut = false;
         getUserInfo()
         .then(()=> {
             getChatting()
             .then((e)=> {   
-                setSocketConnect(e);
+                return setSocketConnect(e);
             })
         })
     },[]);
@@ -50,16 +54,49 @@ const Chatting = ({ state, actions }) => {
         }
     },[message]);
 
+    useEffect(()=> {
+        if(socket){
+            return ()=> {
+                isOut = true;
+                socket.close();
+            }
+        }
+    },[socket])
+
+    useEffect(()=> {
+        if(stomp){
+            return ()=> {
+                isOut = true;
+                stomp.disconnect();
+            }
+        }
+    },[stomp])
+
     const setSocketConnect = (e) => {
         const socket = new SockJS(socketURL);
         const stomp = Stomp.over(socket);
         stompChange(stomp);
-        const messageBuffer = e.data;
-        messageChange(messageBuffer);
-        stomp.connect({},()=> {
-            getSubscribe(stomp);
-            loadChange(true);
-        });
+        socketChange(socket);
+        try {
+            const messageBuffer = e.data;
+            messageChange(messageBuffer);
+        } catch {
+
+        }
+        stomp.connect(
+            {},
+            {},
+            ()=> {
+                getSubscribe(stomp);
+                loadChange(true);
+            },
+            ()=> {},//error
+            ()=> {//close
+                if(!isOut){
+                    setSocketConnect();
+                }
+            }
+            );
     }
 
     const getChatting = () => new Promise((resolve,reject)=> {

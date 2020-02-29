@@ -27,7 +27,8 @@ export const ChattingSubHeader = styled.div`
 `
 
 export const ChattingBubble = styled.div`
-    height: 2vh;
+    word-break: break-all;
+    min-height: 2vh;
     background-color: ${props => props.type ? "#4898BE" : "#F2F2F2"};
     color: ${props => props.type ? "white" : "black"};
     font-size: 16px;
@@ -47,6 +48,7 @@ export const ChattingTalk = styled.div`
         font-size: 13px;
         font-weight: 600;
         margin: 20px;
+        max-width: 40%;
         > span {
             margin-top: 5px;
         }

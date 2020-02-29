@@ -55,6 +55,9 @@ export const ChattingListComponent = styled.div`
     }
     > .text {
         width: 40%;
+        text-overflow: ellipsis;
+        overflow: hidden;
+        white-space: nowrap;
     }
 `
 
