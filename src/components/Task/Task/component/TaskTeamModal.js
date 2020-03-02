@@ -12,16 +12,16 @@ const TaskTeamModal = ({ state, taskActions, onClickToggleModal, setMembers, mem
 
     const onClickAddMember = useCallback((member) => {
         const copy = { ...members };
-        const { uuid, userName, userNumber } = member;
-        if ((copy.members.findIndex(i => i.uuid === uuid)) !== -1)
+        const { userId, userName, userNumber } = member;
+        if ((copy.members.findIndex(i => i.userId === userId)) !== -1)
             return copy;
-        copy.members.push({ uuid: uuid, userNumber: userNumber, userName: userName });
+        copy.members.push({ userId: userId, userNumber: userNumber, userName: userName });
         setMembers(copy);
     }, [members]);
     const onClickRemoveMember = useCallback((member) => {
         const copy = { ...members };
-        const { uuid } = member;
-        const idx = copy.members.findIndex((i) => (i.uuid === uuid));
+        const { userId } = member;
+        const idx = copy.members.findIndex((i) => (i.userId === userId));
         copy.members.splice(idx, 1);
         setMembers(copy);
     }, [members]);
@@ -35,7 +35,7 @@ const TaskTeamModal = ({ state, taskActions, onClickToggleModal, setMembers, mem
     const memberRequest = useCallback((requestType, member) => {
         if (typeof accessToken === "object") return;
         axios({
-            url: `${limServer}/member/${member.uuid}?teamId=${members.teamId}`,
+            url: `${limServer}/member/${member.userId}?teamId=${members.teamId}`,
             method: requestType,
             headers: {
                 "Content-Type": "application/json",
@@ -68,27 +68,25 @@ const TaskTeamModal = ({ state, taskActions, onClickToggleModal, setMembers, mem
         })
         return selectedMemebers;
     }, [members, memberRequest]);
-    const uuidFilter = useCallback((uuid) => {
-        if (typeof members.members !== "object") return;
-        return members.members.some((member) => member.uuid === uuid);
+    const selectedMemberFilter = useCallback(({ userId }) => {
+        return members.members.some((mem) => mem.userId === userId)
     }, [members]);
     const sameClassFilter = useCallback(({ userNumber }) => {
-        if (typeof members.members !== "object" || my.userNumber === undefined) return;
         return my.userNumber.toString()[1] === userNumber.toString()[1];
     }, [my]);
-    const getAllMembersList = useCallback(() => {
+    const getAllMemberList = useCallback(() => {
+        if (typeof members.members !== "object" || my.userId === undefined) return;
         const list = allMembers
-            .filter((member) => (member.userNumber !== my.userNumber) && !uuidFilter(member.uuid) && sameClassFilter(member))
+            .filter((member) => (member.userId !== my.userId) && !selectedMemberFilter(member) && sameClassFilter(member))
             .map((member, i) => {
                 return (
                     <li
                         key={i}
                         onClick={() => memberRequest("post", member)}
-                        data-uuid={member.uuid}
                     >
                         <span>{member.userNumber}</span>
                         <span>{member.userName}</span>
-                    </li >
+                    </li>
                 )
             })
         return list;
@@ -110,17 +108,13 @@ const TaskTeamModal = ({ state, taskActions, onClickToggleModal, setMembers, mem
                     <div className="team-member--background"></div>
                     <div className="team-member--editer">
                         <div className="editer--searching">
-                            <div className="editer--searching_input">
-                                <div><input type="text" placeholder="학번이나 이름으로 검색하세요." /></div>
-                                <div><button>검색</button></div>
-                            </div>
                             <div className="editer--searching_li">
                                 <ul>
                                     <li>
                                         <span>학번</span>
                                         <span>이름</span>
                                     </li>
-                                    {getAllMembersList()}
+                                    {getAllMemberList()}
                                 </ul>
                             </div>
                         </div>
