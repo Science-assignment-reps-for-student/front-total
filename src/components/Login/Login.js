@@ -3,7 +3,7 @@ import * as S from '../SignUp/styles';
 import blackXButton from '../SignUp/img/blackXButton.png';
 import ApiDefault from '../utils';
 
-const Login = ({ state, actions, modalOn, setModalOn, taskActions }) => {
+const Login = ({ state, actions, modalOn, setModalOn, taskActions, setIsLogin }) => {
     const [loginInfo, setLoginInfo] = useState({
         email: null,
         password: null
@@ -29,6 +29,7 @@ const Login = ({ state, actions, modalOn, setModalOn, taskActions }) => {
             taskActions.accessTokenChange(auth.data.accessToken);
             taskActions.refreshTokenChange(auth.data.refreshToken);
             actions.setLogged(true);
+            setIsLogin(true);
             setModalOn({ ...modalOn, login: false });
         } catch (error) {
             alert('아이디와 비밀번호를 확인해주세요.');

@@ -5,7 +5,7 @@ import ApiDefault from '../../utils';
 import prevButton from '../img/prevButton.png';
 import nextButton from '../img/nextButton.png';
 
-const HomeWorkBoardList = ({ state, homework }) => {
+const HomeWorkBoardList = ({ state, homework, taskState, setHomeworkDataInState }) => {
     const [paginationNumber, setPaginationNumber] = useState([]);
     const [nowPage, setNowPage] = useState(!homework.length ? undefined : 1);
     const [startPage, setStartPage] = useState(Math.floor((nowPage - 1) / 5) * 5 + 1);
@@ -16,7 +16,7 @@ const HomeWorkBoardList = ({ state, homework }) => {
             if (index >= (nowPage * 8) || index < (nowPage - 1) * 8) return false;
             let isTeam = null;
             let isImportant = (new Date(data['homework_deadline']).getTime() - new Date().getTime()) < 1 * 24 * 60 * 60 * 1000 * 2 ? true : false;
-            return <HomeworkBoardItem data={data} key={data.id} isTeam={isTeam} isImportant={isImportant} />;
+            return <HomeworkBoardItem data={data} key={data.id} isTeam={isTeam} isImportant={isImportant} taskState={taskState} setHomeworkDataInState={setHomeworkDataInState} />;
         })
         return list;
     };

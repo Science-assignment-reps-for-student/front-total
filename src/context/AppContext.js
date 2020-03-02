@@ -24,7 +24,7 @@ const TaskProvider = ({ children }) => {
     const [limServer, setLimServer] = useState("https://api.dsm-scarfs.hs.kr/chuckflap");
 
     const value = {
-        state: {
+        taskState: {
             accessToken: accessToken,
             refreshToken: refreshToken,
             wooServer: wooServer,

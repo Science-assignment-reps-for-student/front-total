@@ -82,17 +82,24 @@ const TaskGuide = ({ state, taskActions, setHomework, setHomeworkDataInState }) 
         return list;
     }, [allPages, curPage, bottomList]);
     const setBottomPageList = useCallback((type) => {
-        if (type === "minus") {
-            if (bottomList === 1) return;
-            setCurPage((bottomList - 1) * 5);
-            setBottomList(bottomList - 1);
-        }
         if (type === "plus") {
-            if ((bottomList * 5) >= allPages) return;
-            setCurPage((bottomList + 1) * 5 - 4);
-            setBottomList(bottomList + 1);
-        }
-    }, [allPages, bottomList]);
+            if (curPage === allPages) return;
+            if (curPage % 5 === 0) {
+                setCurPage((bottomList + 1) * 5 - 4);
+                setBottomList(bottomList + 1);
+            } else {
+                setCurPage(curPage + 1);
+            }
+        } else if (type === "minus") {
+            if (curPage === 1) return;
+            if (curPage % 5 === 1) {
+                setCurPage((bottomList - 1) * 5);
+                setBottomList(bottomList - 1);
+            } else {
+                setCurPage(curPage - 1);
+            }
+        } 
+    }, [pageState]);
 
     useEffect(() => {
         homeworkRequest();
