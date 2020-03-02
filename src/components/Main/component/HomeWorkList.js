@@ -4,7 +4,7 @@ import { HomeWorkListWrapper } from '../styles';
 import HomeWorkItem from './HomeWorkItem';
 import ApiDefault from '../../utils';
 
-const HomeWorkList = ({ state, homework, setHomework }) => {
+const HomeWorkList = ({ state, homework, setHomework, taskState, setHomeworkDataInState }) => {
     const history = useHistory();
 
     useEffect(() => {
@@ -42,7 +42,7 @@ const HomeWorkList = ({ state, homework, setHomework }) => {
 
     return (
         <HomeWorkListWrapper>
-            {(homework.length !== 0) && homework.map(data => <HomeWorkItem key={data.id} data={data} />)}
+            {homework.map(data => <HomeWorkItem key={data.id} data={data} taskState={taskState} setHomeworkDataInState={setHomeworkDataInState} />)}
         </HomeWorkListWrapper>
     );
 };

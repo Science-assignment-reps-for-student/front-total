@@ -46,7 +46,7 @@ const App = () => {
             <TaskProvider>
                 <TaskConsumer>
                     {
-                        ({ taskActions, state }) => {
+                        ({ taskActions, taskState }) => {
                             return (
                                 <>
                                     <Global />
@@ -54,7 +54,7 @@ const App = () => {
                                         path="/qna"
                                         render={() =>
                                             <QnA 
-                                                state={state}
+                                                state={taskState}
                                                 getUserInfo={getUserInfo}
                                                 taskActions={taskActions}
                                             />
@@ -64,7 +64,7 @@ const App = () => {
                                         path="/task/:homeworkId/evaluation"
                                         render={() => 
                                             <PeerEvaluation 
-                                                state={state} 
+                                                state={taskState} 
                                                 members={members}
                                                 setMembers={setMembers}
                                                 getUserInfo={getUserInfo} 
@@ -79,7 +79,7 @@ const App = () => {
                                         path="/task/:homeworkId"
                                         render={() =>
                                             <Task
-                                                state={state}
+                                                state={taskState}
                                                 members={members}
                                                 setMembers={setMembers}
                                                 getUserInfo={getUserInfo}
@@ -94,7 +94,7 @@ const App = () => {
                                         path="/task"
                                         render={() =>
                                             <TaskGuide
-                                                state={state}
+                                                state={taskState}
                                                 getUserInfo={getUserInfo}
                                                 setHomework={setHomework}
                                                 taskActions={taskActions}
@@ -123,7 +123,7 @@ const App = () => {
                                     <AuthProvider>
                                         <AuthConsumer>
                                             {
-                                                ({ state, actions }) => <Route exact path="/" render={() => <Main state={state} actions={actions} taskActions={taskActions} />} />
+                                                ({ state, actions }) => <Route exact path="/" render={() => <Main state={state} actions={actions} taskActions={taskActions} taskState={taskState} setHomeworkDataInState={setHomeworkDataInState} getUserInfo={getUserInfo} />} />
                                             }
                                         </AuthConsumer> 
                                     </AuthProvider>

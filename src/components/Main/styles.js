@@ -168,7 +168,7 @@ export const HomeWorkItemWrapper = styled('div')`
         > span {
             color: #ffffff;
         }
-        > div {
+        > a {
             border: none;
             width: 100px;
             height: 25px;
