@@ -2,25 +2,16 @@ import React, { useState, useRef, useCallback, useEffect } from 'react';
 import * as Styled from './Styled';
 import { getAccessTokenUsingRefresh } from '../resource/publicFunction';
 import send from './img/send.png';
-import { Stomp } from '@stomp/stompjs';
-import SockJS from 'sockjs-client';
 import axios from 'axios';
 import { Header } from '../Header';
 import { useHistory } from 'react-router-dom';
 
-const QnA = ({ state, actions, getUserInfo }) => {
+const QnA = ({ state, actions, my, stompState, usableSocket, chatMain, scrollBufChange, buffer }) => {
     const history = useHistory();
     const { limServer, accessToken } = state;
-    const chatMain = useRef(null);
     const chatInput = useRef(null);
-    const [my, setMy] = useState({});
-    const socketCondition = useRef(null);
     const [chat, setChat] = useState("");
-    const [chatBuf, setChatBuf] = useState({});
     const [chatList, setChatList] = useState([]);
-    const [scrollBuf, setScrollBuf] = useState(0);
-    const [stompState, setStompState] = useState(undefined);
-    const [usableSocket, SetUsableSocket] = useState(false);
 
     const pad = useCallback((n, width = 2) => {
         n = n + "";
@@ -33,8 +24,8 @@ const QnA = ({ state, actions, getUserInfo }) => {
     const onChangeChat = useCallback((e) => setChat(e.target.value), []);
     const setMainScroll = useCallback(() => {
         if (chatMain.current === null) return;
-        else chatMain.current.scrollTop = scrollBuf;
-    }, [chatMain, scrollBuf]);
+        else chatMain.current.scrollTop = buffer.scroll;
+    }, [chatMain, buffer.scroll]);
     const checkInputIsEmpty = useCallback(() => {
         const input = chatInput.current;
         if (input.value === "") return true;
@@ -60,21 +51,24 @@ const QnA = ({ state, actions, getUserInfo }) => {
     // About Socket
     const getAllChatRequest = useCallback(() => {
         if (my.userId === undefined) return;
-        axios.get(`${limServer}/message/${my.userId}`, {
-            headers: {
-                Authorization: accessToken
-            }
-        }).then(e => {
-            setChatList(e.data);
-            setScrollBuf(chatMain.current.scrollHeight);
-            chatMain.current.scrollTop = chatMain.current.scrollHeight;
-        }).catch(err => {
-            if (err.response.status === 403)
-                getAccessTokenUsingRefresh(state, actions);
-        })
+        else {
+            axios.get(`${limServer}/message/${my.userId}`, {
+                headers: {
+                    Authorization: accessToken
+                }
+            }).then(e => {
+                setChatList(e.data);
+                scrollBufChange();
+                chatMain.current.scrollTop = chatMain.current.scrollHeight;
+            }).catch(err => {
+                const code = err.response.status;
+                if (code === 403)
+                    getAccessTokenUsingRefresh(state, actions);
+            })
+        }
     }, [state, my]);
     const sendMessage = useCallback((msg) => {
-        if (!checkInputIsEmpty || my.userId === undefined) return;
+        if (checkInputIsEmpty() || my.userId === undefined) return;
         const stringedData = JSON.stringify({
             "token": accessToken,
             "message": msg
@@ -82,41 +76,24 @@ const QnA = ({ state, actions, getUserInfo }) => {
         stompState.send(`/send/${my.userId}`, {}, stringedData);
         chatInput.current.focus();
     }, [state, stompState, my]);
-    const receiveMessage = useCallback((msg) => {
-        setChatBuf(JSON.parse(msg.body));
-        setScrollBuf(chatMain.current.scrollHeight);
-    }, []);
 
     useEffect(() => {
         if (accessToken === null) {
-            alert("로그인 후 이용해주시길 바랍니다.");
+            alert("로그인 후 이용해주세요.");
             history.push("/");
-        } else {
-            getUserInfo(limServer, accessToken)
-                .then(e => {
-                    setMy(e.data);
-                })
-            const socket = new SockJS(`${limServer}/socket`);
-            const stomp = Stomp.over(socket);
-            setStompState(stomp);
-            stomp.connect({}, () => { });
         }
     }, []);
     useEffect(() => {
         getAllChatRequest();
     }, [my]);
     useEffect(() => {
-        setChatList([...chatList, chatBuf]);
-    }, [chatBuf]);
-    useEffect(() => {
-        if (stompState === undefined || my.userId === undefined) return;
-        stompState.onConnect = () => {
-            socketCondition.current.remove();
-            SetUsableSocket(true);
-            stompState.subscribe(`/receive/${my.userId}`, receiveMessage);
+        if (buffer.chat.hasOwnProperty("message")) {
+            setChatList([...chatList, buffer.chat]);
         }
+    }, [buffer.chat]);
+    useEffect(() => {
         setMainScroll();
-    }, [chatList, stompState]);
+    }, [chatList]);
 
     return (
         <>
@@ -124,7 +101,7 @@ const QnA = ({ state, actions, getUserInfo }) => {
             <Styled.QnA>
                 <div>
                     <header>
-                        <span ref={socketCondition}>현재 채팅방에 접속할 수 없습니다. 잠시만 기다려주십시오.</span>
+                        {!usableSocket && <span>현재 채팅방에 접속할 수 없습니다. 잠시만 기다려주십시오.</span>}
                         <h1>과학 선생님</h1>
                     </header>
                     <section>
@@ -143,6 +120,7 @@ const QnA = ({ state, actions, getUserInfo }) => {
                                                 setChat("");
                                             }
                                         }}
+                                        autoFocus={true}
                                         value={chat}
                                         ref={chatInput}
                                         placeholder="과학선생님께 문의할 메세지를 입력하세요." />

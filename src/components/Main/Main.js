@@ -14,7 +14,7 @@ import loginButton from './img/loginButton.png';
 import logoutButton from './img/logOutButton.png';
 import signUpButton from './img/signUpButton.png';
 
-const Main = ({ state, actions, taskActions, taskState, setHomeworkDataInState }) => {
+const Main = ({ state, actions, taskActions, taskState, setHomeworkDataInState, setIsLogin }) => {
     console.log(4);
     const scrollButon = useRef();
     const pageBackground = useRef();
@@ -125,6 +125,7 @@ const Main = ({ state, actions, taskActions, taskState, setHomeworkDataInState }
                                         taskActions.accessTokenChange(null);
                                         taskActions.refreshTokenChange(null);
                                         actions.setLogged(false);
+                                        setIsLogin(false);
                                     }
                                 }} />
                             </> :
@@ -137,7 +138,7 @@ const Main = ({ state, actions, taskActions, taskState, setHomeworkDataInState }
                 {state.logged && <S.ScrollButton ref={scrollButon} page={page} onClick={changePage} />}
             </S.MainBackground>
             {modalOn.signup === true && <SignUp modalOn={modalOn} setModalOn={setModalOn} />}
-            {modalOn.login === true && <Login state={state} actions={actions} modalOn={modalOn} setModalOn={setModalOn} taskActions={taskActions} />}
+            {modalOn.login === true && <Login state={state} actions={actions} modalOn={modalOn} setModalOn={setModalOn} taskActions={taskActions} setIsLogin={setIsLogin} />}
         </>
     );
 };

@@ -1,16 +1,27 @@
-import React, { useState, useCallback } from 'react'
+import React, { useState, useCallback, useEffect, useRef } from 'react'
 import { Route, Switch, withRouter, useHistory } from 'react-router-dom';
-import { PeerEvaluation, Task, TaskGuide, AdminLogin, Homework, AdminMain, Main, QnA, AdminChatting, ChattingList } from './components';
+import { PeerEvaluation, Task, TaskGuide, AdminLogin, Homework, AdminMain, Main, QnA } from './components';
 import { AuthConsumer, AuthProvider } from './context/Auth';
 import { TaskProvider, TaskConsumer } from './context/AppContext';
 import { AccessTokenProvider, AccessTokenConsumer } from './context/AccessTokenContext';
 import Global from './styled';
+import { Stomp } from '@stomp/stompjs';
+import SockJS from 'sockjs-client';
 import axios from 'axios';
 
 const App = () => {
     const history = useHistory();
+    const chatMain = useRef(null);
+    const [my, setMy] = useState({});
     const [members, setMembers] = useState({});
+    const [isLogin, setIsLogin] = useState(false);
     const [homeworkData, setHomeworkData] = useState({});
+    const [stompState, setStompState] = useState(undefined);
+    const [usableSocket, SetUsableSocket] = useState(false);
+    const [buffer, setBuffer] = useState({
+        chat: {},
+        scroll: 0
+    });
 
     const setHomework = useCallback((data) => { setHomeworkData(data) }, []);
     const setHomeworkDataInState = useCallback((wooServer, accessToken, homeworkId) => {
@@ -40,6 +51,57 @@ const App = () => {
             }
         })
     }, []);
+    const scrollBufChange = useCallback(() => {
+        if (chatMain.current !== null) {
+            setBuffer({ ...buffer, scroll: chatMain.current.scrollHeight });
+        }
+    }, [chatMain]);
+    const setSocket = useCallback(() => {
+        const socket = new SockJS("http://54.180.174.253:8888/chuckflap/socket");
+        const stomp = Stomp.over(socket);
+        setStompState(stomp);
+        stomp.connect(
+            {}, {}, () => { },  // success 
+            () => { },  // error
+            () => {     // close
+                setSocket();
+            }
+        );
+    }, []);
+
+    useEffect(() => {
+        if (isLogin || localStorage.getItem("accessToken") !== null) {
+            axios.get("http://54.180.174.253:8888/chuckflap/message", {
+                headers: {
+                    Authorization: localStorage.getItem("accessToken")
+                }
+            }).then(e => {
+                console.log(e);
+                getUserInfo("https://api.dsm-scarfs.hs.kr/chuckflap", localStorage.getItem("accessToken"))
+                    .then(e => {
+                        setMy(e.data);
+                    })
+                setSocket();
+            }).catch(err => {
+                const code = err.response.status;
+                if (code == 403) {
+                    alert("로그인을 해주시길 바랍니다.");
+                    history.push("/");
+                }
+            })
+        }
+    }, [isLogin]);
+    useEffect(() => {
+        if (stompState && my.userId) {
+            stompState.onConnect = () => {
+                SetUsableSocket(true);
+                stompState.subscribe(`/receive/${my.userId}`, (msg) => {
+                    setBuffer({ ...buffer, chat: JSON.parse(msg.body) });
+                    scrollBufChange();
+                });
+            }
+        }
+    }, [stompState, my]);
 
     return (
         <Switch>
@@ -53,27 +115,32 @@ const App = () => {
                                     <Route
                                         path="/qna"
                                         render={() =>
-                                            <QnA 
+                                            <QnA
+                                                my={my}
+                                                buffer={buffer}
                                                 state={taskState}
-                                                getUserInfo={getUserInfo}
-                                                taskActions={taskActions}
+                                                chatMain={chatMain}
+                                                actions={taskActions}
+                                                stompState={stompState}
+                                                usableSocket={usableSocket}
+                                                scrollBufChange={scrollBufChange}
                                             />
                                         }
                                     />
-                                    <Route 
+                                    <Route
                                         path="/task/:homeworkId/evaluation"
-                                        render={() => 
-                                            <PeerEvaluation 
-                                                state={taskState} 
+                                        render={() =>
+                                            <PeerEvaluation
+                                                state={taskState}
                                                 members={members}
                                                 setMembers={setMembers}
-                                                getUserInfo={getUserInfo} 
+                                                getUserInfo={getUserInfo}
                                                 taskActions={taskActions}
                                                 homeworkData={homeworkData}
                                                 setHomeworkDataInState={setHomeworkDataInState}
                                             />
                                         }
-                                        />
+                                    />
                                     <Route
                                         exact
                                         path="/task/:homeworkId"
@@ -87,8 +154,8 @@ const App = () => {
                                                 homeworkData={homeworkData}
                                                 setHomeworkDataInState={setHomeworkDataInState}
                                             />
-                                        } 
-                                        />
+                                        }
+                                    />
                                     <Route
                                         exact
                                         path="/task"
@@ -100,32 +167,30 @@ const App = () => {
                                                 taskActions={taskActions}
                                                 setHomeworkDataInState={setHomeworkDataInState}
                                             />
-                                        } 
-                                        /> 
+                                        }
+                                    />
                                     <AccessTokenProvider>
                                         <AccessTokenConsumer>
                                             {
-                                            ({ actions, state }) => {
-                                                return (
-                                                <>  
-                                                    <Route path="/Admin/Login" render={()=> <AdminLogin actions={actions}/>}/>
-                                                    <Route path="/Admin/Make" render={() => <Homework state={state} actions={actions} type="Make"/>}/>
-                                                    <Route path="/Admin/revise/:homeworkNum" render={() => <Homework state={state} actions={actions} type="Fix"/>}/>
-                                                    <Route path="/Admin/ChattingList" render={() => <ChattingList state={state} actions={actions}/>}/>
-                                                    <Route path="/Admin/Chatting/:userId" render={()=> <AdminChatting state={state} actions={actions}/>}/>
-                                                    <Route exact path="/Admin" render={()=> <AdminMain state={state} actions={actions}/>}/>
-                                                </>
-                                                );
+                                                ({ actions, state }) => {
+                                                    return (
+                                                        <>
+                                                            <Route path="/admin/login" render={() => <AdminLogin actions={actions} />} />
+                                                            <Route path="/admin/make" render={() => <Homework state={state} actions={actions} type="Make" />} />
+                                                            <Route path="/admin/revise/:homeworkNum" render={() => <Homework state={state} actions={actions} type="Fix" />} />
+                                                            <Route exact path="/Admin" render={() => <AdminMain state={state} actions={actions} />} />
+                                                        </>
+                                                    );
+                                                }
                                             }
-                                        }
                                         </AccessTokenConsumer>
                                     </AccessTokenProvider>
                                     <AuthProvider>
                                         <AuthConsumer>
                                             {
-                                                ({ state, actions }) => <Route exact path="/" render={() => <Main state={state} actions={actions} taskActions={taskActions} taskState={taskState} setHomeworkDataInState={setHomeworkDataInState} getUserInfo={getUserInfo} />} />
+                                                ({ state, actions }) => <Route exact path="/" render={() => <Main state={state} actions={actions} taskActions={taskActions} taskState={taskState} setHomeworkDataInState={setHomeworkDataInState} setIsLogin={setIsLogin} />} />
                                             }
-                                        </AuthConsumer> 
+                                        </AuthConsumer>
                                     </AuthProvider>
                                 </>
                             );

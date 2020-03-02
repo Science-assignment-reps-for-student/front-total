@@ -10,10 +10,15 @@ const QnA = styled.main`
         > header {
             padding: 16px 32px;
             box-shadow: 0px 3px 3px rgba(0, 0, 0, 0.2);
-            > h1 { font-size: 14px; }
             > span {
+                display: inline-block;
+                margin-right: 8px;
                 font-size: 16px;
                 color: red;
+            }
+            > h1 {
+                display: inline-block;
+                font-size: 14px;
             }
         }
         > section {
@@ -34,8 +39,6 @@ const QnA = styled.main`
                 }
                 > li {
                     margin-bottom: 4px;
-                }
-                > li.chat-teacher {
                     > p {
                         margin-bottom: 4px;
                         font-weight: bold;
@@ -44,24 +47,26 @@ const QnA = styled.main`
                     > div {
                         > span {
                             display: inline-block;
+                            max-width: 40%;
+                            line-height: 1.2;
                             padding: 8px 12px;
                             border-radius: 16px;
+                            word-break: break-all;
+                        }
+                    }
+                }
+                > li.chat-teacher {
+                    > div {
+                        > span {
                             background-color: #F2F2F2;
                         }
                     }
                 }
                 > li.chat-student {
                     text-align: right;
-                    > p {
-                        margin-bottom: 4px;
-                        font-weight: bold;
-                        font-size: 10px;
-                    }
                     > div {
                         > span {
-                            display: inline-block;
-                            padding: 8px 12px;
-                            border-radius: 16px;
+                            text-align: left;
                             background-color: #FF8B4E;
                             color: white;
                         }
@@ -96,6 +101,7 @@ const QnA = styled.main`
                         > img {
                             width: 16px;
                             height: 16px;
+                            margin-right: 10px;
                             cursor: pointer;
                         }
                     }
