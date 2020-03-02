@@ -13,11 +13,9 @@ import scrollDown2 from './img/scrollDown2.png';
 import loginButton from './img/loginButton.png';
 import logoutButton from './img/logOutButton.png';
 import signUpButton from './img/signUpButton.png';
-import signupBackground from '../SignUp/img/signupBackground.png';
-import loginBackground from '../Login/img/loginBackground.png';
 
-const Main = ({ state, actions, taskActions }) => {
-    console.log(1);
+const Main = ({ state, actions, taskActions, taskState, setHomeworkDataInState, setIsLogin }) => {
+    console.log(4);
     const scrollButon = useRef();
     const pageBackground = useRef();
     const homeWorkStateBlock = useRef();
@@ -37,11 +35,6 @@ const Main = ({ state, actions, taskActions }) => {
             } catch { }
         }
     }, [state.logged, page]);
-
-    // useEffect(() => {
-    //     pageBackground.current.style.backgroundPosition = '0% 0%';
-    //     pageBackground.current.style.backgroundImage = `url(${Background})`;
-    // }, []);
     useEffect(() => {
         if (state.logged) {
             pageBackground.current.style.backgroundImage = page === 1 ? `url(${Background})` : `url(${Background2})`;
@@ -75,7 +68,7 @@ const Main = ({ state, actions, taskActions }) => {
                         <img src={logo} alt="logo" />
                         <ul>
                             <li><Link to="/task">과제</Link></li>
-                            <li><Link to="/">QnA</Link></li>
+                            <li><Link to="/qna">QnA</Link></li>
                         </ul>
                     </div>
                 </header>
@@ -93,13 +86,13 @@ const Main = ({ state, actions, taskActions }) => {
                             }
                         </section>
                         {(page === 2 && state.logged) &&
-                            <HomeWorkBoardList state={state} actions={actions} homework={homework} setHomework={setHomework} />
+                            <HomeWorkBoardList state={state} actions={actions} homework={homework} setHomework={setHomework} taskState={taskState} setHomeworkDataInState={setHomeworkDataInState} />
                         }
                         <aside>
                             <S.HomeWorkStateBlock page={page} ref={homeWorkStateBlock}>
                                 {state.logged === true &&
                                     <>
-                                        <HomeWorkList state={state} actions={actions} homework={homework} setHomework={setHomework} />
+                                        <HomeWorkList state={state} actions={actions} homework={homework} setHomework={setHomework} taskState={taskState} setHomeworkDataInState={setHomeworkDataInState} />
                                         <div>
                                             <h4>현재 과제</h4>
                                             <img alt="줄이미지" src={list} />
@@ -129,7 +122,10 @@ const Main = ({ state, actions, taskActions }) => {
                                         localStorage.clear();
                                         actions.setAccessToken(null);
                                         actions.setRefreshToken(null);
+                                        taskActions.accessTokenChange(null);
+                                        taskActions.refreshTokenChange(null);
                                         actions.setLogged(false);
+                                        setIsLogin(false);
                                     }
                                 }} />
                             </> :
@@ -142,7 +138,7 @@ const Main = ({ state, actions, taskActions }) => {
                 {state.logged && <S.ScrollButton ref={scrollButon} page={page} onClick={changePage} />}
             </S.MainBackground>
             {modalOn.signup === true && <SignUp modalOn={modalOn} setModalOn={setModalOn} />}
-            {modalOn.login === true && <Login state={state} actions={actions} modalOn={modalOn} setModalOn={setModalOn} taskActions={taskActions} />}
+            {modalOn.login === true && <Login state={state} actions={actions} modalOn={modalOn} setModalOn={setModalOn} taskActions={taskActions} setIsLogin={setIsLogin} />}
         </>
     );
 };

@@ -109,6 +109,10 @@ const TaskBottom = styled.div`
     justify-content: space-between; 
     background-color: #F8F8F8;
     box-shadow: none;
+    h5 {
+        margin: 0;
+        padding: 0;
+    }
     > div {
         width: 47%;
         border-top: 3px solid #858585;
@@ -303,36 +307,8 @@ const TaskTeamModal = styled.div`
         background-color: white;
         > div.editer--searching {
             padding: 24px 0 0 12px;
-            > div.editer--searching_input {
-                display: flex;
-                align-items: center;
-                justify-content: flex-start;
-                width: 650px;
-                > div {
-                    height: 35px;
-                }
-                > div > input {
-                    width: 250px;
-                    height: inherit;
-                    padding: 8px 12px;
-                    border: 1px solid #858585;
-                    border-radius: 4px 0 0 4px;
-                    box-sizing: border-box;
-                }
-                > div > button {
-                    width: 70px;
-                    height: inherit;
-                    padding: 8px 12px;
-                    border: 1px solid #1A1A1A;
-                    border-radius: 0 4px 4px 0;
-                    box-sizing: border-box;
-                    background-color: #1A1A1A;
-                    color: #F8F8F8;
-                    cursor: pointer;
-                }
-            }
+            width: 450px;
             > div.editer--searching_li {
-                    padding-top: 24px;
                     height: 350px;
                     overflow-y: scroll;
                     &::-webkit-scrollbar {
@@ -357,7 +333,7 @@ const TaskTeamModal = styled.div`
                         }
                         > li:first-child {
                             font-weight: bold;
-                            margin-bottom: 32px;
+                            margin-bottom: 12px;
                         }
                         > li:not(:first-child).clicked {
                             transition: 0.25s;

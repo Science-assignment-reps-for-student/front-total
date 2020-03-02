@@ -5,12 +5,19 @@ import oIcon from '../img/oIcon.png';
 import xIcon from '../img/xIcon.png';
 import importantIcon from '../img/importantIcon.png';
 
-const HomeworkBoardItem = ({ data, isTeam, isImportant }) => {
+const HomeworkBoardItem = ({ data, isTeam, isImportant, taskState, setHomeworkDataInState }) => {
+    const { wooServer, accessToken } = taskState;
+    
     return (
         <HomeWorkBoardItemWrapper isImportant={isImportant}>
             <span>{data !== "undefined" && data.homeworkType === 0 ? '개인' : data.homeworkType === 1 ? '팀' : '실험'}</span>
             <span>
-                <Link to={`task/${data.id}`}>{data !== "undefined" && data.homeworkTitle}</Link>
+                <Link 
+                    to={`task/${data.id}`}
+                    onClick={() => {
+                        setHomeworkDataInState(wooServer, accessToken, data.id);
+                    }}
+                >{data !== "undefined" && data.homeworkTitle}</Link>
             </span>
             <span>{data !== "undefined" && new Date(data['created_at']).yyyymmddWithDot()}</span>
             <span>{data !== "undefined" && new Date(data['homework_deadline']).yyyymmddWithDot()}</span>

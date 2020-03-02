@@ -1,138 +1,147 @@
-import React, { useState, useEffect, useRef, useCallback } from 'react';
-import SockJS from 'react-stomp'
+import React, { useState, useRef, useCallback, useEffect } from 'react';
 import * as Styled from './Styled';
+import { getAccessTokenUsingRefresh } from '../resource/publicFunction';
 import send from './img/send.png';
-/* 
-<html>
-<head>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.0.0/sockjs.min.js"></script>
-    <script>
-        let roomId = getUrlPar('roomId');
-        let socket = new SockJS('http://localhost:8888/socket');
-        let socketStomp = Stomp.over(socket);
-        socketStomp.connect({}, function() {
-            socketStomp.subscribe('/receive/'+roomId, function(msg) {
-                if(list.innerHTML == '') list.innerHTML = msg.body;
-                else list.innerHTML = list.innerHTML + '\n' + msg.body;
-                list.scrollTop = list.scrollHeight;
-            });
-        });
-        function messageSend(message) {
-            socketStomp.send('/chat/'+roomId, {}, message);
-        }
-        function enterKeyboard(event) {
-            if (event.code == 'Enter' || event.code === 'NumpadEnter') {
-                messageSend(message.value);
-                message.value = '';
-            }
-        }
-        function getUrlPar(name) {
-            name = name.replace(/[\[]/, '\\[').replace(/[\]]/, '\\]');
-            var regex = new RegExp('[\\?&]' + name + '=([^&#]*)'),
-                results = regex.exec(location.search);
-            return results === null ? '' : decodeURIComponent(results[1].replace(/\+/g, ' '));
-        }
-    </script>
-</head>
-<body>
-    <textarea id="list" style="width: 50%;height: 50%;"></textarea>
-    <input onkeypress="enterKeyboard(event)" id="message" type="text" autofocus />
-</body>
-</html>
-*/
+import axios from 'axios';
+import { Header } from '../Header';
+import { useHistory } from 'react-router-dom';
 
-const data = [
-    { text: "asdasdasdasdasd", who: "teacher" },
-    { text: "qweqweqweqweqwe", who: "student" },
-    { text: "asdasdasdasdasd", who: "teacher" },
-    { text: "qweqweqweqweqwe", who: "student" },
-    { text: "asdasdasdasdasd", who: "teacher" },
-    { text: "qweqweqweqweqwe", who: "student" },
-    { text: "asdasdasdasdasd", who: "teacher" },
-    { text: "qweqweqweqweqwe", who: "student" },
-    { text: "asdasdasdasdasd", who: "teacher" },
-    { text: "qweqweqweqweqwe", who: "student" },
-    { text: "asdasdasdasdasd", who: "teacher" },
-    { text: "qweqweqweqweqwe", who: "student" },
-    { text: "asdasdasdasdasd", who: "teacher" },
-    { text: "qweqweqweqweqwe", who: "student" },
-];
-
-const QnA = () => {
-    
-    const chatMain = useRef(null);
+const QnA = ({ state, actions, my, stompState, usableSocket, chatMain, scrollBufChange, buffer }) => {
+    const history = useHistory();
+    const { limServer, accessToken } = state;
     const chatInput = useRef(null);
     const [chat, setChat] = useState("");
-    const [chatList, setChatList] = useState(data);
+    const [chatList, setChatList] = useState([]);
 
+    const pad = useCallback((n, width = 2) => {
+        n = n + "";
+        return n.length >= width ? n : new Array(width - n.length + 1).join('0') + n;
+    }, []);
+    const getFullDate = useCallback((date = new Date()) => {
+        const a = new Date(date), y = a.getFullYear(), m = a.getMonth() + 1, d = a.getDate(), h = a.getHours(), min = a.getMinutes(), sec = a.getSeconds();
+        return `${y}-${pad(m)}-${d} ${h}:${min}:${sec}`;
+    }, []);
     const onChangeChat = useCallback((e) => setChat(e.target.value), []);
+    const setMainScroll = useCallback(() => {
+        if (chatMain.current === null) return;
+        else chatMain.current.scrollTop = buffer.scroll;
+    }, [chatMain, buffer.scroll]);
     const checkInputIsEmpty = useCallback(() => {
         const input = chatInput.current;
         if (input.value === "") return true;
+        input.focus();
+        return false;
+    }, [chatList, chatInput]);
+    const makeChatJsx = useCallback(() => {
+        const list = chatList.map((chat, i) => {
+            return (
+                chat.messageType === 1
+                    ? <li className="chat-teacher" key={i}>
+                        <p>선생님 <span>{getFullDate(chat.messageTime)}</span></p>
+                        <div><span>{chat.message}</span></div>
+                    </li>
+                    : <li className="chat-student" key={i}>
+                        <p><span>{getFullDate(chat.messageTime)}</span></p>
+                        <div><span>{chat.message}</span></div>
+                    </li>
+            )
+        });
+        return list;
+    }, [chatList]);
+    // About Socket
+    const getAllChatRequest = useCallback(() => {
+        if (my.userId === undefined) return;
         else {
-            input.focus();
-            return false;
+            axios.get(`${limServer}/message/${my.userId}`, {
+                headers: {
+                    Authorization: accessToken
+                }
+            }).then(e => {
+                setChatList(e.data);
+                scrollBufChange();
+                chatMain.current.scrollTop = chatMain.current.scrollHeight;
+            }).catch(err => {
+                const code = err.response.status;
+                if (code === 403)
+                    getAccessTokenUsingRefresh(state, actions);
+            })
         }
-    }, [chatList, chatInput]);
-    const onSetChatList = useCallback((text, who) => {
-        if (checkInputIsEmpty()) return;
-        setChatList([...chatList, { text: text, who: who }]);
-        chatInput.current.value = "";
+    }, [state, my]);
+    const sendMessage = useCallback((msg) => {
+        if (checkInputIsEmpty() || my.userId === undefined) return;
+        const stringedData = JSON.stringify({
+            "token": accessToken,
+            "message": msg
+        });
+        stompState.send(`/send/${my.userId}`, {}, stringedData);
         chatInput.current.focus();
+    }, [state, stompState, my]);
 
-    }, [chatList, chatInput]);
+    useEffect(() => {
+        if (accessToken === null) {
+            alert("로그인 후 이용해주세요.");
+            history.push("/");
+        }
+    }, []);
+    useEffect(() => {
+        getAllChatRequest();
+    }, [my]);
+    useEffect(() => {
+        if (buffer.chat.hasOwnProperty("message")) {
+            setChatList([...chatList, buffer.chat]);
+        }
+    }, [buffer.chat]);
+    useEffect(() => {
+        setMainScroll();
+    }, [chatList]);
 
     return (
-        <Styled.QnA>
-            <div>
-                <header><h1>박지연 선생님</h1></header>
-                <section ref={chatMain}>
-                    <ul>
-                        {chatList.map((chat, i) => {
-                            return (
-                                chat.who === "teacher"
-                                    ? <li className="chat-teacher" key={i}>
-                                        <p>박지연 선생님</p>
-                                        <div><span>{chat.text}</span></div>
-                                    </li>
-                                    : <li className="chat-student" key={i}>
-                                        <div><span>{chat.text}</span></div>
-                                    </li>
-                            )
-                        })
-                        }
-                    </ul>
-                    <div className="input-wrap">
-                        <div>
+        <>
+            <Header />
+            <Styled.QnA>
+                <div>
+                    <div className={usableSocket ? "connected" : "disConnected"}>채팅 서버와 연결되지 않았습니다</div>
+                    <header>
+                        <h1>과학 선생님</h1>
+                    </header>
+                    <section>
+                        <ul ref={chatMain}>
+                            {makeChatJsx()}
+                        </ul>
+                        <div className="input-wrap">
                             <div>
-                                <input
-                                    type="text"
-                                    onChange={onChangeChat}
-                                    onKeyUp={(e) => {
-                                        if (e.keyCode === 13) {
-                                            onSetChatList(chat, "student");
-                                            setChat("");
-                                        }
-                                    }}
-                                    value={chat}
-                                    ref={chatInput}
-                                    placeholder="과학선생님께 문의할 메세지를 입력하세요." />
-                            </div>
-                            <div>
-                                <img
-                                    src={send}
-                                    onClick={() => {
-                                        onSetChatList(chat, "teacher");
-                                        setChat("");
-                                    }}
-                                    alt="send-message" />
+                                <div>
+                                    <input
+                                        type="text"
+                                        onChange={onChangeChat}
+                                        onKeyUp={(e) => {
+                                            if (e.keyCode === 13 && usableSocket) {
+                                                sendMessage(chat);
+                                                setChat("");
+                                            }
+                                        }}
+                                        autoFocus={true}
+                                        value={chat}
+                                        ref={chatInput}
+                                        placeholder="과학선생님께 문의할 메세지를 입력하세요." />
+                                </div>
+                                <div>
+                                    <img
+                                        src={send}
+                                        onClick={() => {
+                                            if (usableSocket) {
+                                                sendMessage(chat);
+                                                setChat("");
+                                            }
+                                        }}
+                                        alt="send-message" />
+                                </div>
                             </div>
                         </div>
-                    </div>
-                </section>
-            </div>
-        </Styled.QnA>
+                    </section>
+                </div>
+            </Styled.QnA>
+        </>
     )
 };
 

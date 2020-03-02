@@ -1,27 +1,27 @@
 import axios from 'axios';
 import { messageURL } from './serverURL';
 
-export const refreshAccessToken = (refreshToken,actions,refreshAccessTokenURL)=> {
+export const refreshAccessToken = (refreshToken, actions, refreshAccessTokenURL) => {
     const refreshHeader = {
         "headers": {
             "Authorization": refreshToken,
-          },
+        },
     }
-    axios.put(refreshAccessTokenURL,{},refreshHeader)
-    .then((e)=> {
-        const accessTokenBuffer = e.data.accessToken;
-        const refreshTokenBuffer = e.data.refreshToken;
-        setLocalStorage(accessTokenBuffer,refreshTokenBuffer);
-        setContext(accessTokenBuffer,refreshTokenBuffer,actions);
-    })
+    axios.put(refreshAccessTokenURL, {}, refreshHeader)
+        .then((e) => {
+            const accessTokenBuffer = e.data.accessToken;
+            const refreshTokenBuffer = e.data.refreshToken;
+            setLocalStorage(accessTokenBuffer, refreshTokenBuffer);
+            setContext(accessTokenBuffer, refreshTokenBuffer, actions);
+        })
 }
 
-export const setLocalStorage = (accessToken,refreshToken) => {
-    localStorage.setItem('accessToken',accessToken);
-    localStorage.setItem('refreshToken',refreshToken);
+export const setLocalStorage = (accessToken, refreshToken) => {
+    localStorage.setItem('accessToken', accessToken);
+    localStorage.setItem('refreshToken', refreshToken);
 };
 
-export const setContext = (accessToken,refreshToken,actions) => {
+export const setContext = (accessToken, refreshToken, actions) => {
     const { accessTokenChange, refreshTokenChange } = actions;
     accessTokenChange(accessToken);
     refreshTokenChange(refreshToken);
@@ -54,12 +54,12 @@ export const parseDate = (date) => {
 export const reparseDate = (parsedDate) => {
     const bufferDate = new Date(parsedDate);
     const year = bufferDate.getFullYear().toString();
-    let month = (bufferDate.getMonth()+1).toString();
+    let month = (bufferDate.getMonth() + 1).toString();
     let day = bufferDate.getDate().toString();
-    if(month.length < 2){
+    if (month.length < 2) {
         month = `0${month}`;
-    } 
-    if(day.length < 2){
+    }
+    if (day.length < 2) {
         day = `0${day}`;
     }
     return `${year}-${month}-${day}`;
@@ -69,7 +69,7 @@ export const isDateAllow = (date) => {
     const value = Object.values(date);
     let flag = true;
     value.map(e => {
-        if(e.length < 10){
+        if (e.length < 10) {
             flag = false;
         }
         return e;
@@ -77,23 +77,23 @@ export const isDateAllow = (date) => {
     return flag;
 }
 
-export const isDataAllow = (title,content,type,date) => {
-    if(title.length < 1){
+export const isDataAllow = (title, content, type, date) => {
+    if (title.length < 1) {
         return false;
-    } else if(content.length < 1){
+    } else if (content.length < 1) {
         return false;
-    } else if(type === -1){
+    } else if (type === -1) {
         return false;
-    } else if(!isDateAllow(date)){
+    } else if (!isDateAllow(date)) {
         return false;
     }
-     else {
+    else {
         return true;
     }
 }
 
 export const isFile = (obj) => {
-    if(obj.type){
+    if (obj.type) {
         return true;
     } else {
         return false;
@@ -102,40 +102,40 @@ export const isFile = (obj) => {
 
 export const isAllFile = (array) => {
     let flag = true;
-    array.map((e)=>{
+    array.map((e) => {
         isFile(e) ? flag = true : flag = false;
         return e;
     });
     return flag;
 }
 
-export const getUserInfo = (url,accessToken) => {
+export const getUserInfo = (url, accessToken) => {
     const header = {
         headers: {
             "Authorization": accessToken,
         }
     }
-    return new Promise((resolve,reject)=> {
-        axios.get(url,header)
-        .then((e)=> {
-            const userType = e.data.userType;
-            if(userType === 0){
-                resolve(false);
-            }
-            resolve(true);
-        })
-        .catch((e)=> {
-            reject(e);
-        })
+    return new Promise((resolve, reject) => {
+        axios.get(url, header)
+            .then((e) => {
+                const userType = e.data.userType;
+                if (userType === 0) {
+                    resolve(false);
+                }
+                resolve(true);
+            })
+            .catch((e) => {
+                reject(e);
+            })
     })
 }
 
 export const getIsExpiration = (err) => {
-    try{
+    try {
         const statusCode = err.response.status;
-        if(statusCode === 401 || statusCode === 410 || statusCode === 422){
+        if (statusCode === 401 || statusCode === 410 || statusCode === 422) {
             return true;
-        } else{
+        } else {
             return false;
         }
     } catch {
