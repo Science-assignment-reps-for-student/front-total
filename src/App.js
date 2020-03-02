@@ -57,21 +57,21 @@ const App = () => {
         }
     }, [chatMain]);
     const setSocket = useCallback(() => {
-        const socket = new SockJS("http://54.180.174.253:8888/chuckflap/socket");
+        const socket = new SockJS("https://api.dsm-scarfs.hs.kr/chuckflap/socket");
         const stomp = Stomp.over(socket);
         setStompState(stomp);
         stomp.connect(
             {}, {}, () => { },  // success 
             () => { },  // error
             () => {     // close
-                setSocket();
+                setTimeout(setSocket, 3000);
             }
         );
     }, []);
 
     useEffect(() => {
         if (isLogin || localStorage.getItem("accessToken") !== null) {
-            axios.get("http://54.180.174.253:8888/chuckflap/message", {
+            axios.get("https://api.dsm-scarfs.hs.kr/chuckflap/message", {
                 headers: {
                     Authorization: localStorage.getItem("accessToken")
                 }
