@@ -47,7 +47,7 @@ export const MainContent = styled.div`
             }
         }
         > .buttonWrapper {
-            width: 25%;
+            width: ${props => props.button ? 27 : 20}%;
             margin: 0;
             display: flex;
             justify-content: space-around;
@@ -131,6 +131,7 @@ export const MainClassCoutColoredBar = styled.div`
 
 export const MainListContent = styled.tr`
     background: "white";
+    font-size: 14px;
     height: ${props => props.isHeader ? 35 : 25}px;
     &:nth-child(odd){
         background-color: #F5F5F5;
@@ -193,7 +194,7 @@ export const MainClassCheckbox = styled.div`
 `
 
 export const MainFixButton = styled.button`
-    width: 100px;
+    width: 90px;
     height: 35px;
     font-weight: 600;
     font-size: 15px;

@@ -3,9 +3,10 @@ import { Header, BackgroundBlack } from '../public';
 import * as S from './style/HomeworkStyle';
 import { HomeworkNav, HomeworkButtonBar, HomeworkMain } from './component';
 import axios from 'axios';
-import { homeworkURL, refreshAccessTokenURL, getUserInfoURL } from '../resource/serverURL';
-import { refreshAccessToken, parseDate, reparseDate, isDataAllow, isAllFile, getUserInfo, getIsExpiration } from '../resource/publicFunction';
+import { homeworkURL, refreshAccessTokenURL, getUserInfoURL, socketURL } from '../resource/serverURL';
+import { refreshAccessToken, parseDate, reparseDate, isDataAllow, isAllFile, getUserInfo, getIsExpiration, getHasAlarm } from '../resource/publicFunction';
 import { withRouter, useParams } from 'react-router-dom';
+
 
 const Admin_Homework = ({ state, type, history, actions }) => {
     const { homeworkNum } = useParams();
@@ -67,6 +68,19 @@ const Admin_Homework = ({ state, type, history, actions }) => {
         fileChange,
         dateChange,
     };
+
+    useEffect(()=> {
+        const isAdmin = getUserInfo(getUserInfoURL,accessToken);
+        isAdmin
+        .then((userType)=> {
+            if(!userType){
+                history.push('/admin/Login');
+            }
+        })
+        .catch(()=> {
+            history.push('/admin/Login');
+        })
+    },[])
 
     const getReparseDateObject = (date1,date2,date3,date4) => {
         const dateBuffer = {
@@ -193,26 +207,13 @@ const Admin_Homework = ({ state, type, history, actions }) => {
         }
     },[type])
 
-    useEffect(()=> {
-        const isAdmin = getUserInfo(getUserInfoURL,accessToken);
-        isAdmin
-        .then((userType)=> {
-            if(!userType){
-                history.push('/admin/Login');
-            }
-        })
-        .catch(()=> {
-            history.push('/admin/Login');
-        })
-    },[])
-
     return (
         <BackgroundBlack>
-            <Header/>
+            <Header actions={actions} state={state}/>
             <S.HomeworkDiv>
                 <h1>{type === "Fix" ? "과제수정" : "과제생성"}</h1>
                 <HomeworkButtonBar setHomework={setHomework} patchHomework={patchHomework} deleteHomework={deleteHomework} type={type}/>
-                <div>
+                <div className="wrapper">
                     <HomeworkMain MainInfo={MainInfo} MainInfoChange={MainInfoChange}/>
                     <HomeworkNav NavInfo={NavInfo} NavInfoChange={NavInfoChange}/>
                 </div>

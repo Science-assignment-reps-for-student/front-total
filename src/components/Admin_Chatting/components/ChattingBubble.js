@@ -2,9 +2,9 @@ import React from 'react';
 import { isDayOver } from '../../resource/publicFunction';
 import * as S from '../style/ChattingStyle';
 
-const ChattingBubble = ({ messageType, count, message, userData, messageTime }) => {
+const ChattingBubble = ({ messageType, message, userData, messageTime }) => {
     return (
-        <S.ChattingTalk type={messageType} key={count}>
+        <S.ChattingTalk type={messageType}>
             <div>
                 {messageType ? "" : userData.userName}
                 <S.ChattingBubble type={messageType}>{message}</S.ChattingBubble>

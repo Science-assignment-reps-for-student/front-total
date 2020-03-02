@@ -108,7 +108,7 @@ const MainContent = ({ checked, title, classData, type, contentId, history, file
     }
 
     return (
-        <S.MainContent>
+        <S.MainContent button={type !== 0}>
             <div className="wrapper">
                 <h2>{getTitle(type,title)}</h2>
                 <div className="buttonWrapper">

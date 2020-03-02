@@ -76,6 +76,14 @@ export const HeaderButton = styled.div`
     > p {
         transform: translateY(8px);
     }
+    > .check {
+        width: 10px;
+        height: 10px;
+        border-radius: 5px;
+        background-color: #FF5700;
+        position: absolute;
+        transform: translate(32px,-10px);
+    }
 `
 
 export const HeaderButtonUnderLine = styled.div`

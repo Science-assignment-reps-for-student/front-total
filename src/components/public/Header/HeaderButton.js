@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 import { withRouter } from 'react-router-dom'
 import * as S from '../style/PublicStyle'
 
-const HeaderButton = ({ children, page, history, actions }) => {
+const HeaderButton = ({ children, page, history, actions, isCheck }) => {
 
     const [isHover,hoverChange] = useState(false);
     const { refreshTokenChange, accessTokenChange } = actions;
@@ -36,6 +36,7 @@ const HeaderButton = ({ children, page, history, actions }) => {
         <S.HeaderButton onMouseEnter={mouseEnter} onMouseLeave={mouseLeave} onClick={movePage}>
             <p>{children}</p>
             <S.HeaderButtonUnderLine hover={isHover}/>
+            {isCheck ? <div className="check"/> : ""}
         </S.HeaderButton>
     )
 }
