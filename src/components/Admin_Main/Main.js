@@ -43,6 +43,7 @@ const AdminMain = ({ state, actions, history }) => {
 
     const [ count, countChange ] = useState(5)
 
+
     const { accessToken, refreshToken } = state;
     
     const header = {
@@ -288,7 +289,7 @@ const AdminMain = ({ state, actions, history }) => {
 
     return (
         <>
-            <Header/>
+            <Header actions={actions} state={state}/>
             <BackgroundWhite>
                 <S.MainDiv onScroll={handleScroll}>
                     <div>

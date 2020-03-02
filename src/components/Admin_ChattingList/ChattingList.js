@@ -4,13 +4,14 @@ import { Header } from '../public/Header';
 import { BackgroundWhite } from '../public/Background';
 import { ListComponent } from './components';
 import axios from 'axios';
-import { messageURL, refreshAccessTokenURL } from '../resource/serverURL';
-import { isDayOver, getIsExpiration, refreshAccessToken } from '../resource/publicFunction';
+import { messageURL, refreshAccessTokenURL, getUserInfoURL } from '../resource/serverURL';
+import { isDayOver, getIsExpiration, refreshAccessToken, getUserInfo } from '../resource/publicFunction';
+import { withRouter } from 'react-router-dom'; 
 
-const ChattingList = ({ actions, state }) => {
+const ChattingList = ({ actions, state, history }) => {
     const { accessToken, refreshToken } = state;
     const [messageList, listChange] = useState([]);
-    const [page, pageChange] = useState(0)
+    const [page, pageChange] = useState(0);
     const header = {
         headers: {
             "Authorization": accessToken,
@@ -18,15 +19,26 @@ const ChattingList = ({ actions, state }) => {
     };
 
     useEffect(()=> {
-        axios.get(messageURL,header)
-        .then((e)=> {
-            const list = e.data;
-            listChange(list);
+        const isAdmin = getUserInfo(getUserInfoURL,accessToken);
+        isAdmin
+        .then((userType)=> {
+            if(!userType){
+                history.push('/admin/Login');
+            } else {
+                axios.get(messageURL,header)
+                .then((e)=> {
+                    const list = e.data;
+                    listChange(list);
+                })
+                .catch((e)=> {
+                    getIsExpiration(e) 
+                    ? refreshAccessToken(refreshToken,actions,refreshAccessTokenURL) 
+                    : alert("네트워크를 확인해 주세요.");
+                })
+            }
         })
         .catch((e)=> {
-            getIsExpiration(e) 
-            ? refreshAccessToken(refreshToken,actions,refreshAccessTokenURL) 
-            : alert("네트워크를 확인해 주세요.");
+            history.push('/admin/Login');
         })
     },[]);
 
@@ -60,14 +72,13 @@ const ChattingList = ({ actions, state }) => {
 
     return (
         <>
-            <Header/>
+            <Header actions={actions} state={state}/>
             <BackgroundWhite img={true}/>
             <S.ChattingListBackground>
                 <h2>Q&A</h2>
                 <hr/>
                 <div className="wrapper">
                     <S.ChattingListBody>
-                        <h1>Q&A</h1>
                         <div>
                             <ListComponent name="이름" number="학번" date="최근 날짜" text="최근 대화" isHeader={true}/>
                             {messageList.length >= 1 ? setMessageList() : "" }
@@ -82,4 +93,4 @@ const ChattingList = ({ actions, state }) => {
     )
 }
 
-export default ChattingList;
+export default withRouter(ChattingList);

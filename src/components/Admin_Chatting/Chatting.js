@@ -6,11 +6,14 @@ import { Stomp } from '@stomp/stompjs';
 import SockJS from 'sockjs-client';
 import axios from 'axios';
 import { messageURL, socketURL, refreshAccessTokenURL, getUserInfoURL } from '../resource/serverURL';
-import { isDayOver, getIsExpiration, refreshAccessToken } from '../resource/publicFunction';
+import { getIsExpiration, refreshAccessToken, getUserInfo } from '../resource/publicFunction';
 import { useParams } from 'react-router-dom';
-import { ChattingBubble } from './components'
+import { ChattingBubble } from './components';
+import { withRouter } from 'react-router-dom'
 
-const Chatting = ({ state, actions }) => {
+let isOut = false;
+
+const Chatting = ({ state, actions, history }) => {
     
     const { accessToken, refreshToken }  = state;
     const header = {
@@ -21,6 +24,7 @@ const Chatting = ({ state, actions }) => {
     const { userId } = useParams();
     const [inputValue, valueChange] = useState("");
     const [stomp, stompChange] = useState();
+    const [socket, socketChange] = useState();
     const [message, messageChange] = useState([]);
     const [buffer, bufferChange] = useState();
     const [isLoaded, loadChange] = useState(false);
@@ -29,37 +33,76 @@ const Chatting = ({ state, actions }) => {
 
     
     useEffect(()=> {
-        getUserInfo()
-        .then(()=> {
-            getChatting()
-            .then((e)=> {   
-                setSocketConnect(e);
+        isOut = false;
+        const isAdmin = getUserInfo(getUserInfoURL,accessToken);
+        isAdmin
+        .then((userType)=> {
+            getUserData()
+            .then(()=> {
+                if(!userType){
+                    history.push('/admin/Login');
+                } else {
+                    getChatting()
+                    .then((e)=> {   
+                        return setSocketConnect(e);
+                    })
+                    .catch(()=> {
+                        history.push('/admin/Login');
+                    })
+                }
             })
         })
+        .catch(()=> {
+            history.push('/admin/Login');
+        })
     },[]);
-
     useEffect(()=> {
         if(buffer){
             messageChange([...message,buffer]);
         }
     },[buffer]);
-
     useEffect(()=> {
         if(message.length > 0){
             endPoint.current.scrollIntoView();
         }
     },[message]);
-
+    useEffect(()=> {
+        if(socket){
+            return ()=> {
+                isOut = true;
+                socket.close();
+            }
+        }
+    },[socket])
+    useEffect(()=> {
+        if(stomp){
+            return ()=> {
+                isOut = true;
+                stomp.disconnect();
+            }
+        }
+    },[stomp])
     const setSocketConnect = (e) => {
         const socket = new SockJS(socketURL);
         const stomp = Stomp.over(socket);
         stompChange(stomp);
+        socketChange(socket);
         const messageBuffer = e.data;
         messageChange(messageBuffer);
-        stomp.connect({},()=> {
-            getSubscribe(stomp);
-            loadChange(true);
-        });
+        stomp.connect(
+            {},
+            {},
+            ()=> {
+                getSubscribe(stomp);
+                loadChange(true);
+            },
+            ()=> {},//error
+            ()=> {//close
+                if(!isOut){
+                    setSocketConnect(e);
+                }
+            }
+        );
     }
 
     const getChatting = () => new Promise((resolve,reject)=> {
@@ -72,15 +115,6 @@ const Chatting = ({ state, actions }) => {
             ? refreshAccessToken(refreshToken,actions,refreshAccessTokenURL) 
             : alert("네트워크를 확인해 주세요.");
             reject(e);
-        })
-    })
-
-    const getUserInfo = () => new Promise((resolve,reject) => {
-        axios.get(`${getUserInfoURL}/${userId}`, header)
-        .then((e)=> {
-            const data = e.data;
-            userDataChange(data);
-            resolve(data);
         })
     })
 
@@ -109,13 +143,22 @@ const Chatting = ({ state, actions }) => {
         message.map((data)=> {
             const { messageType, messageTime, message } = data;
             buffer.push(
-                <ChattingBubble messageType={messageType} count={count} message={message} userData={userData} messageTime={messageTime}/>
+                <ChattingBubble messageType={messageType} message={message} userData={userData} messageTime={messageTime} key={count}/>
             );
             count++;
             return data;
         })
         return buffer;
     }
+
+    const getUserData = () => new Promise((resolve,reject)=> {
+        axios.get(`${getUserInfoURL}/${userId}`,header)
+        .then((e)=> {
+            const userData = e.data;
+            userDataChange(userData);
+            resolve(userData);
+        })
+    })
 
     const sendMessage = () => {
         if(inputValue.length <= 0 || !isLoaded){
@@ -144,7 +187,7 @@ const Chatting = ({ state, actions }) => {
 
     return (
         <>
-            <Header/>
+            <Header state={state} actions={actions} isHeader={true}/>
             <S.ChattingMain>
                 <S.ChattingSubHeader>{userData ? `${userData.userNumber} ${userData.userName}` : "로딩중..."}</S.ChattingSubHeader>
                 <div className="wrapper">
@@ -155,7 +198,7 @@ const Chatting = ({ state, actions }) => {
                 </div>
                 <S.ChattingType>
                     <S.ChattingTypeInput>
-                        <input type="text" value={inputValue} onChange={enterHandler} onKeyPress={keyPressHandler}/>
+                        <input type="text" value={inputValue} onChange={enterHandler} onKeyPress={keyPressHandler} autoFocus/>
                         <img src={enter} alt="enter" onClick={sendMessage}/>
                     </S.ChattingTypeInput>
                 </S.ChattingType>
@@ -164,4 +207,4 @@ const Chatting = ({ state, actions }) => {
     )
 }
 
-export default Chatting;
+export default withRouter(Chatting);

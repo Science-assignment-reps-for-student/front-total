@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { messageURL } from './serverURL';
 
 export const refreshAccessToken = (refreshToken, actions, refreshAccessTokenURL) => {
     const refreshHeader = {
@@ -153,3 +154,20 @@ export const getAccessTokenUsingRefresh = (state, actions) => {
         actions.refreshTokenChange(e.data.refreshToken);
     })
 };
+
+
+export const getHasAlarm = (header) => 
+new Promise((resolve,reject) => {
+    axios.get(messageURL,header)
+    .then((e)=> { 
+        const data = e.data;
+        if(data[0].show){
+            resolve(false);
+        } else {
+            resolve(true);
+        }
+    })
+    .catch((e)=> {
+        reject(e);
+    })
+});

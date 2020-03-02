@@ -1,6 +1,6 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import * as S from '../style/ChattingListStyle';
-import { withRouter } from 'react-router-dom'
+import { withRouter } from 'react-router-dom';
 
 const ListComponent = ({ number, text, name, date, isNew, isHeader, userId, history }) => {
 

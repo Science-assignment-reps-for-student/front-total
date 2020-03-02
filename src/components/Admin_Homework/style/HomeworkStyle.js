@@ -15,6 +15,9 @@ export const HomeworkDiv = styled.div`
         display: flex;
         width: 100%;
     }
+    > .wrapper {
+        height: 90%;
+    }
 `
 
 export const HomeworkButtonDiv = styled.div`
@@ -149,6 +152,7 @@ export const HomeworkFile = styled.div`
     display: flex;
     flex-wrap: wrap;
     align-items: center;
+    justify-content: center;
     border: 1px solid #E1E1E1;
     overflow-y: scroll;
     font-size: 13px;
@@ -189,7 +193,7 @@ export const HomeworkFile = styled.div`
 
 export const HomeworkExplain = styled.textarea`
     width: 100%;
-    height: 451px;
+    height: 70%;
     border: 1px solid #858585;
     resize: none;
     padding: 10px;

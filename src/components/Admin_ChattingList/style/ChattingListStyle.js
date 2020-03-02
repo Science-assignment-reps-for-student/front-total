@@ -7,23 +7,22 @@ export const ChattingListBackground = styled.div`
     box-sizing: border-box;
     > h2 {
         margin: 5px 0px 25px 0px;
+        font-size: 30px;
     }
     > .wrapper {
         display: flex;
         justify-content: center;
         align-items: center;
         width: 100%;
-        height: 80%;
+        height: 90%;
     }
 `
 
 export const ChattingListBody = styled.div`
-    width: 1010px;
-    height: 600px;
-    > h1 {
-        margin-bottom: 20px;
-    }
+    width: 65%;
+    height: 100%;
     > div { 
+        margin: 20px;
         width: 100%;
         height: 90%;
         border: 1px solid #858585;
@@ -55,6 +54,9 @@ export const ChattingListComponent = styled.div`
     }
     > .text {
         width: 40%;
+        text-overflow: ellipsis;
+        overflow: hidden;
+        white-space: nowrap;
     }
 `
 
