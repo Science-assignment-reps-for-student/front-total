@@ -7,15 +7,30 @@ const QnA = styled.main`
         height: 100%;
         display: flex;
         flex-direction: column;
+        > div {
+            width: 100%;
+            height: 45px;
+            background-color: #ff3030;
+            position: absolute;
+            top: 130px;
+            left: 0;
+            z-index: 1;
+            transition: 0.7s;
+            text-align: center;
+            line-height: 45px;
+            color: #FFF;
+        }
+        > div.connected {
+            transform: translate(0, -50px);
+        }
+        > div.disConnected {
+            transform: translate(0, 0);
+        }
         > header {
             padding: 16px 32px;
             box-shadow: 0px 3px 3px rgba(0, 0, 0, 0.2);
-            > span {
-                display: inline-block;
-                margin-right: 8px;
-                font-size: 16px;
-                color: red;
-            }
+            background-color: white;
+            z-index: 1;
             > h1 {
                 display: inline-block;
                 font-size: 14px;

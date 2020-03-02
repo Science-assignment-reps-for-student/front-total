@@ -100,8 +100,8 @@ const QnA = ({ state, actions, my, stompState, usableSocket, chatMain, scrollBuf
             <Header />
             <Styled.QnA>
                 <div>
+                    <div className={usableSocket ? "connected" : "disConnected"}>채팅 서버와 연결되지 않았습니다</div>
                     <header>
-                        {!usableSocket && <span>현재 채팅방에 접속할 수 없습니다. 잠시만 기다려주십시오.</span>}
                         <h1>과학 선생님</h1>
                     </header>
                     <section>
