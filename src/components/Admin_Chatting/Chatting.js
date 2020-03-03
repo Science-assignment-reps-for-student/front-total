@@ -29,6 +29,7 @@ const Chatting = ({ state, actions, history }) => {
     const [buffer, bufferChange] = useState();
     const [isLoaded, loadChange] = useState(false);
     const [userData, userDataChange] = useState();
+    const [isError, errorChange] = useState(false);
     const endPoint = useRef();
 
     
@@ -43,8 +44,10 @@ const Chatting = ({ state, actions, history }) => {
                     history.push('/admin/Login');
                 } else {
                     getChatting()
-                    .then((e)=> {   
-                        return setSocketConnect(e);
+                    .then((e)=> {    
+                    const data =  e.data
+                    messageChange(data);
+                        return setSocketConnect(data);
                     })
                     .catch(()=> {
                         history.push('/admin/Login');
@@ -82,13 +85,12 @@ const Chatting = ({ state, actions, history }) => {
             }
         }
     },[stomp])
+
     const setSocketConnect = (e) => {
         const socket = new SockJS(socketURL);
         const stomp = Stomp.over(socket);
         stompChange(stomp);
         socketChange(socket);
-        const messageBuffer = e.data;
-        messageChange(messageBuffer);
         stomp.connect(
             {},
             {},
@@ -96,7 +98,9 @@ const Chatting = ({ state, actions, history }) => {
                 getSubscribe(stomp);
                 loadChange(true);
             },
-            ()=> {},//error
+            (e)=> {
+                console.log(e);
+            },//error
             ()=> {//close
                 if(!isOut){
                     setSocketConnect(e);
@@ -188,8 +192,9 @@ const Chatting = ({ state, actions, history }) => {
     return (
         <>
             <Header state={state} actions={actions} isHeader={true}/>
-            <S.ChattingMain>
+            <S.ChattingMain error={isError}>
                 <S.ChattingSubHeader>{userData ? `${userData.userNumber} ${userData.userName}` : "로딩중..."}</S.ChattingSubHeader>
+                <div className="error">채팅 서버와 연결되지 않았습니다</div>
                 <div className="wrapper">
                     <div>
                         {setMessage()}

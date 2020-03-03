@@ -36,7 +36,6 @@ export const ChattingListComponent = styled.div`
     border-bottom: 1px solid #858585;
     box-sizing: border-box;
     display: flex;
-    justify-content: center;
     align-items: center;
     cursor: pointer;
     font-weight: ${props => props.isHeader ? "600" : ""};
@@ -50,7 +49,7 @@ export const ChattingListComponent = styled.div`
         background-color: #FF5700;
         border-radius: 9px;
         position: absolute;
-        transform: translate(-505px);
+        transform: translateX(-8px);
     }
     > .text {
         width: 40%;

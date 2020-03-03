@@ -12,6 +12,18 @@ export const ChattingMain = styled.div`
             overflow-y: hidden;
         }
     }
+    > .error {
+        width: 100%;
+        height: 45px;
+        background-color: #ff3030;
+        position: absolute;
+        left: 0;
+        transition: 0.7s;
+        text-align: center;
+        line-height: 45px;
+        color: #FFF;
+        transform: ${props => props.error ? "translate(0px, 0px)" : "translate(0px, -45px)"};
+    }
 `
 
 export const ChattingSubHeader = styled.div`
@@ -24,6 +36,9 @@ export const ChattingSubHeader = styled.div`
     padding-left: 30px;
     box-shadow: 0 2px 2px -2px gray;
     box-sizing: border-box;
+    z-index: 100;
+    position: relative;
+    background-color: white;
 `
 
 export const ChattingBubble = styled.div`

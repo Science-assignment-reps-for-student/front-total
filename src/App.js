@@ -1,6 +1,6 @@
 import React, { useState, useCallback, useEffect, useRef } from 'react'
 import { Route, Switch, withRouter, useHistory } from 'react-router-dom';
-import { PeerEvaluation, Task, TaskGuide, AdminLogin, Homework, AdminMain, Main, QnA } from './components';
+import { PeerEvaluation, Task, TaskGuide, AdminLogin, Homework, AdminMain, Main, QnA, AdminChatting, ChattingList } from './components';
 import { AuthConsumer, AuthProvider } from './context/Auth';
 import { TaskProvider, TaskConsumer } from './context/AppContext';
 import { AccessTokenProvider, AccessTokenConsumer } from './context/AccessTokenContext';
@@ -17,7 +17,7 @@ const App = () => {
     const [isLogin, setIsLogin] = useState(false);
     const [homeworkData, setHomeworkData] = useState({});
     const [stompState, setStompState] = useState(undefined);
-    const [usableSocket, SetUsableSocket] = useState(false);
+    const [usableSocket, SetUsableSocket] = useState(false);    
     const [buffer, setBuffer] = useState({
         chat: {},
         scroll: 0
@@ -76,7 +76,6 @@ const App = () => {
                     Authorization: localStorage.getItem("accessToken")
                 }
             }).then(e => {
-                console.log(e);
                 getUserInfo("https://api.dsm-scarfs.hs.kr/chuckflap", localStorage.getItem("accessToken"))
                     .then(e => {
                         setMy(e.data);
@@ -179,6 +178,8 @@ const App = () => {
                                                             <Route path="/admin/make" render={() => <Homework state={state} actions={actions} type="Make" />} />
                                                             <Route path="/admin/revise/:homeworkNum" render={() => <Homework state={state} actions={actions} type="Fix" />} />
                                                             <Route exact path="/Admin" render={() => <AdminMain state={state} actions={actions} />} />
+                                                            <Route path="/Admin/ChattingList" render={()=> <ChattingList state={state} actions={actions}/>}/>
+                                                            <Route path="/Admin/Chatting/:userId" render={()=> <AdminChatting state={state} actions={actions}/>}/>
                                                         </>
                                                     );
                                                 }
