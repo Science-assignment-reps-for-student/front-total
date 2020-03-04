@@ -2,69 +2,8 @@ import React, { useState, useEffect } from 'react';
 import * as S from '../style/PublicStyle';
 import HeaderButton from './HeaderButton';
 import { AccessTokenConsumer } from '../../../context/AccessTokenContext';
-import SockJS from 'sockjs-client';
-import { Stomp } from '@stomp/stompjs';
-import { socketURL } from '../../resource/serverURL';
-import { getHasAlarm } from '../../resource/publicFunction';
 
-const Header = ({ state, actions, isHeader }) => {
-
-    const [socket, socketChange] = useState();
-    const [stomp, stompChange] = useState();
-    const [isAlarm, alarmChange] = useState(false);
-    const [isOut, outChange] = useState(false);
-    const [isCheck, checkChange] = useState(false);
-    const { accessToken, refreshToken } = state;
-
-    const header = {
-        headers: {
-            "Authorization": accessToken,
-        }
-    }
-
-
-    useEffect(()=> {
-        if(!isHeader){
-            getHasAlarm(header)
-            .then((e)=> {
-                getNotificationPermission();
-                checkChange(e);
-                setSocket();
-            })
-            .catch(()=> {
-    
-            })
-        }
-    },[])
-
-    useEffect(()=> {
-        if(socket){
-            return () => {
-                outChange(true);
-            };
-        }
-    },[socket,stomp])
-
-    useEffect(()=> {
-        if(isOut){
-            socket.close();
-            stomp.disconnect();
-        }
-    },[isOut])
-
-    useEffect(()=> {
-        if(isAlarm){
-            const { userName, message } = isAlarm;
-            const alarm = new Notification(userName, {body: message});
-            checkChange(true);
-            alarm.show = () => {
-                setTimeout(alarm.close, 5000);
-            }
-            alarm.click = () => {
-                alarm.close();
-            }
-        }
-    },[isAlarm])
+const Header = ({ state, actions, isCheck }) => {
 
     const getNotificationPermission = () => {
         if (!("Notification" in window)) {
@@ -75,36 +14,6 @@ const Header = ({ state, actions, isHeader }) => {
                 alert('알림을 차단하셨습니다.\n브라우저의 사이트 설정에서 변경하실 수 있습니다.');
                 return false;
             }
-        });
-    }
-
-    const setSocket = () => {
-        const socket = new SockJS(socketURL);
-        const stomp = Stomp.over(socket);
-        stompChange(stomp);
-        socketChange(socket);
-        stomp.connect(
-            {},
-            {},
-            ()=> {// success
-                getSubscribe(stomp);
-            },
-            ()=> {},//error
-            ()=> {//close
-                setTimeout(()=> {
-                    if(!isOut){
-                        setSocket();
-                    }
-                },5000);
-            }
-        );
-    }
-
-    const getSubscribe = (stomp) => {
-        return stomp.subscribe(`/receive/admin`, function(msg) {
-            const data = msg.body;
-            const parsedData = JSON.parse(data);
-            alarmChange(parsedData);
         });
     }
 

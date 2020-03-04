@@ -29,7 +29,7 @@ const Chatting = ({ state, actions, history }) => {
     const [buffer, bufferChange] = useState();
     const [isLoaded, loadChange] = useState(false);
     const [userData, userDataChange] = useState();
-    const [isError, errorChange] = useState(false);
+    const [isError, errorChange] = useState(true);
     const endPoint = useRef();
 
     
@@ -45,9 +45,9 @@ const Chatting = ({ state, actions, history }) => {
                 } else {
                     getChatting()
                     .then((e)=> {    
-                    const data =  e.data
-                    messageChange(data);
-                        return setSocketConnect(data);
+                        const data =  e.data
+                        messageChange(data);
+                        setSocketConnect(data);
                     })
                     .catch(()=> {
                         history.push('/admin/Login');
@@ -86,7 +86,7 @@ const Chatting = ({ state, actions, history }) => {
         }
     },[stomp])
 
-    const setSocketConnect = (e) => {
+    const setSocketConnect = () => {
         const socket = new SockJS(socketURL);
         const stomp = Stomp.over(socket);
         stompChange(stomp);
@@ -96,14 +96,15 @@ const Chatting = ({ state, actions, history }) => {
             {},
             ()=> {
                 getSubscribe(stomp);
+                errorChange(false);
                 loadChange(true);
             },
-            (e)=> {
-                console.log(e);
+            ()=> {
+                console.log("error");
             },//error
             ()=> {//close
                 if(!isOut){
-                    setSocketConnect(e);
+                    setTimeout(setSocketConnect(),5000);
                 }
             }
         );
@@ -123,7 +124,7 @@ const Chatting = ({ state, actions, history }) => {
     })
 
     const getSubscribe = (stomp) => {
-        return stomp.subscribe(`/receive/${userId}`, function(msg) {
+        stomp.subscribe(`/receive/${userId}`, function(msg) {
             const data = msg.body;
             const parsedData = JSON.parse(data);
             const messageId = parsedData.messageId;
