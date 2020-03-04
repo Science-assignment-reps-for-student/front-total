@@ -3,16 +3,33 @@ import * as Styled from './Styled';
 import { getAccessTokenUsingRefresh } from '../resource/publicFunction';
 import send from './img/send.png';
 import axios from 'axios';
+import { Stomp } from '@stomp/stompjs';
+import SockJS from 'sockjs-client';
 import { Header } from '../Header';
 import { useHistory } from 'react-router-dom';
 
-const QnA = ({ state, actions, my, stompState, usableSocket, chatMain, scrollBufChange, buffer }) => {
+const QnA = ({ state, actions, isLogin, getUserInfo }) => {
     const history = useHistory();
     const { limServer, accessToken } = state;
     const chatInput = useRef(null);
+    const chatMain = useRef(null);
     const [chat, setChat] = useState("");
+    const [isOut, setIsOut] = useState(false);
+    const [ableSocket, setAbleSocket] = useState(false);
+    const [stompState, setStompState] = useState(undefined);
+    const [socketState, setSocketState] = useState(undefined);
     const [chatList, setChatList] = useState([]);
+    const [my, setMy] = useState({});
+    const [buffer, setBuffer] = useState({
+        chat: {},
+        scroll: 0
+    });
 
+    const scrollBufChange = useCallback(() => {
+        if (chatMain.current !== null) {
+            setBuffer({ ...buffer, scroll: chatMain.current.scrollHeight });
+        }
+    }, [chatMain]);
     const pad = useCallback((n, width = 2) => {
         n = n + "";
         return n.length >= width ? n : new Array(width - n.length + 1).join('0') + n;
@@ -76,13 +93,54 @@ const QnA = ({ state, actions, my, stompState, usableSocket, chatMain, scrollBuf
         stompState.send(`/send/${my.userId}`, {}, stringedData);
         chatInput.current.focus();
     }, [state, stompState, my]);
+    const setSocket = useCallback(() => {
+        const socket = new SockJS("http://54.180.174.253:8888/chuckflap/socket");
+        const stomp = Stomp.over(socket);
+        setStompState(stomp);
+        setSocketState(socket);
+        stomp.connect(
+            {}, {}, 
+            () => { },  // success 
+            () => { },  // error
+            () => {     // close
+                if (!isOut) {
+                    setTimeout(setSocket, 5000);
+                }
+            }
+        );
+    }, []);
 
     useEffect(() => {
         if (accessToken === null) {
             alert("로그인 후 이용해주세요.");
             history.push("/");
         }
+        return () => {
+            setIsOut(true);
+        }
     }, []);
+    useEffect(() => {
+        if (isLogin) {
+            axios.get(`${limServer}/message`, {
+                headers: {
+                    Authorization: localStorage.getItem("accessToken")
+                }
+            }).then(e => {
+                // console.log(e);
+                getUserInfo(limServer, localStorage.getItem("accessToken"))
+                    .then(e => {
+                        setMy(e.data);
+                    })
+                setSocket();
+            }).catch(err => {
+                const code = err.response.status;
+                if (code == 403) {
+                    alert("로그인을 해주시길 바랍니다.");
+                    history.push("/");
+                }
+            })
+        }
+    }, [isLogin]);
     useEffect(() => {
         getAllChatRequest();
     }, [my]);
@@ -94,13 +152,38 @@ const QnA = ({ state, actions, my, stompState, usableSocket, chatMain, scrollBuf
     useEffect(() => {
         setMainScroll();
     }, [chatList]);
+    useEffect(() => {
+        if (stompState && my.userId) {
+            stompState.onConnect = () => {
+                setAbleSocket(true);
+                stompState.subscribe(`/receive/${my.userId}`, (msg) => {
+                    setBuffer({ ...buffer, chat: JSON.parse(msg.body) });
+                    scrollBufChange();
+                });
+            }
+        }
+    }, [stompState, my]);
+    useEffect(() => {
+        if (socketState) {
+            return () => {
+                socketState.close();
+            }
+        }
+    }, [socketState]);
+    useEffect(() => {
+        if (stompState) {
+            return () => {
+                stompState.disconnect()
+            }
+        }
+    }, [stompState])
 
     return (
         <>
             <Header />
             <Styled.QnA>
                 <div>
-                    <div className={usableSocket ? "connected" : "disConnected"}>채팅 서버와 연결되지 않았습니다</div>
+                    <div className={ableSocket ? "connected" : "disConnected"}>채팅 서버와 연결되지 않았습니다</div>
                     <header>
                         <h1>과학 선생님</h1>
                     </header>
@@ -115,7 +198,7 @@ const QnA = ({ state, actions, my, stompState, usableSocket, chatMain, scrollBuf
                                         type="text"
                                         onChange={onChangeChat}
                                         onKeyUp={(e) => {
-                                            if (e.keyCode === 13 && usableSocket) {
+                                            if (e.keyCode === 13 && ableSocket) {
                                                 sendMessage(chat);
                                                 setChat("");
                                             }
@@ -129,7 +212,7 @@ const QnA = ({ state, actions, my, stompState, usableSocket, chatMain, scrollBuf
                                     <img
                                         src={send}
                                         onClick={() => {
-                                            if (usableSocket) {
+                                            if (ableSocket) {
                                                 sendMessage(chat);
                                                 setChat("");
                                             }
