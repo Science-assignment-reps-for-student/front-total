@@ -15,7 +15,7 @@ import logoutButton from './img/logOutButton.png';
 import signUpButton from './img/signUpButton.png';
 
 const Main = ({ state, actions, taskActions, taskState, setHomeworkDataInState, setIsLogin }) => {
-    console.log(4);
+    console.log(5);
     const scrollButon = useRef();
     const pageBackground = useRef();
     const homeWorkStateBlock = useRef();

@@ -22,9 +22,11 @@ const QnA = styled.main`
         }
         > div.connected {
             transform: translate(0, -50px);
+            opacity: 0;
         }
         > div.disConnected {
             transform: translate(0, 0);
+            opacity: 1;
         }
         > header {
             padding: 16px 32px;

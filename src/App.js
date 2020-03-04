@@ -5,23 +5,22 @@ import { AuthConsumer, AuthProvider } from './context/Auth';
 import { TaskProvider, TaskConsumer } from './context/AppContext';
 import { AccessTokenProvider, AccessTokenConsumer } from './context/AccessTokenContext';
 import Global from './styled';
-import { Stomp } from '@stomp/stompjs';
-import SockJS from 'sockjs-client';
 import axios from 'axios';
 
 const App = () => {
     const history = useHistory();
-    const chatMain = useRef(null);
-    const [my, setMy] = useState({});
     const [members, setMembers] = useState({});
     const [isLogin, setIsLogin] = useState(false);
     const [homeworkData, setHomeworkData] = useState({});
+<<<<<<< Updated upstream
     const [stompState, setStompState] = useState(undefined);
     const [usableSocket, SetUsableSocket] = useState(false);    
     const [buffer, setBuffer] = useState({
         chat: {},
         scroll: 0
     });
+=======
+>>>>>>> Stashed changes
 
     const setHomework = useCallback((data) => { setHomeworkData(data) }, []);
     const setHomeworkDataInState = useCallback((wooServer, accessToken, homeworkId) => {
@@ -51,25 +50,9 @@ const App = () => {
             }
         })
     }, []);
-    const scrollBufChange = useCallback(() => {
-        if (chatMain.current !== null) {
-            setBuffer({ ...buffer, scroll: chatMain.current.scrollHeight });
-        }
-    }, [chatMain]);
-    const setSocket = useCallback(() => {
-        const socket = new SockJS("https://api.dsm-scarfs.hs.kr/chuckflap/socket");
-        const stomp = Stomp.over(socket);
-        setStompState(stomp);
-        stomp.connect(
-            {}, {}, () => { },  // success 
-            () => { },  // error
-            () => {     // close
-                setTimeout(setSocket, 3000);
-            }
-        );
-    }, []);
 
     useEffect(() => {
+<<<<<<< Updated upstream
         if (isLogin || localStorage.getItem("accessToken") !== null) {
             axios.get("https://api.dsm-scarfs.hs.kr/chuckflap/message", {
                 headers: {
@@ -99,8 +82,12 @@ const App = () => {
                     scrollBufChange();
                 });
             }
+=======
+        if (localStorage.getItem("accessToken")) {
+            setIsLogin(true);
+>>>>>>> Stashed changes
         }
-    }, [stompState, my]);
+    }, []);
 
     return (
         <Switch>
@@ -115,14 +102,10 @@ const App = () => {
                                         path="/qna"
                                         render={() =>
                                             <QnA
-                                                my={my}
-                                                buffer={buffer}
                                                 state={taskState}
-                                                chatMain={chatMain}
+                                                isLogin={isLogin}
                                                 actions={taskActions}
-                                                stompState={stompState}
-                                                usableSocket={usableSocket}
-                                                scrollBufChange={scrollBufChange}
+                                                getUserInfo={getUserInfo}
                                             />
                                         }
                                     />
@@ -189,7 +172,20 @@ const App = () => {
                                     <AuthProvider>
                                         <AuthConsumer>
                                             {
-                                                ({ state, actions }) => <Route exact path="/" render={() => <Main state={state} actions={actions} taskActions={taskActions} taskState={taskState} setHomeworkDataInState={setHomeworkDataInState} setIsLogin={setIsLogin} />} />
+                                                ({ state, actions }) =>
+                                                    <Route
+                                                        exact
+                                                        path="/"
+                                                        render={() =>
+                                                            <Main
+                                                                state={state}
+                                                                actions={actions}
+                                                                taskActions={taskActions}
+                                                                taskState={taskState}
+                                                                setHomeworkDataInState={setHomeworkDataInState}
+                                                                setIsLogin={setIsLogin}
+                                                            />}
+                                                    />
                                             }
                                         </AuthConsumer>
                                     </AuthProvider>
