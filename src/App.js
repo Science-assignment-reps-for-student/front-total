@@ -12,15 +12,6 @@ const App = () => {
     const [members, setMembers] = useState({});
     const [isLogin, setIsLogin] = useState(false);
     const [homeworkData, setHomeworkData] = useState({});
-<<<<<<< Updated upstream
-    const [stompState, setStompState] = useState(undefined);
-    const [usableSocket, SetUsableSocket] = useState(false);    
-    const [buffer, setBuffer] = useState({
-        chat: {},
-        scroll: 0
-    });
-=======
->>>>>>> Stashed changes
 
     const setHomework = useCallback((data) => { setHomeworkData(data) }, []);
     const setHomeworkDataInState = useCallback((wooServer, accessToken, homeworkId) => {
@@ -52,40 +43,8 @@ const App = () => {
     }, []);
 
     useEffect(() => {
-<<<<<<< Updated upstream
-        if (isLogin || localStorage.getItem("accessToken") !== null) {
-            axios.get("https://api.dsm-scarfs.hs.kr/chuckflap/message", {
-                headers: {
-                    Authorization: localStorage.getItem("accessToken")
-                }
-            }).then(e => {
-                getUserInfo("https://api.dsm-scarfs.hs.kr/chuckflap", localStorage.getItem("accessToken"))
-                    .then(e => {
-                        setMy(e.data);
-                    })
-                setSocket();
-            }).catch(err => {
-                const code = err.response.status;
-                if (code == 403) {
-                    alert("로그인을 해주시길 바랍니다.");
-                    history.push("/");
-                }
-            })
-        }
-    }, [isLogin]);
-    useEffect(() => {
-        if (stompState && my.userId) {
-            stompState.onConnect = () => {
-                SetUsableSocket(true);
-                stompState.subscribe(`/receive/${my.userId}`, (msg) => {
-                    setBuffer({ ...buffer, chat: JSON.parse(msg.body) });
-                    scrollBufChange();
-                });
-            }
-=======
         if (localStorage.getItem("accessToken")) {
             setIsLogin(true);
->>>>>>> Stashed changes
         }
     }, []);
 
@@ -157,7 +116,7 @@ const App = () => {
                                                 ({ actions, state }) => {
                                                     return (
                                                         <>
-                                                            <Route path="/admin/login" render={() => <AdminLogin actions={actions} />} />
+                                                            <Route path="/admin/login" render={() => <AdminLogin actions={actions}/>} />
                                                             <Route path="/admin/make" render={() => <Homework state={state} actions={actions} type="Make" />} />
                                                             <Route path="/admin/revise/:homeworkNum" render={() => <Homework state={state} actions={actions} type="Fix" />} />
                                                             <Route exact path="/Admin" render={() => <AdminMain state={state} actions={actions} />} />
