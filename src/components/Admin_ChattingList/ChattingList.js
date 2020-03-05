@@ -8,7 +8,7 @@ import { messageURL, refreshAccessTokenURL, getUserInfoURL } from '../resource/s
 import { isDayOver, getIsExpiration, refreshAccessToken, getUserInfo } from '../resource/publicFunction';
 import { withRouter } from 'react-router-dom'; 
 
-const ChattingList = ({ actions, state, history }) => {
+const ChattingList = ({ actions, state, history, stomp }) => {
     const { accessToken, refreshToken } = state;
     const [messageList, listChange] = useState([]);
     const [page, pageChange] = useState(0);

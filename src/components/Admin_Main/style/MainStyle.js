@@ -27,13 +27,14 @@ export const MainDiv = styled.div`
 
 export const MainContent = styled.div`
     width: 100%;
-    height: 75vh;
+    height: ${props => props.isFolder ? "auto" : "75vh"};
     > div {
         display: flex;
         width:100%;
         height: 90%;
         flex-wrap: wrap;
         justify-content: space-around;
+        transition-duration: 0.3s;
         > h2 {
             font-size: 20px;
         }
@@ -52,6 +53,11 @@ export const MainContent = styled.div`
             display: flex;
             justify-content: space-around;
         }
+    }
+    > .classWrapper {
+        height: ${props => props.isFolder ? "0px" : "90%"};
+        opacity: ${props => props.isFolder ? "0" : "1"};
+        display: ${props => props.isFolder ? "none" : "flex"};
     }
     > .wrapper {
         margin: 5px;

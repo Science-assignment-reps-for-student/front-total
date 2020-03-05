@@ -11,9 +11,7 @@ import { useParams } from 'react-router-dom';
 import { ChattingBubble } from './components';
 import { withRouter } from 'react-router-dom'
 
-let isOut = false;
-
-const Chatting = ({ state, actions, history }) => {
+const Chatting = ({ state, actions, history, stomp }) => {
     
     const { accessToken, refreshToken }  = state;
     const header = {
@@ -23,8 +21,6 @@ const Chatting = ({ state, actions, history }) => {
     }
     const { userId } = useParams();
     const [inputValue, valueChange] = useState("");
-    const [stomp, stompChange] = useState();
-    const [socket, socketChange] = useState();
     const [message, messageChange] = useState([]);
     const [buffer, bufferChange] = useState();
     const [isLoaded, loadChange] = useState(false);
@@ -34,7 +30,6 @@ const Chatting = ({ state, actions, history }) => {
 
     
     useEffect(()=> {
-        isOut = false;
         const isAdmin = getUserInfo(getUserInfoURL,accessToken);
         isAdmin
         .then((userType)=> {
@@ -47,9 +42,8 @@ const Chatting = ({ state, actions, history }) => {
                     .then((e)=> {    
                         const data =  e.data
                         messageChange(data);
-                        setSocketConnect(data);
                     })
-                    .catch(()=> {
+                    .catch((e)=> {
                         history.push('/admin/Login');
                     })
                 }
@@ -69,46 +63,15 @@ const Chatting = ({ state, actions, history }) => {
             endPoint.current.scrollIntoView();
         }
     },[message]);
+
     useEffect(()=> {
-        if(socket){
-            return ()=> {
-                isOut = true;
-                socket.close();
-            }
-        }
-    },[socket])
-    useEffect(()=> {
+        getSubscribe();
         if(stomp){
             return ()=> {
-                isOut = true;
-                stomp.disconnect();
+                stomp.unsubscribe();
             }
         }
     },[stomp])
-
-    const setSocketConnect = () => {
-        const socket = new SockJS(socketURL);
-        const stomp = Stomp.over(socket);
-        stompChange(stomp);
-        socketChange(socket);
-        stomp.connect(
-            {},
-            {},
-            ()=> {
-                getSubscribe(stomp);
-                errorChange(false);
-                loadChange(true);
-            },
-            ()=> {
-                console.log("error");
-            },//error
-            ()=> {//close
-                if(!isOut){
-                    setTimeout(setSocketConnect(),5000);
-                }
-            }
-        );
-    }
 
     const getChatting = () => new Promise((resolve,reject)=> {
         axios.get(`${messageURL}/${userId}`,header)
@@ -123,14 +86,32 @@ const Chatting = ({ state, actions, history }) => {
         })
     })
 
-    const getSubscribe = (stomp) => {
-        stomp.subscribe(`/receive/${userId}`, function(msg) {
-            const data = msg.body;
-            const parsedData = JSON.parse(data);
-            const messageId = parsedData.messageId;
-            readMessage(messageId);
-            bufferChange(parsedData);
-        });
+    const getSubscribe = () => {
+        if(stomp){
+            try {
+                stomp.subscribe(`/receive/${userId}`, (msg) => {
+                    const data = msg.body;
+                    const parsedData = JSON.parse(data);
+                    const messageId = parsedData.messageId;
+                    readMessage(messageId);
+                    bufferChange(parsedData);
+                });
+                errorChange(false);
+                loadChange(true);  
+            } catch {
+                stomp.onConnect = () => {
+                    stomp.subscribe(`/receive/${userId}`, (msg) => {
+                        const data = msg.body;
+                        const parsedData = JSON.parse(data);
+                        const messageId = parsedData.messageId;
+                        readMessage(messageId);
+                        bufferChange(parsedData);
+                    });
+                    errorChange(false);
+                    loadChange(true);   
+                }
+            }
+        }
     }
 
     const readMessage = (messageId) => {

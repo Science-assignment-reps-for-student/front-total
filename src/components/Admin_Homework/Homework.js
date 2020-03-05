@@ -9,7 +9,7 @@ import { refreshAccessToken, parseDate, reparseDate, isDataAllow, isAllFile, get
 import { withRouter, useParams } from 'react-router-dom';
 
 
-const Admin_Homework = ({ state, type, history, actions }) => {
+const Admin_Homework = ({ state, type, history, actions, stomp }) => {
     const { homeworkNum } = useParams();
     const { accessToken, refreshToken } = state;
     const header = {
@@ -77,11 +77,18 @@ const Admin_Homework = ({ state, type, history, actions }) => {
             if(!userType){
                 history.push('/admin/Login');
             }
+            setSubscribe();
         })
         .catch(()=> {
             history.push('/admin/Login');
         })
     },[])
+
+    useEffect(()=> {
+        if(stomp){
+            return stomp.unsubscribe();
+        }
+    },[stomp])
 
     const getReparseDateObject = (date1,date2,date3,date4) => {
         const dateBuffer = {
@@ -202,6 +209,16 @@ const Admin_Homework = ({ state, type, history, actions }) => {
             }
         });
     }
+
+    const setSubscribe = () => {
+        stomp.subscribe('/receive', (e) => {
+        })
+    }
+
+    const setNotification = (data) => {
+        const notificate = new Notification();
+    }
+
     useEffect(()=> {
         if(type === "Fix"){
             getHomework();

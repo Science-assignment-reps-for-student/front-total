@@ -5,18 +5,6 @@ import { AccessTokenConsumer } from '../../../context/AccessTokenContext';
 
 const Header = ({ state, actions, isCheck }) => {
 
-    const getNotificationPermission = () => {
-        if (!("Notification" in window)) {
-            alert("데스크톱 알림을 지원하지 않는 브라우저입니다.");
-        }
-        Notification.requestPermission(function (result) {
-            if(result === 'denied') {
-                alert('알림을 차단하셨습니다.\n브라우저의 사이트 설정에서 변경하실 수 있습니다.');
-                return false;
-            }
-        });
-    }
-
     return (
         <S.Header>
             <div>

@@ -6,12 +6,17 @@ import { TaskProvider, TaskConsumer } from './context/AppContext';
 import { AccessTokenProvider, AccessTokenConsumer } from './context/AccessTokenContext';
 import Global from './styled';
 import axios from 'axios';
+import SockJS from 'sockjs-client';
+import { Stomp } from '@stomp/stompjs';
+import { socketURL } from './components/resource/serverURL';
 
 const App = () => {
     const history = useHistory();
     const [members, setMembers] = useState({});
     const [isLogin, setIsLogin] = useState(false);
     const [homeworkData, setHomeworkData] = useState({});
+    const [socket, socketChange] = useState();
+    const [stomp, stompChange] = useState();
 
     const setHomework = useCallback((data) => { setHomeworkData(data) }, []);
     const setHomeworkDataInState = useCallback((wooServer, accessToken, homeworkId) => {
@@ -45,8 +50,42 @@ const App = () => {
     useEffect(() => {
         if (localStorage.getItem("accessToken")) {
             setIsLogin(true);
+            setSocket();
         }
     }, []);
+
+    const setSocket = () => {
+        const socket = new SockJS(socketURL);
+        const stomp = Stomp.over(socket);
+        getNotificationPermission();
+        stompChange(stomp);
+        socketChange(socket);
+        stomp.connect(
+            {},
+            {},
+            ()=> { 
+
+            },
+            ()=> {
+                console.log("error");
+            },//error
+            ()=> {//close
+                setTimeout(setSocket(),5000);
+            }
+        );
+    }
+
+    const getNotificationPermission = () => {
+        if (!("Notification" in window)) {
+            alert("데스크톱 알림을 지원하지 않는 브라우저입니다.");
+        }
+        Notification.requestPermission(function (result) {
+            if(result === 'denied') {
+                alert('알림을 차단하셨습니다.\n브라우저의 사이트 설정에서 변경하실 수 있습니다.');
+                return false;
+            }
+        });
+    }
 
     return (
         <Switch>
@@ -117,11 +156,11 @@ const App = () => {
                                                     return (
                                                         <>
                                                             <Route path="/admin/login" render={() => <AdminLogin actions={actions}/>} />
-                                                            <Route path="/admin/make" render={() => <Homework state={state} actions={actions} type="Make" />} />
-                                                            <Route path="/admin/revise/:homeworkNum" render={() => <Homework state={state} actions={actions} type="Fix" />} />
-                                                            <Route exact path="/Admin" render={() => <AdminMain state={state} actions={actions} />} />
-                                                            <Route path="/Admin/ChattingList" render={()=> <ChattingList state={state} actions={actions}/>}/>
-                                                            <Route path="/Admin/Chatting/:userId" render={()=> <AdminChatting state={state} actions={actions}/>}/>
+                                                            <Route path="/admin/make" render={() => <Homework state={state} actions={actions} type="Make" stomp={stomp}/>} />
+                                                            <Route path="/admin/revise/:homeworkNum" render={() => <Homework state={state} actions={actions} type="Fix" stomp={stomp}/>}/>
+                                                            <Route path="/Admin/ChattingList" render={()=> <ChattingList state={state} actions={actions} stomp={stomp}/>} />
+                                                            <Route path="/Admin/Chatting/:userId" render={()=> <AdminChatting state={state} actions={actions} stomp={stomp}/>}/>
+                                                            <Route exact path="/Admin" render={() => <AdminMain state={state} actions={actions} stomp={stomp}/>} />
                                                         </>
                                                     );
                                                 }

@@ -282,7 +282,7 @@ const AdminMain = ({ state, actions, history }) => {
                     refreshAccessToken(refreshToken,actions,refreshAccessTokenURL);
                 }
             } catch {
-                alert("네트워크를 확인해 주세요.")
+                alert("네트워크를 확인해 주세요.");
             }
         })
     }
@@ -296,7 +296,7 @@ const AdminMain = ({ state, actions, history }) => {
                         <h1>제출 현황</h1>
                         <hr/>
                         {
-                            getArrowHomework(homeworkType, content).length > 0 && isLoaded ? getArrowHomework(homeworkType,content) : 
+                            isLoaded ? getArrowHomework(homeworkType, content).length > 0 ? getArrowHomework(homeworkType,content) : "과제가 없습니다" : 
                             <S.MainLoadingContent>
                                 <div className="loadingio-spinner-gear-navzgsfup8"><div className="ldio-dlvqi1wu39l">
                                 <div><div></div><div></div><div></div><div></div><div></div><div></div></div>

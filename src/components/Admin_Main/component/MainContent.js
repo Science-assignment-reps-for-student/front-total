@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import * as S from '../style/MainStyle';
 import { MainClass, MainTeamClass, MainExperimentClass } from '../component';
 import { edit, excel, download } from '../imgs';
@@ -8,6 +8,7 @@ const MainContent = ({ checked, title, classData, type, contentId, history, file
 
     const classDataKey = Object.keys(classData);
     const filteredData = classDataKey.filter((e)=> checked[e]);
+    const [isFolder, folderChange] = useState(false);
 
     const classToInt = (string) => {
         switch(string){
@@ -94,7 +95,7 @@ const MainContent = ({ checked, title, classData, type, contentId, history, file
         return getType(type) + title;
     }
 
-    const getType = (type) => {
+    const getType = (type) => { 
         switch(type){
             case 0: 
                 return "[개인]";
@@ -108,8 +109,8 @@ const MainContent = ({ checked, title, classData, type, contentId, history, file
     }
 
     return (
-        <S.MainContent button={type !== 0}>
-            <div className="wrapper">
+        <S.MainContent button={type !== 0} isFolder={isFolder}>
+            <div onClick={() => folderChange(!isFolder)} className="wrapper">
                 <h2>{getTitle(type,title)}</h2>
                 <div className="buttonWrapper">
                     <S.MainFixButton onClick={()=> {history.push(`/Admin/revise/${contentId}`)}}><img src={edit} alt=""/>수정</S.MainFixButton>
@@ -118,7 +119,7 @@ const MainContent = ({ checked, title, classData, type, contentId, history, file
                 </div>
             </div>
             <hr/>
-            <div>
+            <div className="classWrapper">
                 {
                     type === 0 ? 
                     getClass(classData, filteredData, title) : 
