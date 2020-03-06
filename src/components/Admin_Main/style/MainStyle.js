@@ -298,6 +298,7 @@ export const MainList = styled.div`
 
 export const MainTeamListContent = styled.tr`
     background-color: ${props => props.color};
+    font-size: 14px;
     > .status {
         width: 34%;
     }

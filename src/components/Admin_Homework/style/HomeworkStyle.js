@@ -197,7 +197,7 @@ export const HomeworkExplain = styled.textarea`
     border: 1px solid #858585;
     resize: none;
     padding: 10px;
-    font-size: 13px;
+    font-size: 15px;
     font-weight: 600;
     box-sizing: border-box;
     outline: none;

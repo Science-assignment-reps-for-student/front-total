@@ -112,7 +112,7 @@ const MainContent = ({ checked, title, classData, type, contentId, history, file
         <S.MainContent button={type !== 0} isFolder={isFolder}>
             <div onClick={() => folderChange(!isFolder)} className="wrapper">
                 <h2>{getTitle(type,title)}</h2>
-                <div className="buttonWrapper">
+                <div onClick={(e)=> e.stopPropagation()} className="buttonWrapper">
                     <S.MainFixButton onClick={()=> {history.push(`/Admin/revise/${contentId}`)}}><img src={edit} alt=""/>수정</S.MainFixButton>
                     {type === 0 ? "" : <S.MainFixButton onClick={() => {getExcelFile(contentId)}}><img src={excel} alt=""/>엑셀</S.MainFixButton>}
                     <S.MainFixButton onClick={()=>{fileDownload(contentId)}}><img src={download} alt=""/>파일</S.MainFixButton>
