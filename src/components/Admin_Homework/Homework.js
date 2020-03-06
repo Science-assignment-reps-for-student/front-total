@@ -3,8 +3,8 @@ import { Header, BackgroundBlack } from '../public';
 import * as S from './style/HomeworkStyle';
 import { HomeworkNav, HomeworkButtonBar, HomeworkMain } from './component';
 import axios from 'axios';
-import { homeworkURL, refreshAccessTokenURL, getUserInfoURL, socketURL } from '../resource/serverURL';
-import { refreshAccessToken, parseDate, reparseDate, isDataAllow, isAllFile, getUserInfo, getIsExpiration, getHasAlarm } from '../resource/publicFunction';
+import { homeworkURL, getUserInfoURL } from '../resource/serverURL';
+import { parseDate, reparseDate, isDataAllow, isAllFile, getUserInfo, getSubscribe, errorTypeCheck, refreshCallback } from '../resource/publicFunction';
 
 import { withRouter, useParams } from 'react-router-dom';
 
@@ -27,6 +27,7 @@ const Admin_Homework = ({ state, type, history, actions, stomp }) => {
     const [file, _fileChange] = useState([]);
     const [title, _titleChange] = useState("");
     const [category, _categoryChange] = useState(-1);
+    const [isSubscribe,subscribeChange] = useState(false);
 
     const fileChange = useCallback((e) => {
         _fileChange(e);
@@ -77,7 +78,6 @@ const Admin_Homework = ({ state, type, history, actions, stomp }) => {
             if(!userType){
                 history.push('/admin/Login');
             }
-            setSubscribe();
         })
         .catch(()=> {
             history.push('/admin/Login');
@@ -85,10 +85,21 @@ const Admin_Homework = ({ state, type, history, actions, stomp }) => {
     },[])
 
     useEffect(()=> {
+        getSubscribe(stomp,subscribeChange);
         if(stomp){
-            return stomp.unsubscribe();
+            return ()=> {
+                if(isSubscribe){
+                    stomp.unsubscribe();
+                }
+            }
         }
     },[stomp])
+
+    useEffect(()=> {
+        if(type === "Fix"){
+            getHomework();
+        }
+    },[type])
 
     const getReparseDateObject = (date1,date2,date3,date4) => {
         const dateBuffer = {
@@ -122,11 +133,7 @@ const Admin_Homework = ({ state, type, history, actions, stomp }) => {
             dateChange(dateBuffer);
         })
         .catch((e)=> {
-            if(getIsExpiration(e)){
-                refreshAccessToken(refreshToken,actions,refreshAccessTokenURL);
-            } else {
-                alert("네트워크를 확인하세요.");
-            }
+            refreshCallback(refreshToken,actions,e,()=> {});
         });
     }
 
@@ -157,14 +164,7 @@ const Admin_Homework = ({ state, type, history, actions, stomp }) => {
                 history.push('/Admin');
             })
             .catch((e)=> {
-                if(getIsExpiration(e)){
-                    refreshAccessToken(refreshToken,actions,refreshAccessTokenURL)
-                    .then(()=> {
-                        setHomework();
-                    })
-                } else{
-                    alert("네트워크를 확인하세요.")
-                }
+                refreshCallback(refreshToken,actions,e,setHomework);
             });
         } else {
             alert("요소들을 다시 한번 확인해 주세요.");
@@ -179,14 +179,7 @@ const Admin_Homework = ({ state, type, history, actions, stomp }) => {
                 history.push('/Admin')
             })
             .catch((e)=>{
-                if(getIsExpiration(e)){
-                    refreshAccessToken(refreshToken,actions,refreshAccessTokenURL)
-                    .then(()=> {
-                        patchHomework();
-                    })
-                } else{
-                    alert("네트워크를 확인해 주세요.")
-                }
+                refreshCallback(refreshToken,actions,e,patchHomework)
             });
         } else {
             alert("요소들을 다시 한번 확인해 주세요.");
@@ -199,31 +192,9 @@ const Admin_Homework = ({ state, type, history, actions, stomp }) => {
             history.push('/Admin');
         })
         .catch((e)=> {
-            if(getIsExpiration(e)){
-                refreshAccessToken(refreshToken,actions,refreshAccessTokenURL)
-                .then(()=> {
-                    deleteHomework();
-                });
-            } else {
-                alert("네트워크를 확인해 주세요.");
-            }
+            refreshCallback(refreshToken,actions,e,deleteHomework);
         });
     }
-
-    const setSubscribe = () => {
-        stomp.subscribe('/receive', (e) => {
-        })
-    }
-
-    const setNotification = (data) => {
-        const notificate = new Notification();
-    }
-
-    useEffect(()=> {
-        if(type === "Fix"){
-            getHomework();
-        }
-    },[type])
 
     return (
         <BackgroundBlack>

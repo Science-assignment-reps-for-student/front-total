@@ -5,13 +5,14 @@ import { BackgroundWhite } from '../public/Background';
 import { ListComponent } from './components';
 import axios from 'axios';
 import { messageURL, refreshAccessTokenURL, getUserInfoURL } from '../resource/serverURL';
-import { isDayOver, getIsExpiration, refreshAccessToken, getUserInfo } from '../resource/publicFunction';
+import { isDayOver, getIsExpiration, refreshAccessToken, getUserInfo, getSubscribe } from '../resource/publicFunction';
 import { withRouter } from 'react-router-dom'; 
 
 const ChattingList = ({ actions, state, history, stomp }) => {
     const { accessToken, refreshToken } = state;
     const [messageList, listChange] = useState([]);
     const [page, pageChange] = useState(0);
+    const [isSubscribe, subscribeChange] = useState(false); 
     const header = {
         headers: {
             "Authorization": accessToken,
@@ -41,6 +42,17 @@ const ChattingList = ({ actions, state, history, stomp }) => {
             history.push('/admin/Login');
         })
     },[]);
+
+    useEffect(()=> {
+        getSubscribe(stomp,subscribeChange);
+        if(stomp){
+            return ()=> {
+                if(isSubscribe){
+                    stomp.unsubscribe();
+                }
+            }
+        }
+    },[stomp])
 
     const setMessageList = () => {
         const buffer = [];

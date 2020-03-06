@@ -2,12 +2,12 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { Header, BackgroundWhite } from '../public';
 import * as S from './style/MainStyle';
 import { MainContent, MainNav } from './component';
-import { refreshAccessTokenURL, personalHomeworkURL, teamHomeworkURL, getUserInfoURL, experimentHomeworkURL, allFileDownloadURL, getFileCodeURL, excelFileDownloadURL } from '../resource/serverURL.js';
-import { refreshAccessToken, getUserInfo, getIsExpiration } from '../resource/publicFunction';
+import { personalHomeworkURL, teamHomeworkURL, getUserInfoURL, experimentHomeworkURL, allFileDownloadURL, getFileCodeURL, excelFileDownloadURL } from '../resource/serverURL.js';
+import { refreshAccessToken, getUserInfo, getSubscribe, errorTypeCheck } from '../resource/publicFunction';
 import { withRouter } from 'react-router-dom'
 import axios from 'axios';
 
-const AdminMain = ({ state, actions, history }) => {
+const AdminMain = ({ state, actions, history, stomp }) => {
 
     const [ isLoaded, _loadedChange ] = useState();
     const [ data, _dataChange ] = useState({
@@ -42,7 +42,7 @@ const AdminMain = ({ state, actions, history }) => {
     })
 
     const [ count, countChange ] = useState(5)
-
+    const [isSubscribe, subscribeChange] = useState(false);
 
     const { accessToken, refreshToken } = state;
     
@@ -87,6 +87,17 @@ const AdminMain = ({ state, actions, history }) => {
         })
     },[]);
 
+    useEffect(()=> {
+        getSubscribe(stomp,subscribeChange);
+        if(stomp){
+            return ()=> {
+                if(isSubscribe){
+                    stomp.unsubscribe();
+                }
+            }
+        }
+    },[stomp])
+
     const allFileDownload = (contentId) => {
         const fileHeader = {
             headers: {
@@ -110,9 +121,7 @@ const AdminMain = ({ state, actions, history }) => {
                 if(e.response.status === 404){
                     alert("파일이 없습니다");
                 } else {
-                    getIsExpiration(e) 
-                    ? refreshAccessToken(refreshToken,actions,refreshAccessTokenURL) 
-                    : alert("네트워크를 확인해 주세요.");
+                    errorTypeCheck(e,refreshToken,actions);
                 }
             } catch{
                 alert("네트워크를 확인해 주세요.")
@@ -153,9 +162,7 @@ const AdminMain = ({ state, actions, history }) => {
             loadedChange(true);
         })
         .catch((e)=> {
-            getIsExpiration(e) 
-            ? refreshAccessToken(refreshToken,actions,refreshAccessTokenURL) 
-            : alert("네트워크를 확인해 주세요.");
+            errorTypeCheck(e,refreshToken,actions);
         })
     }
 
@@ -169,9 +176,7 @@ const AdminMain = ({ state, actions, history }) => {
             getExperimentHomework(experimentHomeworkURL,header,checked,data,content);
         })
         .catch((e)=> {
-            getIsExpiration(e) 
-            ? refreshAccessToken(refreshToken,actions,refreshAccessTokenURL) 
-            : alert("네트워크를 확인해 주세요.");
+            errorTypeCheck(e,refreshToken,actions);
         })
     }
 
@@ -187,9 +192,7 @@ const AdminMain = ({ state, actions, history }) => {
             getTeamHomework(teamHomeworkURL,header,checked,dataBuffer,contentBuffer);
         })
         .catch((e)=> {
-            getIsExpiration(e) 
-            ? refreshAccessToken(refreshToken,actions,refreshAccessTokenURL) 
-            : alert("네트워크를 확인해 주세요.");
+            errorTypeCheck(e,refreshToken,actions);
         })
     }
 
@@ -267,7 +270,7 @@ const AdminMain = ({ state, actions, history }) => {
                     if(e.response.status === 404){
                         alert("과제가 끝나지 않아, 엑셀이 없습니다.");
                     } else {
-                        refreshAccessToken(refreshToken,actions,refreshAccessTokenURL);
+                        refreshAccessToken(refreshToken,actions);
                     }
                 } catch {
                     alert("네트워크를 확인해 주세요.");
@@ -279,7 +282,7 @@ const AdminMain = ({ state, actions, history }) => {
                 if(e.response.status === 404){
                     alert("파일이 없습니다.");
                 } else {
-                    refreshAccessToken(refreshToken,actions,refreshAccessTokenURL);
+                    refreshAccessToken(refreshToken,actions);
                 }
             } catch {
                 alert("네트워크를 확인해 주세요.");

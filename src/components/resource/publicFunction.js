@@ -1,7 +1,7 @@
 import axios from 'axios';
-import { messageURL } from './serverURL';
+import { messageURL, refreshAccessTokenURL } from './serverURL';
 
-export const refreshAccessToken = (refreshToken, actions, refreshAccessTokenURL) => {
+export const refreshAccessToken = (refreshToken, actions) => {
     const refreshHeader = {
         "headers": {
             "Authorization": refreshToken,
@@ -171,3 +171,44 @@ new Promise((resolve,reject) => {
         reject(e);
     })
 });
+
+export const getSubscribe = (stomp,subscribeChange) => {
+    if(stomp){
+        try {
+            setSubscribe(stomp);
+            subscribeChange(true);
+        } catch {
+            stomp.onConnect = () => {
+                setSubscribe(stomp);
+                subscribeChange(true);
+            }
+        }
+    }
+}
+
+const setSubscribe = (stomp) => {
+    stomp.subscribe('/receive', (e)=> {
+        console.log(e);
+    })
+}
+
+const setNotification = (data) => {
+    const notificate = new Notification();
+}
+
+export const errorTypeCheck = (e,refreshToken,actions) => {
+    getIsExpiration(e) 
+    ? refreshAccessToken(refreshToken,actions) 
+    : alert("네트워크를 확인해 주세요.");
+}
+
+export const refreshCallback = (refreshToken,actions,error,callback) => {
+    if(getIsExpiration(error)){
+        refreshAccessToken(refreshToken,actions)
+        .then(()=> {
+            callback();
+        });
+    } else {
+        alert("네트워크를 확인해 주세요.");
+    }
+}
