@@ -8,16 +8,13 @@ import SockJS from 'sockjs-client';
 import { Header } from '../Header';
 import { useHistory } from 'react-router-dom';
 
-const QnA = ({ state, actions, isLogin, getUserInfo }) => {
+const QnA = ({ stomp, state, actions, isLogin, getUserInfo }) => {
     const history = useHistory();
     const { limServer, accessToken } = state;
     const chatInput = useRef(null);
     const chatMain = useRef(null);
     const [chat, setChat] = useState("");
-    const [isOut, setIsOut] = useState(false);
     const [ableSocket, setAbleSocket] = useState(false);
-    const [stompState, setStompState] = useState(undefined);
-    const [socketState, setSocketState] = useState(undefined);
     const [chatList, setChatList] = useState([]);
     const [my, setMy] = useState({});
     const [buffer, setBuffer] = useState({
@@ -90,48 +87,28 @@ const QnA = ({ state, actions, isLogin, getUserInfo }) => {
             "token": accessToken,
             "message": msg
         });
-        stompState.send(`/send/${my.userId}`, {}, stringedData);
+        stomp.send(`/send/${my.userId}`, {}, stringedData);
         chatInput.current.focus();
-    }, [state, stompState, my]);
-    const setSocket = useCallback(() => {
-        const socket = new SockJS("http://54.180.174.253:8888/chuckflap/socket");
-        const stomp = Stomp.over(socket);
-        setStompState(stomp);
-        setSocketState(socket);
-        stomp.connect(
-            {}, {}, 
-            () => { },  // success 
-            () => { },  // error
-            () => {     // close
-                if (!isOut) {
-                    setTimeout(setSocket, 5000);
-                }
-            }
-        );
-    }, []);
+    }, [state, stomp, my]);
 
     useEffect(() => {
         if (accessToken === null) {
             alert("로그인 후 이용해주세요.");
             history.push("/");
         }
-        return () => {
-            setIsOut(true);
-        }
     }, []);
     useEffect(() => {
         if (isLogin) {
             axios.get(`${limServer}/message`, {
                 headers: {
-                    Authorization: localStorage.getItem("accessToken")
+                    Authorization: accessToken
                 }
             }).then(e => {
                 // console.log(e);
-                getUserInfo(limServer, localStorage.getItem("accessToken"))
+                getUserInfo(limServer, accessToken)
                     .then(e => {
                         setMy(e.data);
                     })
-                setSocket();
             }).catch(err => {
                 const code = err.response.status;
                 if (code == 403) {
@@ -153,30 +130,33 @@ const QnA = ({ state, actions, isLogin, getUserInfo }) => {
         setMainScroll();
     }, [chatList]);
     useEffect(() => {
-        if (stompState && my.userId) {
-            stompState.onConnect = () => {
-                setAbleSocket(true);
-                stompState.subscribe(`/receive/${my.userId}`, (msg) => {
+        if (stomp) {
+            return () => {
+                if (ableSocket) {
+                    stomp.unsubscribe();
+                }
+            }
+        }
+    }, [stomp, ableSocket])
+    useEffect(() => {
+        if (stomp && my.userId) {
+            try {
+                stomp.subscribe(`/receive/${my.userId}`, (msg) => {
                     setBuffer({ ...buffer, chat: JSON.parse(msg.body) });
                     scrollBufChange();
                 });
+                setAbleSocket(true);
+            } catch {
+                stomp.onConnect = () => {
+                    stomp.subscribe(`/receive/${my.userId}`, (msg) => {
+                        setBuffer({ ...buffer, chat: JSON.parse(msg.body) });
+                        scrollBufChange();
+                    });
+                    setAbleSocket(true);
+                }
             }
         }
-    }, [stompState, my]);
-    useEffect(() => {
-        if (socketState) {
-            return () => {
-                socketState.close();
-            }
-        }
-    }, [socketState]);
-    useEffect(() => {
-        if (stompState) {
-            return () => {
-                stompState.disconnect()
-            }
-        }
-    }, [stompState])
+    }, [stomp, my]);
 
     return (
         <>

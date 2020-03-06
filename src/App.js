@@ -57,14 +57,13 @@ const App = () => {
     const setSocket = () => {
         const socket = new SockJS(socketURL);
         const stomp = Stomp.over(socket);
-        getNotificationPermission();
+        // getNotificationPermission();
         stompChange(stomp);
         socketChange(socket);
         stomp.connect(
             {},
             {},
             ()=> { 
-
             },
             ()=> {
                 console.log("error");
@@ -100,6 +99,7 @@ const App = () => {
                                         path="/qna"
                                         render={() =>
                                             <QnA
+                                                stomp={stomp}
                                                 state={taskState}
                                                 isLogin={isLogin}
                                                 actions={taskActions}
