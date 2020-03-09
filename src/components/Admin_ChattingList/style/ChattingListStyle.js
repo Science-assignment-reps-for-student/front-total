@@ -69,5 +69,6 @@ export const ChattingListButton = styled.div`
         padding: 5px;
         margin: 1px;
         border: 1px solid #858585;
+        cursor: pointer;
     }
 `

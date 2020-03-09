@@ -42,6 +42,7 @@ export const Header = styled.div`
             font-size: 20px;
             color:white;
             font-weight: 100;
+            cursor: pointer;
             > span {
                 font-weight: 600;
             }
