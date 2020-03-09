@@ -2,8 +2,8 @@ import React, { useCallback } from 'react';
 import * as S from '../style/MainStyle';
 import { MainListContent } from '../component';
 import axios from 'axios';
-import { getFileCodeURL, personalFileDownloadURL , refreshAccessTokenURL } from '../../resource/serverURL.js';
-import { refreshAccessToken, getIsExpiration } from '../../resource/publicFunction';
+import { getFileCodeURL, personalFileDownloadURL } from '../../resource/serverURL.js';
+import { errorTypeCheck } from '../../resource/publicFunction';
 
 const MainList = ({ studentList, text, contentId, state, actions }) => {
 
@@ -31,14 +31,25 @@ const MainList = ({ studentList, text, contentId, state, actions }) => {
                     link.download = file_name;
                     link.click()
                 })
-                .catch(()=> {
-                    getIsExpiration(e) 
-                    ? refreshAccessToken(refreshToken,actions,refreshAccessTokenURL) 
-                    : alert("네트워크를 확인해 주세요.");
+                .catch((err)=> {
+                    errorTypeCheck(err,refreshToken,actions);
                 })
             }
             return e;
         })
+    }
+
+    const fileErrorCheck = (errResponse) => {
+        try{
+            const statusCode = errResponse.response.status
+            if(statusCode === 404){
+                alert("파일이 없습니다");
+            } else {
+                errorTypeCheck(errResponse,refreshToken,actions);
+            }
+        } catch{
+            alert("네트워크를 확인해 주세요.")
+        }
     }
 
     const getFileCode = (number) => {
@@ -48,11 +59,11 @@ const MainList = ({ studentList, text, contentId, state, actions }) => {
                 const codeList = e.data.file_info;
                 personalFileDownload(codeList,number);
             })
-            .catch((e)=> {
-                if(e.response.status === 404){
+            .catch((err)=> {
+                if(err.response.status === 404){
                     alert("파일이 없습니다.")
                 } else {
-                    getIsExpiration(e) ? refreshAccessToken(refreshToken,actions,refreshAccessTokenURL) : alert("네트워크를 확인해 주세요.");
+                    fileErrorCheck(err);
                 }
             })
         }
@@ -69,7 +80,8 @@ const MainList = ({ studentList, text, contentId, state, actions }) => {
                         <th>제출여부</th>
                     </S.MainListContent>
                     {
-                        studentList.map(({user_name,user_number,submit}) => <MainListContent name={user_name} number={user_number} isChecked={submit} getFile={getFileCode}/>)
+                        studentList.map(({user_name,user_number,submit}) => 
+                            <MainListContent name={user_name} number={user_number} isChecked={submit} getFile={getFileCode}/>)
                     }
                 </tbody>
             </table>

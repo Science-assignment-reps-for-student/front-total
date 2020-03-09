@@ -3,7 +3,7 @@ import { Header, BackgroundWhite } from '../public';
 import * as S from './style/MainStyle';
 import { MainContent, MainNav } from './component';
 import { personalHomeworkURL, teamHomeworkURL, getUserInfoURL, experimentHomeworkURL, allFileDownloadURL, getFileCodeURL, excelFileDownloadURL } from '../resource/serverURL.js';
-import { refreshAccessToken, getUserInfo, getSubscribe, errorTypeCheck } from '../resource/publicFunction';
+import { getUserInfo, getSubscribe, errorTypeCheck } from '../resource/publicFunction';
 import { withRouter } from 'react-router-dom'
 import axios from 'axios';
 
@@ -11,23 +11,23 @@ const AdminMain = ({ state, actions, history, stomp }) => {
 
     const [ isLoaded, _loadedChange ] = useState();
     const [ data, _dataChange ] = useState({
-        0: {
+        personal: {
             homework_info: [],
             homework_type: 0
         },
-        1: {
+        team: {
             homework_info: [],
             homework_type: 1
         },
-        2: {
+        experiment: {
             homework_info: [],
             homework_type: 2
         },
     });
     const [ content, _contentChange ] = useState({
-        0: [],
-        1: [],
-        2: [],
+        personal: [],
+        team: [],
+        experiment: [],
     });
     const [ checked, _checkedChange] = useState({
         class_1: true,
@@ -36,9 +36,9 @@ const AdminMain = ({ state, actions, history, stomp }) => {
         class_4: true,
     });
     const [ homeworkType, _typeChange ] = useState({
-        0: true,
-        1: false,
-        2: false,
+        personal: true,
+        team: false,
+        experiment: false,
     })
 
     const [ count, countChange ] = useState(5)
@@ -50,6 +50,12 @@ const AdminMain = ({ state, actions, history, stomp }) => {
         headers: {
             "Authorization": `Bearer ${accessToken}`
         }
+    }
+    const fileHeader = {
+        headers: {
+            "Authorization": `Bearer ${accessToken}`
+        },
+        responseType: "blob",
     }
 
     const loadedChange = useCallback((e)=> {
@@ -76,56 +82,83 @@ const AdminMain = ({ state, actions, history, stomp }) => {
         const isAdmin = getUserInfo(getUserInfoURL,accessToken);
         isAdmin
         .then((userType)=> {
-            if(!userType){
-                history.push('/admin/Login');
-            } else {
+            if(userType){
+                // yes admin
                 getPersonalHomework(personalHomeworkURL,header,checked,data,content);
-            }
+                return;
+            } 
+            // not admin
+            history.push('/');
         })
-        .catch((e)=> {
+        .catch(()=> {
             history.push('/admin/Login');
         })
     },[]);
 
     useEffect(()=> {
         getSubscribe(stomp,subscribeChange);
-        if(stomp){
+        if(stomp && isSubscribe){
             return ()=> {
-                if(isSubscribe){
-                    stomp.unsubscribe();
-                }
+                stomp.unsubscribe();
             }
         }
     },[stomp])
 
-    const allFileDownload = (contentId) => {
-        const fileHeader = {
-            headers: {
-                "Authorization": `Bearer ${accessToken}`
-            },
-            responseType: "blob",
+    useEffect(()=> {
+        if(isLoaded){
+            const keys = Object.keys(data);
+            const contentBuffer = Object.assign({},content);
+            keys.map((key)=> {
+                const { homework_info, homework_type } = data[key];
+                contentBuffer[key] = makeContent(homework_info,homework_type,checked);
+                return key;
+            })
+            contentChange(contentBuffer);
         }
+    }, [checked]);
+
+    const downloadFile = (fileName,file) => {
+        const link = document.createElement("a");
+        link.href = URL.createObjectURL(file);
+        link.download = fileName;
+        link.click();
+    }
+    
+    const fileErrorCheck = (errResponse) => {
+        try{
+            const statusCode = errResponse.response.status
+            if(statusCode === 404){
+                alert("파일이 없습니다");
+            } else {
+                errorTypeCheck(errResponse,refreshToken,actions);
+            }
+        } catch{
+            alert("네트워크를 확인해 주세요.")
+        }
+    }
+
+    const getFileCodePromise = (contentId) => new Promise((resolve,reject)=> {
         axios.get(`${getFileCodeURL}/${contentId}`,header)
-        .then((e)=> {
-            const zipName = e.data.file_zip_info;
+        .then((response)=> {
+            resolve(response);
+        })
+        .catch((err)=> {
+            reject(err);
+        })
+    })
+
+    const zipFileDownload = (contentId) => {
+        const fileCodePromise = getFileCodePromise(contentId);
+        fileCodePromise
+        .then((response)=> {
+            const zipName = response.data.file_zip_info;
             axios.get(`${allFileDownloadURL}/${contentId}`,fileHeader)
             .then((response)=> {
-                const link = document.createElement("a");
-                link.href = URL.createObjectURL(response.data);
-                link.download = zipName;
-                link.click();
+                downloadFile(zipName,response.data);
             })
         })
-        .catch((e)=> {
-            try{
-                if(e.response.status === 404){
-                    alert("파일이 없습니다");
-                } else {
-                    errorTypeCheck(e,refreshToken,actions);
-                }
-            } catch{
-                alert("네트워크를 확인해 주세요.")
-            }
+        .catch((err)=> {
+            fileErrorCheck(err);
         })
     }
 
@@ -141,7 +174,7 @@ const AdminMain = ({ state, actions, history, stomp }) => {
                 classData={classData} 
                 key={homework_id} 
                 contentId={homework_id}
-                fileDownload={allFileDownload}
+                fileDownload={zipFileDownload}
                 created_at={created_at}
                 getExcelFile={getExcelFile}
                 />);
@@ -155,8 +188,8 @@ const AdminMain = ({ state, actions, history, stomp }) => {
         .then((e)=> {
             const homeworkData = e.data;
             const { homework_info, homework_type } = homeworkData;
-            content[2] = makeContent(homework_info,homework_type,checked);
-            data[2] = homeworkData;
+            content.experiment = makeContent(homework_info,homework_type,checked);
+            data.experiment = homeworkData;
             dataChange(data);
             contentChange(content);
             loadedChange(true);
@@ -171,8 +204,8 @@ const AdminMain = ({ state, actions, history, stomp }) => {
         .then((e)=> {
             const homeworkData = e.data;
             const { homework_info, homework_type } = homeworkData;
-            content[1] = makeContent(homework_info,homework_type,checked);
-            data[1] = homeworkData;
+            content.team = makeContent(homework_info,homework_type,checked);
+            data.team = homeworkData;
             getExperimentHomework(experimentHomeworkURL,header,checked,data,content);
         })
         .catch((e)=> {
@@ -187,8 +220,8 @@ const AdminMain = ({ state, actions, history, stomp }) => {
             const { homework_info, homework_type } = homeworkData;
             const contentBuffer = Object.assign({},content);
             const dataBuffer = Object.assign({},data);
-            contentBuffer[0] = makeContent(homework_info,homework_type,checked);
-            dataBuffer[0] = homeworkData;
+            contentBuffer.personal = makeContent(homework_info,homework_type,checked);
+            dataBuffer.personal = homeworkData;
             getTeamHomework(teamHomeworkURL,header,checked,dataBuffer,contentBuffer);
         })
         .catch((e)=> {
@@ -196,19 +229,18 @@ const AdminMain = ({ state, actions, history, stomp }) => {
         })
     }
 
-    useEffect(()=> {
-        if(isLoaded){
-            const keys = Object.keys(data);
-            const contentBuffer = Object.assign({},content);
-            keys.map((key)=> {
-                const { homework_info, homework_type } = data[key];
-                contentBuffer[key] = makeContent(homework_info,homework_type,checked);
-                return key;
-            })
-            contentChange(contentBuffer);
-        }
-    }, [checked]);
-
+    const sortContentList = (contentList) => {
+        contentList.sort((prev,next)=> {
+            if(prev.props.created_at < next.props.created_at){
+                return 1;
+            } else if(prev.props.created_at > next.props.created_at){
+                return -1;
+            } else {
+                return 0;
+            }
+        });
+        return contentList
+    }
 
     const getArrowHomework = (homeworkType,content) => {
         const typeKey = Object.keys(homeworkType);
@@ -220,15 +252,7 @@ const AdminMain = ({ state, actions, history, stomp }) => {
             }
             return key;
         });
-        buffer.sort((prev,next)=> {
-            if(prev.props.created_at < next.props.created_at){
-                return 1;
-            } else if(prev.props.created_at > next.props.created_at){
-                return -1;
-            } else {
-                return 0;
-            }
-        });
+        sortContentList(buffer);
         for(let i = 0 ;i < count;i++){
             if(buffer[i]){  
                 result.push(buffer[i]);
@@ -238,7 +262,7 @@ const AdminMain = ({ state, actions, history, stomp }) => {
     }
 
     const isHomeworkTypeAllTrue = (homeworkType) => {
-        return homeworkType[0] || homeworkType[1] || homeworkType[2];
+        return homeworkType.personal || homeworkType.team || homeworkType.experiment;
     }
 
     const handleScroll = (e) => {
@@ -248,45 +272,22 @@ const AdminMain = ({ state, actions, history, stomp }) => {
         }
     };
 
-    const getExcelFile = (homework_num) => {
-        axios.get(`${getFileCodeURL}/${homework_num}`,header)
+    const getExcelFile = (contentId) => {
+        const fileCodePromise = getFileCodePromise(contentId);
+        fileCodePromise
         .then((e)=> {
             const { file_excel_name } = e.data;
-            axios.get(`${excelFileDownloadURL}/${homework_num}`,{
-                headers: {
-                    "Authorization": `Bearer ${accessToken}`
-                },
-                responseType: "blob"
-            }
+            axios.get(`${excelFileDownloadURL}/${contentId}`,fileHeader
             ).then((e)=> {
                 const excelFile = e.data;
-                const link = document.createElement("a");
-                link.href = URL.createObjectURL(excelFile);
-                link.download = file_excel_name;
-                link.click()
+                downloadFile(file_excel_name,excelFile);
             })
-            .catch((e)=> {
-                try{
-                    if(e.response.status === 404){
-                        alert("과제가 끝나지 않아, 엑셀이 없습니다.");
-                    } else {
-                        refreshAccessToken(refreshToken,actions);
-                    }
-                } catch {
-                    alert("네트워크를 확인해 주세요.");
-                }
+            .catch((err)=> {
+                fileErrorCheck(err);
             })
         })
-        .catch((e)=> {
-            try{
-                if(e.response.status === 404){
-                    alert("파일이 없습니다.");
-                } else {
-                    refreshAccessToken(refreshToken,actions);
-                }
-            } catch {
-                alert("네트워크를 확인해 주세요.");
-            }
+        .catch((err)=> {
+            fileErrorCheck(err)
         })
     }
 

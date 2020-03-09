@@ -117,16 +117,16 @@ export const getUserInfo = (url, accessToken) => {
     }
     return new Promise((resolve, reject) => {
         axios.get(url, header)
-            .then((e) => {
-                const userType = e.data.userType;
-                if (userType === 0) {
-                    resolve(false);
-                }
-                resolve(true);
-            })
-            .catch((e) => {
-                reject(e);
-            })
+        .then((e) => {
+            const userType = e.data.userType;
+            if (userType === 0) {
+                resolve(false);
+            }
+            resolve(true);
+        })
+        .catch((e) => {
+            reject(e);
+        })
     })
 }
 
@@ -160,8 +160,9 @@ export const getHasAlarm = (header) =>
 new Promise((resolve,reject) => {
     axios.get(messageURL,header)
     .then((e)=> { 
-        const data = e.data;
-        if(data[0].show){
+        const messageData = e.data;
+        const firstMessage = messageData[0];
+        if(firstMessage.show){
             resolve(false);
         } else {
             resolve(true);
@@ -174,10 +175,11 @@ new Promise((resolve,reject) => {
 
 export const getSubscribe = (stomp,subscribeChange) => {
     if(stomp){
-        try {
+        const socketReadyState = stomp.webSocket.readyState
+        if(socketReadyState){
             setSubscribe(stomp);
             subscribeChange(true);
-        } catch {
+        } else {
             stomp.onConnect = () => {
                 setSubscribe(stomp);
                 subscribeChange(true);

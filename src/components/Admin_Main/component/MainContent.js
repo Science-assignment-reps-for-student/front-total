@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useCallback } from 'react';
 import * as S from '../style/MainStyle';
 import { MainClass, MainTeamClass, MainExperimentClass } from '../component';
 import { edit, excel, download } from '../imgs';
@@ -8,7 +8,10 @@ const MainContent = ({ checked, title, classData, type, contentId, history, file
 
     const classDataKey = Object.keys(classData);
     const filteredData = classDataKey.filter((e)=> checked[e]);
-    const [isFolder, folderChange] = useState(false);
+    const [isFolder, _folderChange] = useState(false);
+    const folderChange = useCallback((e)=> {
+        _folderChange(e);
+    },[]);
 
     const classToInt = (string) => {
         switch(string){

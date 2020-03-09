@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react';
+import React from 'react';
 import * as S from '../style/MainStyle';
 
 
@@ -58,15 +58,15 @@ const MainNav = ({ checked, checkedChange, typeChange, type }) => {
             </S.MainClassCheckbox>
             <div id="bar"/>
             <S.MainClassCheckbox>
-                <input type="checkbox" checked={type[0]}  onChange={()=> homeworkHandleClick(0)}/>
+                <input type="checkbox" checked={type.personal}  onChange={()=> homeworkHandleClick("personal")}/>
                 <span>개인 과제</span>
             </S.MainClassCheckbox>
             <S.MainClassCheckbox>
-                <input type="checkbox" checked={type[1]} onChange={()=> homeworkHandleClick(1)}/>
+                <input type="checkbox" checked={type.team} onChange={()=> homeworkHandleClick("team")}/>
                 <span>팀 과제</span>
             </S.MainClassCheckbox>
             <S.MainClassCheckbox>
-                <input type="checkbox" checked={type[2]} onChange={()=> homeworkHandleClick(2)}/>
+                <input type="checkbox" checked={type.experiment} onChange={()=> homeworkHandleClick("experiment")}/>
                 <span>실험 과제</span>
             </S.MainClassCheckbox>
             <div id="bar"/>

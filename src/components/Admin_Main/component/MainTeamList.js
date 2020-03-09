@@ -1,9 +1,9 @@
-import React, { useCallback } from 'react';
+import React from 'react';
 import * as S from '../style/MainStyle';
 import { MainTeamListContent } from '../component';
 import axios from 'axios';
-import { getFileCodeURL, refreshAccessTokenURL, teamFileDownloadURL } from '../../resource/serverURL.js';
-import { refreshAccessToken, getIsExpiration } from '../../resource/publicFunction';
+import { getFileCodeURL, teamFileDownloadURL } from '../../resource/serverURL.js';
+import { errorTypeCheck } from '../../resource/publicFunction';
 
 const MainTeamList = ({ teamList, text, state, actions, contentId }) => {
     let count = 0;
@@ -31,14 +31,25 @@ const MainTeamList = ({ teamList, text, state, actions, contentId }) => {
                     link.download = file_name;
                     link.click();
                 })
-                .catch((e)=> {
-                    getIsExpiration(e) 
-                    ? refreshAccessToken(refreshToken,actions,refreshAccessTokenURL) 
-                    : alert("네트워크를 확인해 주세요.");
+                .catch((err)=> {
+                    errorTypeCheck(err,refreshToken,actions)
                 })
             }
             return e;
         })
+    }
+
+    const fileErrorCheck = (errResponse) => {
+        try{
+            const statusCode = errResponse.response.status
+            if(statusCode === 404){
+                alert("파일이 없습니다");
+            } else {
+                errorTypeCheck(errResponse,refreshToken,actions);
+            }
+        } catch{
+            alert("네트워크를 확인해 주세요.")
+        }
     }
 
     const getFileCode = (teamName) => {
@@ -48,11 +59,11 @@ const MainTeamList = ({ teamList, text, state, actions, contentId }) => {
                 const codeList = e.data.file_info;
                 teamFileDownload(codeList,teamName);
             })
-            .catch((e)=> {
-                if(e.response.status === 404){
+            .catch((err)=> {
+                if(err.response.status === 404){
                     alert("파일이 없습니다.")
                 } else {
-                    getIsExpiration(e) ? refreshAccessToken(refreshToken,actions,refreshAccessTokenURL) : alert("네트워크를 확인해 주세요.");
+                    fileErrorCheck(err);
                 }
             })
         }

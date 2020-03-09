@@ -1,14 +1,15 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import * as S from '../style/PublicStyle';
 import HeaderButton from './HeaderButton';
 import { AccessTokenConsumer } from '../../../context/AccessTokenContext';
+import { withRouter } from 'react-router-dom'
 
-const Header = ({ state, actions, isCheck }) => {
+const Header = ({ isCheck, history }) => {
 
     return (
         <S.Header>
             <div>
-                <p id="title"><span>SCARFS </span>Admin console</p>
+                <p id="title" onClick={()=> history.push('/Admin')}><span>SCARFS </span>Admin console</p>
                 <div>
                     <AccessTokenConsumer>
                         {
@@ -38,4 +39,4 @@ const Header = ({ state, actions, isCheck }) => {
     )
 }
 
-export default Header;
+export default withRouter(Header);

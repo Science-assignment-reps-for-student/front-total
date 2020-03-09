@@ -1,11 +1,9 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { Header } from '../public/Header';
 import * as S from './style/ChattingStyle';
 import { enter } from './img';
-import { Stomp } from '@stomp/stompjs';
-import SockJS from 'sockjs-client';
 import axios from 'axios';
-import { messageURL, socketURL, refreshAccessTokenURL, getUserInfoURL } from '../resource/serverURL';
+import { messageURL, refreshAccessTokenURL, getUserInfoURL } from '../resource/serverURL';
 import { getIsExpiration, refreshAccessToken, getUserInfo } from '../resource/publicFunction';
 import { useParams } from 'react-router-dom';
 import { ChattingBubble } from './components';
@@ -20,15 +18,36 @@ const Chatting = ({ state, actions, history, stomp }) => {
         }
     }
     const { userId } = useParams();
-    const [inputValue, valueChange] = useState("");
-    const [message, messageChange] = useState([]);
-    const [buffer, bufferChange] = useState();
-    const [isLoaded, loadChange] = useState(false);
-    const [userData, userDataChange] = useState();
-    const [isError, errorChange] = useState(true);
-    const [isSubscribe,subscribeChange] = useState(false);
+    const [inputValue, _valueChange] = useState("");
+    const [message, _messageChange] = useState([]);
+    const [buffer, _bufferChange] = useState();
+    const [isLoaded, _loadChange] = useState(false);
+    const [userData, _userDataChange] = useState();
+    const [isError, _errorChange] = useState(true);
+    const [isSubscribe, _subscribeChange] = useState(false);
     const endPoint = useRef();
 
+    const valueChange = useCallback((e)=> {
+        _valueChange(e);
+    },[])
+    const messageChange = useCallback((e)=> {
+        _messageChange(e);
+    },[])
+    const bufferChange = useCallback((e)=> {
+        _bufferChange(e);
+    },[])
+    const loadChange = useCallback((e)=> {
+        _loadChange(e);
+    },[])
+    const userDataChange = useCallback((e) => {
+        _userDataChange(e);
+    },[])
+    const errorChange = useCallback((e)=> {
+        _errorChange(e);
+    },[])
+    const subscribeChange = useCallback((e) => {
+        _subscribeChange(e);
+    },[])
     
     useEffect(()=> {
         const isAdmin = getUserInfo(getUserInfoURL,accessToken);
@@ -41,8 +60,8 @@ const Chatting = ({ state, actions, history, stomp }) => {
                 } else {
                     getChatting()
                     .then((e)=> {    
-                        const data =  e.data
-                        messageChange(data);
+                        const messageData =  e.data
+                        messageChange(messageData);
                     })
                     .catch((e)=> {
                         history.push('/admin/Login');
@@ -60,18 +79,15 @@ const Chatting = ({ state, actions, history, stomp }) => {
         }
     },[buffer]);
     useEffect(()=> {
-        if(message.length > 0){
+        if(isEmpty(message)){
             endPoint.current.scrollIntoView();
         }
     },[message]);
-
     useEffect(()=> {
         getSubscribe();
-        if(stomp){
+        if(stomp && isSubscribe){
             return ()=> {
-                if(isSubscribe){
-                    stomp.unsubscribe();
-                }
+                stomp.unsubscribe();
             }
         }
     },[stomp])
@@ -91,10 +107,11 @@ const Chatting = ({ state, actions, history, stomp }) => {
 
     const getSubscribe = () => {
         if(stomp){
-            try {
+            const socketReadyState = stomp.webSocket.readyState;
+            if(socketReadyState){
                 setSubscribe();
                 subscribeChange(true);
-            } catch {
+            } else {
                 stomp.onConnect = () => {
                     setSubscribe();
                     subscribeChange(true);
@@ -103,10 +120,18 @@ const Chatting = ({ state, actions, history, stomp }) => {
         }
     }
 
+    const isEmpty = (array) => {
+        if(array.length > 0){
+            return true;
+        } else {
+            return false;
+        }
+    }
+
     const setSubscribe = () => {
         stomp.subscribe(`/receive/${userId}`, (msg) => {
-            const data = msg.body;
-            const parsedData = JSON.parse(data);
+            const messageData = msg.body;
+            const parsedData = JSON.parse(messageData);
             const messageId = parsedData.messageId;
             readMessage(messageId);
             bufferChange(parsedData);
@@ -127,13 +152,13 @@ const Chatting = ({ state, actions, history, stomp }) => {
     const setMessage = () => {
         let buffer = [];
         let count = 0;
-        message.map((data)=> {
-            const { messageType, messageTime, message } = data;
+        message.map((messageData)=> {
+            const { messageType, messageTime, message } = messageData;
             buffer.push(
                 <ChattingBubble messageType={messageType} message={message} userData={userData} messageTime={messageTime} key={count}/>
             );
             count++;
-            return data;
+            return messageData;
         })
         return buffer;
     }
@@ -148,14 +173,14 @@ const Chatting = ({ state, actions, history, stomp }) => {
     })
 
     const sendMessage = () => {
-        if(inputValue.length <= 0 || !isLoaded){
+        if(!isEmpty(inputValue) || !isLoaded){
             return;
         } else {
-            const data = {
+            const messageData = {
                 "token": state.accessToken,
                 "message": inputValue,
             };  
-            const stringedData = JSON.stringify(data);
+            const stringedData = JSON.stringify(messageData);
             stomp.send(`/send/${userId}`,{}, stringedData);
             valueChange("");
         }
