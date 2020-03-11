@@ -17,12 +17,14 @@ const HomeWorkList = ({ state, homework, setHomework, taskState, setHomeworkData
                 (dd > 9 ? '' : '0') + dd
             ].join('.');
         };          
-        Date.prototype.getDifferenceDate = (end, start) => {
-            const date1 = new Date(start);
-            const date2 = new Date(end);
-            const diffTime = Math.abs(date2 - date1);
-            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-            return diffDays;
+        Date.prototype.getDDay = (end) => {
+            let date1 = new Date(end);
+            let date2 = new Date(Date.now());
+            date1 = new Date(date1.getFullYear(), date1.getMonth()+1, date1.getDate());
+            date2 = new Date(date2.getFullYear(), date2.getMonth()+1, date2.getDate());
+            const diffTime = date1 - date2;
+            const diffDays = Math.ceil(diffTime / (1000 * 3600 * 24));
+            return diffDays >= 0 ? diffDays === 0 ? 'D-Day' : `D-${diffDays}` : '마감됨';
         }
         const getHomework = () => {
             ApiDefault.get('homework', {
