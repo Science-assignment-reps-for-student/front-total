@@ -109,7 +109,7 @@ export const MainBackground = styled.div`
 `;
 
 export const HomeWorkListWrapper = styled('div')`
-    margin-top: 48px;
+    margin-top: 24px;
     height: 272px;
     overflow-y: scroll;
     -ms-overflow-style: none;
@@ -188,24 +188,16 @@ export const HomeWorkItemWrapper = styled('div')`
 `;
 
 export const HomeWorkStateBlock = styled.div`
-    display: flex;
-    align-items: flex-start;
     opacity: ${({ page }) => page === 1 ? '1' : '0'};
     transition: linear 300ms;
     height: 272px;
-    > div:nth-child(2) {
-        display: flex;
-        align-items: flex-start;
-        justify-content: space-between;
-        position: relative;
-        right: 48px;
+    position: relative;
+    right: 120px;
+    > div:first-child {
         > h4 {
             font-family: 'Roboto';
             color: #ffffff;
             margin: 0 16px 0 0;
-        }
-        > img {
-            object-fit: contain;    
         }
     }
 `;
