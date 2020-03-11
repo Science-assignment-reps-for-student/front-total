@@ -1,5 +1,26 @@
 import styled from 'styled-components'
 
+const size = {
+    mobileS: '320px',
+    mobileM: '375px',
+    mobileL: '425px',
+    tablet: '768px',
+    laptop: '1024px',
+    laptopL: '1440px',
+    desktop: '2560px'
+}
+
+export const device = {
+    mobileS: `(max-width: ${size.mobileS})`,
+    mobileM: `(max-width: ${size.mobileM})`,
+    mobileL: `(max-width: ${size.mobileL})`,
+    tablet: `(max-width: ${size.tablet})`,
+    laptop: `(max-width: ${size.laptop})`,
+    laptopL: `(max-width: ${size.laptopL})`,
+    desktop: `(max-width: ${size.desktop})`,
+    desktopL: `(max-width: ${size.desktop})`
+};
+
 export const Background = styled.div`
     background-image: url(${props => props.src});
     background-repeat:no-repeat;
@@ -37,7 +58,10 @@ export const Header = styled.div`
         align-items: center;
         height: 100%;
         > #title {
-            width: 350px;
+            width: 20vw;
+            @media ${device.laptop} {
+                width: 30vw;
+            }
             text-align: center;
             font-size: 20px;
             color:white;
@@ -49,7 +73,10 @@ export const Header = styled.div`
         }
         
         > div {
-            width: 260px;
+            width: 15vw;
+            @media ${device.laptop} {
+                width: 30vw;
+            }
             height: 100%;
             display: flex;
             justify-content: space-between;
@@ -75,7 +102,7 @@ export const HeaderButton = styled.div`
         color: white;
     }
     > p {
-        transform: translateY(8px);
+        transform: translateY(1vh);
     }
     > .check {
         width: 10px;
