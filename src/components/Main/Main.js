@@ -92,11 +92,10 @@ const Main = ({ state, actions, taskActions, taskState, setHomeworkDataInState, 
                             <S.HomeWorkStateBlock page={page} ref={homeWorkStateBlock}>
                                 {state.logged === true &&
                                     <>
-                                        <HomeWorkList state={state} actions={actions} homework={homework} setHomework={setHomework} taskState={taskState} setHomeworkDataInState={setHomeworkDataInState} />
                                         <div>
                                             <h4>현재 과제</h4>
-                                            <img alt="줄이미지" src={list} />
                                         </div>
+                                        <HomeWorkList state={state} actions={actions} homework={homework} setHomework={setHomework} taskState={taskState} setHomeworkDataInState={setHomeworkDataInState} />
                                     </>
                                 }
                             </S.HomeWorkStateBlock>
