@@ -1,12 +1,33 @@
 import styled from 'styled-components';
 
+const size = {
+    mobileS: '320px',
+    mobileM: '375px',
+    mobileL: '425px',
+    tablet: '768px',
+    laptop: '1024px',
+    laptopL: '1440px',
+    desktop: '2560px'
+}
+
+export const device = {
+    mobileS: `(max-width: ${size.mobileS})`,
+    mobileM: `(max-width: ${size.mobileM})`,
+    mobileL: `(max-width: ${size.mobileL})`,
+    tablet: `(max-width: ${size.tablet})`,
+    laptop: `(max-width: ${size.laptop})`,
+    laptopL: `(max-width: ${size.laptopL})`,
+    desktop: `(max-width: ${size.desktop})`,
+    desktopL: `(max-width: ${size.desktop})`
+};
+
 export const MainDiv = styled.div`  
-    width: 98vw;
+    width: 98%;
     padding: 1vw;
     display:flex;
     &::-webkit-scrollbar {
         display: none;
-    }   
+    }
     > div{
         width: 80%;
         height: 88vh;
@@ -28,6 +49,9 @@ export const MainDiv = styled.div`
 export const MainContent = styled.div`
     width: 100%;
     height: ${props => props.isFolder ? "auto" : "75vh"};
+    @media ${device.laptop}{
+        height: auto;
+    }
     > div {
         display: flex;
         width:100%;
@@ -42,16 +66,21 @@ export const MainContent = styled.div`
             width: 48%;
             height: 50%;
             margin: 0 1% 0 1%;
+            max-width: 680px;  
+            @media ${device.laptop}{
+                width: 100%;
+                height: 328px;
+            } 
             > h2 {
                 margin: 10px;
                 font-size:20px;
             }
         }
         > .buttonWrapper {
-            width: ${props => props.button ? 27 : 20}%;
+            width: auto;
+            height: auto;
             margin: 0;
             display: flex;
-            justify-content: space-around;
         }
     }
     > .classWrapper {
@@ -60,7 +89,7 @@ export const MainContent = styled.div`
         display: ${props => props.isFolder ? "none" : "flex"};
     }
     > .wrapper {
-        margin: 5px;
+        margin: 5px 0px 5px 0px;
         height: auto;
         display: flex;
         align-items: center;
@@ -74,25 +103,33 @@ export const MainClass = styled.div`
     background: white;
     border: 1px solid #D5D5D5;
     border-radius: 3px;
+    max-width: 680px;
     > h3 {
         box-sizing: border-box;
         padding: 10px;
         height: 15%;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
         font-size: 15px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
         > span {
             text-align: right;
+            justify-self: right;
+        }
+        > div {
+            display: flex;
+            align-items: center;
+            ${props => props.isOver ? "transform: translate(-30px)" : ""};
+            > img {
+                width: 40px;
+                height: 40px;
+            }
         }
     }
     > div{
         width: 100%;
         height: 85%;
         display: flex;
-        > div {
-        
-        }
         > .secondDiv {
             width: 33%;
         }
@@ -108,7 +145,7 @@ export const MainClassCount = styled.div`
         width: 50%;
         height: 100%;
         > p {
-            font-size: 20px;
+            font-size: 17px;
             font-weight: 600;
             margin: 20px;
             margin-bottom: 10px;
@@ -209,6 +246,7 @@ export const MainFixButton = styled.button`
     background-color: white;
     border: 1px solid black;
     border-radius: 3px;
+    margin-right: 10px;
     > img {
         width: 15px;
         height: 15px;
