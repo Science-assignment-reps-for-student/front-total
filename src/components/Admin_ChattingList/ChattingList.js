@@ -1,23 +1,36 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import * as S from './style/ChattingListStyle';
 import { Header } from '../public/Header';
 import { BackgroundWhite } from '../public/Background';
 import { ListComponent } from './components';
 import axios from 'axios';
-import { messageURL, refreshAccessTokenURL, getUserInfoURL } from '../resource/serverURL';
-import { isDayOver, getIsExpiration, refreshAccessToken, getUserInfo, getSubscribe } from '../resource/publicFunction';
+import { messageURL, getUserInfoURL } from '../resource/serverURL';
+import { isDayOver, errorTypeCheck, getUserInfo, getSubscribe } from '../resource/publicFunction';
 import { withRouter } from 'react-router-dom'; 
 
 const ChattingList = ({ actions, state, history, stomp }) => {
     const { accessToken, refreshToken } = state;
-    const [messageList, listChange] = useState([]);
-    const [page, pageChange] = useState(0);
-    const [isSubscribe, subscribeChange] = useState(false); 
+    const [messageList, _listChange] = useState([]);
+    const [page, _pageChange] = useState(0);
+    const [isSubscribe, _subscribeChange] = useState(false); 
     const header = {
         headers: {
             "Authorization": accessToken,
         },
     };
+
+    const listChange = useCallback((e)=> {
+        _listChange(e);
+    },[])
+
+    const pageChange = useCallback((e)=> {
+        _pageChange(e);
+    },[])
+
+    const subscribeChange = useCallback((e)=> {
+        _subscribeChange(e);
+    },[])
+
 
     useEffect(()=> {
         const isAdmin = getUserInfo(getUserInfoURL,accessToken);
@@ -28,13 +41,11 @@ const ChattingList = ({ actions, state, history, stomp }) => {
             } else {
                 axios.get(messageURL,header)
                 .then((e)=> {
-                    const list = e.data;
-                    listChange(list);
+                    const messageList = e.data;
+                    listChange(messageList);
                 })
-                .catch((e)=> {
-                    getIsExpiration(e) 
-                    ? refreshAccessToken(refreshToken,actions,refreshAccessTokenURL) 
-                    : alert("네트워크를 확인해 주세요.");
+                .catch((err)=> {
+                    errorTypeCheck(err,refreshToken,actions)
                 })
             }
         })
@@ -45,11 +56,9 @@ const ChattingList = ({ actions, state, history, stomp }) => {
 
     useEffect(()=> {
         getSubscribe(stomp,subscribeChange);
-        if(stomp){
+        if(stomp && isSubscribe){
             return ()=> {
-                if(isSubscribe){
-                    stomp.unsubscribe();
-                }
+                stomp.unsubscribe();
             }
         }
     },[stomp])
@@ -74,12 +83,24 @@ const ChattingList = ({ actions, state, history, stomp }) => {
         return buffer;
     }
 
+    const getButtonNumber = (messageList, count) => {
+        return count <= Math.ceil(messageList.length / 7);
+    }   
+
     const setButton = () => {
         let buffer = [];
-        for(let i=1; i <= Math.ceil(messageList.length / 7); i++){
+        for(let i=1; getButtonNumber(messageList, i); i++){
             buffer.push(<div onClick={()=> {pageChange(i-1)}}>{i}</div>)
         }
         return buffer;
+    }
+
+    const isEmpty = (array) => {
+        if(array.length > 0){
+            return false;
+        } else {
+            return true;
+        }
     }
 
     return (
@@ -93,7 +114,7 @@ const ChattingList = ({ actions, state, history, stomp }) => {
                     <S.ChattingListBody>
                         <div>
                             <ListComponent name="이름" number="학번" date="최근 날짜" text="최근 대화" isHeader={true}/>
-                            {messageList.length >= 1 ? setMessageList() : "" }
+                            {!isEmpty(messageList) ? setMessageList() : "" }
                         </div>  
                     </S.ChattingListBody>
                 </div>

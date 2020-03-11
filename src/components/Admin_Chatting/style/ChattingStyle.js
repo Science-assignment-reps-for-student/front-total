@@ -1,5 +1,26 @@
 import styled from 'styled-components';
 
+const size = {
+    mobileS: '320px',
+    mobileM: '375px',
+    mobileL: '425px',
+    tablet: '768px',
+    laptop: '1024px',
+    laptopL: '1440px',
+    desktop: '2560px'
+}
+
+export const device = {
+    mobileS: `(max-width: ${size.mobileS})`,
+    mobileM: `(max-width: ${size.mobileM})`,
+    mobileL: `(max-width: ${size.mobileL})`,
+    tablet: `(max-width: ${size.tablet})`,
+    laptop: `(max-width: ${size.laptop})`,
+    laptopL: `(max-width: ${size.laptopL})`,
+    desktop: `(max-width: ${size.desktop})`,
+    desktopL: `(max-width: ${size.desktop})`
+};
+
 export const ChattingMain = styled.div`
     width: 100%;
     height: 95vh;
@@ -14,15 +35,15 @@ export const ChattingMain = styled.div`
     }
     > .error {
         width: 100%;
-        height: 45px;
+        height: 5vh;
         background-color: #ff3030;
         position: absolute;
         left: 0;
         transition: 0.7s;
         text-align: center;
-        line-height: 45px;
+        line-height: 5vh ;
         color: #FFF;
-        transform: ${props => props.error ? "translate(0px, 0px)" : "translate(0px, -45px)"};
+        transform: ${props => props.error ? "translate(0px, 0px)" : "translate(0px, -5vh)"};
     }
 `
 
