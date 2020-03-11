@@ -3,6 +3,7 @@ import * as S from '../style/MainStyle';
 import { MainList } from '../component';
 import { AccessTokenConsumer } from '../../../context/AccessTokenContext';
 import { reparseDate } from '../../resource/publicFunction';
+import { importantIcon } from '../imgs';
 
 const MainClass = ({ num, title, studentList, deadline, contentId, created_at }) => {
 
@@ -19,6 +20,12 @@ const MainClass = ({ num, title, studentList, deadline, contentId, created_at })
         return counter;
     }
     
+    const isHomeworkOver = (deadline) => {
+        const nowDate = new Date();
+        const currentDate = new Date(deadline * 1000);
+        return nowDate > currentDate;
+    }
+    
     const max = studentList.length;
     const count = countChecked(studentList);
 
@@ -26,8 +33,16 @@ const MainClass = ({ num, title, studentList, deadline, contentId, created_at })
     return (
         <div>
             <h2>{num}반</h2>
-            <S.MainClass>
-                <h3>{title}<span>시작: {reparseDate(created_at*1000)} 종료 : {reparseDate(deadline*1000)}</span></h3>
+            <S.MainClass isOver={isHomeworkOver(deadline)}>
+                <h3>
+                    <div>
+                        {
+                            isHomeworkOver(deadline) ? <img src={importantIcon} alt=""/> : ""
+                        }
+                        {title}
+                    </div>
+                    <span>시작: {reparseDate(created_at*1000)} 종료 : {reparseDate(deadline*1000)}</span>
+                </h3>
                 <hr/>
                 <div>
                     <S.MainClassCount>
