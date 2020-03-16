@@ -34,7 +34,7 @@ const peerReducer = (state, action) => {
 
 const PeerEvaluation = ({ state, taskActions, members, setMembers, getUserInfo, homeworkData, setHomeworkDataInState }) => {
     const history = useHistory();
-    const { homework_type } = homeworkData;
+    const { homework_title, homework_type } = homeworkData;
     const { limServer, wooServer, accessToken } = state;
     const { homeworkId } = useParams();
     const [my, setMy] = useState({});
@@ -246,7 +246,7 @@ const PeerEvaluation = ({ state, taskActions, members, setMembers, getUserInfo, 
             <Header />
             <Styled.PeerEvaluation>
                 <div>
-                    <h2>{evaluationData.title}</h2>
+                    <h2>[{homework_type === 0 ? "개인" : homework_type === 1 ? "팀" : "실험"}] {homework_title}</h2>
                     <section>
                         <div className="evaluation-title">
                             <h3>동료평가</h3>

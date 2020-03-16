@@ -15,7 +15,6 @@ const InputList = ({ type, title, subTitle, i, selfReducerHandler, peerStateChan
                     data-type={type} 
                     data-num={i}
                     onClick={(e) => {
-                        console.log(typeof selfReducerHandler, typeof peerStateChange);
                         if (typeof selfReducerHandler === "function")
                             selfReducerHandler(e);
                         else if (typeof peerStateChange === "function")
