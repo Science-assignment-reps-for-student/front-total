@@ -152,6 +152,18 @@ const TaskBottom = styled.div`
                     font-weight: bold;
                 }
             }
+            a {
+                padding: 8px;
+                border: 1px solid #2E2E2E;
+                border-radius: 8px;
+                font-weight: bold;
+                font-size: 12px;
+            }
+            a:hover {
+                color: white;
+                background-color: #2E2E2E;
+                transition: 0.3s ease-in-out;
+            }
         }
         > div.show--list {
             flex: 1;
