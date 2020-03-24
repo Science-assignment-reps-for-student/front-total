@@ -1,6 +1,6 @@
-import React, { useState, useCallback, useEffect, useRef } from 'react'
+import React, { useState, useCallback, useEffect } from 'react'
 import { Route, Switch, withRouter, useHistory } from 'react-router-dom';
-import { PeerEvaluation, Task, TaskGuide, AdminLogin, Homework, AdminMain, Main, QnA, AdminChatting, ChattingList } from './components';
+import { PeerEvaluation, Task, TaskGuide, AdminLogin, Homework, AdminMain, Main, QnA, AdminChatting, ChattingList, Board, BoardDetail } from './components';
 import { AuthConsumer, AuthProvider } from './context/Auth';
 import { TaskProvider, TaskConsumer } from './context/AppContext';
 import { AccessTokenProvider, AccessTokenConsumer } from './context/AccessTokenContext';
@@ -148,6 +148,23 @@ const App = () => {
                                                 setHomeworkDataInState={setHomeworkDataInState}
                                             />
                                         }
+                                    />
+                                    <Route 
+                                        path="/board/:number" 
+                                        render={()=> <BoardDetail
+                                            state={taskState}
+                                            getUserInfo={getUserInfo}
+                                            isLogin={isLogin}
+                                        />}
+                                    />
+                                    <Route 
+                                        exact
+                                        path="/board" 
+                                        render={()=> <Board
+                                            state={taskState}
+                                            getUserInfo={getUserInfo}
+                                            isLogin={isLogin}
+                                        />}
                                     />
                                     <AccessTokenProvider>
                                         <AccessTokenConsumer>
