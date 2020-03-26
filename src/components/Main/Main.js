@@ -69,6 +69,7 @@ const Main = ({ state, actions, taskActions, taskState, setHomeworkDataInState, 
                         <ul>
                             <li><Link to="/task">과제</Link></li>
                             <li><Link to="/qna">QnA</Link></li>
+                            <li><Link to="/board">게시판</Link></li>
                         </ul>
                     </div>
                 </header>
