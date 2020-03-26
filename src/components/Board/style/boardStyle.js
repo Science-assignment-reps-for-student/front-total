@@ -45,6 +45,15 @@ export const BoardGuide = styled.main`
                         cursor: pointer;
                     }
                 }
+                > div.button {
+                    margin-left: 10px;
+                    width: 100px;
+                    background-color: #1A1A1A;
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+                    color: white;
+                }
             }
         }
         > div.task-guide-table {
@@ -99,20 +108,20 @@ export const BoardGuide = styled.main`
                         height: 12px;
                     }
                     > div { 
-                        width: 48px;
-                        height: 48px;
+                        width: 36px;
+                        height: 36px;
                         position: absolute;
                         background-color: #FF5700;
                         border-radius: 24px;
-                        top: 3px;
-                        left: -25px;
+                        left: -18px;
+                        top: 9px;
                         display: flex;
                         justify-content: center;
                         align-items: center;
                         > i {
                             position: absolute;
-                            width: 30px;
-                            height: 19px;
+                            width: 20px;
+                            height: 14px;
                             background-image: url(${New});
                             background-position: center;
                             background-repeat: no-repeat;
@@ -150,7 +159,6 @@ export const BoardGuide = styled.main`
                     background-position: center;
                     background-repeat: no-repeat;
                     background-size: contain;
-                    
                 }
                 > li:last-child > i {
                     transform: rotate(180deg);
