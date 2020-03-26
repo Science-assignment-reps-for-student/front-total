@@ -67,7 +67,7 @@ export const TaskTop = styled.div`
             }
             > p {
                 line-height: 2;
-                font-size: 12px;
+                font-size: 15px;
             }
         }
         > div.file {
@@ -124,15 +124,31 @@ export const BoardCommentContent = styled.div `
         border-bottom: 0.5px solid #858585;
         box-shadow: 1px 1px 2px 0px #858585;
         > p {
+            display: flex;
             font-size: 15px;
+            width: 80%;
             > span {
                 margin: 10px;
+                text-align: center;
             }
             > span.name {
                 font-weight: 600;
             }
+            > span.content {
+                display: ${props => props.isFix ? "none" : "block"};
+            }
+            > input {
+                display: ${props => props.isFix ? "block" : "none"};
+                width: 100%;
+                outline: none;
+                border: none;   
+                font-size: 15px;
+            }
         }
         > div {
+            width: 20%;
+            display:flex;
+            justify-content:flex-end;
             > div {
                 display: flex;
                 color: #858585;
@@ -163,7 +179,7 @@ export const BoardCommentContent = styled.div `
 export const BoardCommentInput = styled.div`
     height: 40px;
     width: 100%;
-    margin: 10px;
+    margin: 10px 0px;
     box-shadow: 0px 0px 5px 0px #858585;
     display: ${props => props.isCheck ? "flex" : "none"};
     > input {

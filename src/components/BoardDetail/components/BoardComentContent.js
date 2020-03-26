@@ -5,12 +5,14 @@ import { BoardCommentInput } from '../components';
 const BoardCommentContent =  ({ isMine, name, date, comments, content })=> {
     const [isCheck, checkChange] = useState(false);
     const [commentData, dataChange] = useState(comments);
+    const [isFix, fixChange] = useState(false);
     return (
-        <S.BoardCommentContent>
+        <S.BoardCommentContent isFix={isFix}>
             <div className="comment">
                 <p>
                     <span className="name">{name}</span>
-                    <span>{content}</span>
+                    <span className="content">{content}</span>
+                    <input placeholder="내용을 입력하세요."/>
                 </p>
                 <div>
                     <div>
@@ -19,7 +21,7 @@ const BoardCommentContent =  ({ isMine, name, date, comments, content })=> {
                             isMine ?
                             <div>
                                 <span className="delete">삭제</span>
-                                <span className="fix">수정</span>
+                                <span className="fix" onClick={()=> fixChange(!isFix)}>수정</span>
                             </div> :
                             <div>
                                 <span onClick={()=> checkChange(!isCheck)}>답글</span>

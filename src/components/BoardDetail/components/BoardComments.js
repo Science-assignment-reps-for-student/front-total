@@ -1,9 +1,8 @@
-import React from 'react';
-import * as S from '../style/BoardDetailStyle';
-import { BoardComment } from '../components';
+import React, { useState } from 'react';
+import { BoardComment, BoardCommentInput } from '../components';
 
 const BoardComments = () => {
-    const dummyData = [
+    const [data, dataChange] = useState([
         {
             name: "강신희",
             content: "강신희 바보",
@@ -26,15 +25,16 @@ const BoardComments = () => {
                 }
             ]
         }
-    ]
+    ]);
     return (
         <>
             {
-                dummyData.map((comment)=> {
+                data.map((comment)=> {
                     const { name, content, date, isMine, cocomment } = comment;
                     return <BoardComment name={name} content={content} date={date} isMine={isMine} comments={cocomment}/>
                 })
             }
+            <BoardCommentInput commentData={data} dataChange={dataChange} isCheck={true}/>
         </>
     )
 }
