@@ -3,7 +3,7 @@ import { Header, BackgroundWhite } from '../public';
 import * as S from './style/MainStyle';
 import { MainContent, MainNav } from './component';
 import { personalHomeworkURL, teamHomeworkURL, getUserInfoURL, experimentHomeworkURL, allFileDownloadURL, getFileCodeURL, excelFileDownloadURL } from '../resource/serverURL.js';
-import { getUserInfo, getSubscribe, errorTypeCheck } from '../resource/publicFunction';
+import { getUserInfo, getSubscribe, errorTypeCheck, getIsExpiration, refreshAccessToken } from '../resource/publicFunction';
 import { withRouter } from 'react-router-dom'
 import axios from 'axios';
 
@@ -90,8 +90,12 @@ const AdminMain = ({ state, actions, history, stomp }) => {
             // not admin
             history.push('/');
         })
-        .catch(()=> {
-            history.push('/admin/Login');
+        .catch((err)=> {
+            if(!getIsExpiration(err)){
+                history.push('/admin/Login');
+            } else {
+                refreshAccessToken(refreshToken,actions);
+            }
         })
     },[]);
 
@@ -126,14 +130,16 @@ const AdminMain = ({ state, actions, history, stomp }) => {
     
     const fileErrorCheck = (errResponse) => {
         try{
-            const statusCode = errResponse.response.status
+            const statusCode = errResponse.response.status;
             if(statusCode === 404){
                 alert("파일이 없습니다");
+            } else if(statusCode === 412) {
+                alert("파일이 생성되지 않았습니다.");
             } else {
                 errorTypeCheck(errResponse,refreshToken,actions);
             }
         } catch{
-            alert("네트워크를 확인해 주세요.")
+            alert("네트워크를 확인해 주세요.");
         }
     }
 
@@ -272,15 +278,32 @@ const AdminMain = ({ state, actions, history, stomp }) => {
         }
     };
 
+    const excelFileUpdate = (contentId) => new Promise((resolve,reject) => {
+        axios.put(`${excelFileDownloadURL}/${contentId}`,{},header)
+        .then(()=> {
+            resolve();
+        })
+        .catch((err)=> {
+            reject(err);
+        })
+    })
+
     const getExcelFile = (contentId) => {
         const fileCodePromise = getFileCodePromise(contentId);
         fileCodePromise
         .then((e)=> {
-            const { file_excel_name } = e.data;
-            axios.get(`${excelFileDownloadURL}/${contentId}`,fileHeader
-            ).then((e)=> {
-                const excelFile = e.data;
-                downloadFile(file_excel_name,excelFile);
+            const excelFileUpdatePromise = excelFileUpdate(contentId);
+            excelFileUpdatePromise
+            .then(()=> {
+                const { file_excel_name } = e.data;
+                axios.get(`${excelFileDownloadURL}/${contentId}`,fileHeader)
+                .then((e)=> {
+                    const excelFile = e.data;
+                    downloadFile(file_excel_name,excelFile);
+                })
+                .catch((err)=> {
+                    fileErrorCheck(err);
+                })
             })
             .catch((err)=> {
                 fileErrorCheck(err);

@@ -22,6 +22,9 @@ const Header = () => {
                     <li>
                         <NavLink to="/qna" activeStyle={activeStyle}>QnA</NavLink>
                     </li>
+                    <li>
+                        <NavLink to="/board" activeStyle={activeStyle}>게시판</NavLink>
+                    </li>
                 </ul>
             </div>
         </Styled.TaskHaeder>

@@ -133,6 +133,7 @@ export const getUserInfo = (url, accessToken) => {
 export const getIsExpiration = (err) => {
     try {
         const statusCode = err.response.status;
+        console.log(statusCode);
         if (statusCode === 401 || statusCode === 410 || statusCode === 422) {
             return true;
         } else {
@@ -175,11 +176,10 @@ new Promise((resolve,reject) => {
 
 export const getSubscribe = (stomp,subscribeChange) => {
     if(stomp){
-        const socketReadyState = stomp.webSocket.readyState
-        if(socketReadyState){
+        try {
             setSubscribe(stomp);
             subscribeChange(true);
-        } else {
+        } catch {
             stomp.onConnect = () => {
                 setSubscribe(stomp);
                 subscribeChange(true);

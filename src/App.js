@@ -1,6 +1,6 @@
-import React, { useState, useCallback, useEffect, useRef } from 'react'
+import React, { useState, useCallback, useEffect } from 'react'
 import { Route, Switch, withRouter, useHistory } from 'react-router-dom';
-import { PeerEvaluation, Task, TaskGuide, AdminLogin, Homework, AdminMain, Main, QnA, AdminChatting, ChattingList } from './components';
+import { PeerEvaluation, Task, TaskGuide, AdminLogin, Homework, AdminMain, Main, QnA, AdminChatting, ChattingList, Board, BoardDetail, BoardInput } from './components';
 import { AuthConsumer, AuthProvider } from './context/Auth';
 import { TaskProvider, TaskConsumer } from './context/AppContext';
 import { AccessTokenProvider, AccessTokenConsumer } from './context/AccessTokenContext';
@@ -57,7 +57,6 @@ const App = () => {
     const setSocket = () => {
         const socket = new SockJS(socketURL);
         const stomp = Stomp.over(socket);
-        // getNotificationPermission();
         stompChange(stomp);
         socketChange(socket);
         stomp.connect(
@@ -148,6 +147,30 @@ const App = () => {
                                                 setHomeworkDataInState={setHomeworkDataInState}
                                             />
                                         }
+                                    />
+                                    <Route 
+                                        path="/board/:number" 
+                                        render={()=> <BoardDetail
+                                            state={taskState}
+                                            getUserInfo={getUserInfo}
+                                            isLogin={isLogin}
+                                        />}
+                                    />
+                                    <Route 
+                                        exact
+                                        path="/board" 
+                                        render={()=> <Board
+                                            state={taskState}
+                                            getUserInfo={getUserInfo}
+                                            isLogin={isLogin}
+                                        />}
+                                    />
+                                    <Route path="/write" render={()=> 
+                                        <BoardInput 
+                                            state={taskState}
+                                            getUserInfo={getUserInfo}
+                                            isLogin={isLogin}
+                                        />}
                                     />
                                     <AccessTokenProvider>
                                         <AccessTokenConsumer>
