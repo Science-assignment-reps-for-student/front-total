@@ -1,9 +1,11 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Header } from '../Header';
 import * as S from './style/boardStyle';
 import { BoardComponent } from './components';
+import { withRouter } from 'react-router-dom';
 
-const Board = () => {
+const Board = ({ state, getUserInfo, history }) => {
+    const { limServer, wooServer, accessToken, refreshToken } = state;
     const [search, searchChange] = useState();
     const [postList, postListChange] = useState([
         {
@@ -159,6 +161,11 @@ const Board = () => {
         return page * 8;
     }
 
+    useEffect(()=> {
+        const userInfoPro = getUserInfo(limServer,accessToken);
+        if(!userInfoPro){ history.push('/'); }
+    },[])
+
     return (
         <>
             <Header/>
@@ -177,6 +184,7 @@ const Board = () => {
                                 />
                             </div>
                             <div><button>검색</button></div>
+                            <div className="button" onClick={()=> history.push('/write')}>글쓰기</div>
                         </div>
                     </div>
                     <div className="task-guide-table">
@@ -207,4 +215,4 @@ const Board = () => {
     )
 }
 
-export default Board;
+export default withRouter(Board);
