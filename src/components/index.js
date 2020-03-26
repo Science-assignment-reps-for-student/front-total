@@ -6,6 +6,7 @@ export { Task, TaskGuide } from './Task';
 export { PeerEvaluation } from './PeerEvaluation';
 export { Board } from './Board';
 export { BoardDetail } from './BoardDetail';
+export { BoardInput } from './BoardInput';
 
 export { AdminMain } from './Admin_Main';
 export { AdminLogin } from './Admin_Login';
