@@ -9,6 +9,7 @@ import axios from 'axios';
 import SockJS from 'sockjs-client';
 import { Stomp } from '@stomp/stompjs';
 import { socketURL } from './components/resource/serverURL';
+import NoMatch from './components/NoMatch/NoMatch';
 
 const App = () => {
     const history = useHistory();
@@ -194,22 +195,25 @@ const App = () => {
                                         <AuthConsumer>
                                             {
                                                 ({ state, actions }) =>
-                                                    <Route
-                                                        exact
-                                                        path="/"
-                                                        render={() =>
-                                                            <Main
-                                                                state={state}
-                                                                actions={actions}
-                                                                taskActions={taskActions}
-                                                                taskState={taskState}
-                                                                setHomeworkDataInState={setHomeworkDataInState}
-                                                                setIsLogin={setIsLogin}
-                                                            />}
-                                                    />
+                                                    <>
+                                                        <Route
+                                                            exact
+                                                            path="/"
+                                                            render={() =>
+                                                                <Main
+                                                                    state={state}
+                                                                    actions={actions}
+                                                                    taskActions={taskActions}
+                                                                    taskState={taskState}
+                                                                    setHomeworkDataInState={setHomeworkDataInState}
+                                                                    setIsLogin={setIsLogin}
+                                                                />}
+                                                        />
+                                                    </>
                                             }
                                         </AuthConsumer>
                                     </AuthProvider>
+                                    <Route component={NoMatch} />
                                 </>
                             );
                         }
