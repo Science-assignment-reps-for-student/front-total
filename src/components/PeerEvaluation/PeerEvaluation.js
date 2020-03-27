@@ -72,7 +72,7 @@ const PeerEvaluation = ({ state, taskActions, members, setMembers, getUserInfo, 
                 [] :
                 [
                     ...Array.from(members.members).filter((member) => member.userNumber !== my.number),
-                    { uuid: members.leaderId, userNumber: members.leaderNumber, userName: members.leaderName }
+                    { userId: members.leaderId, userNumber: members.leaderNumber, userName: members.leaderName }
                 ]
     });
 
@@ -86,7 +86,7 @@ const PeerEvaluation = ({ state, taskActions, members, setMembers, getUserInfo, 
             } else {
                 copy.peerStudents = [
                     ...Array.from(members.members).filter((member) => +member.userNumber !== +my.userNumber),
-                    { uuid: members.leaderId, userNumber: members.leaderNumber, userName: members.leaderName }
+                    { userId: members.leaderId, userNumber: members.leaderNumber, userName: members.leaderName }
                 ];
                 setEvaluationData(copy);
             }
@@ -136,7 +136,7 @@ const PeerEvaluation = ({ state, taskActions, members, setMembers, getUserInfo, 
         const list = evaluationData.peerStudents.map((student, i) => {
             return (
                 <div key={i}>
-                    <p className="evaluated-name" data-uuid={student.uuid}>{student.userNumber} {student.userName}</p>
+                    <p className="evaluated-name" data-userId={student.userId}>{student.userNumber} {student.userName}</p>
                     {evaluationData.peerData.map((data, j) => {
                         return (
                             <InputList
@@ -164,9 +164,9 @@ const PeerEvaluation = ({ state, taskActions, members, setMembers, getUserInfo, 
             },
             data: {
                 homeworkId: +homeworkId,
-                scientificAccuracy: seflState.scientificAccuracy,
-                communication: seflState.communication,
-                attitude: seflState.attitude,
+                scientificAccuracy: +seflState.scientificAccuracy,
+                communication: +seflState.communication,
+                attitude: +seflState.attitude,
             }
         }).then(() => {
             if (+homework_type === 0) {
@@ -175,15 +175,16 @@ const PeerEvaluation = ({ state, taskActions, members, setMembers, getUserInfo, 
                 submitPeerEvaluation();
                 alert("평가를 성공적으로 제출하였습니다.");
             }
+        }).catch((error) => {
+            if (typeof error.response === "undefined") return;
+            const code = error.response.status;
+            if (code === 400)
+                return alert("자기 평가를 이미 완료하였습니다.");
+            else if (code === 410)
+                getAccessTokenUsingRefresh(state, taskActions);
+        }).finally(() => {
+            history.go(-1);
         })
-            .catch((error) => {
-                if (typeof error.response === "undefined") return;
-                const code = error.response.status;
-                if (code === 400)
-                    return alert("자기 평가를 이미 완료하였습니다.");
-                else if (code === 410)
-                    getAccessTokenUsingRefresh(state, taskActions);
-            })
     }, [homeworkId, state, seflState]);
     const submitPeerEvaluation = useCallback(() => {
         evaluationData.peerStudents.map((student, i) => {
@@ -196,9 +197,9 @@ const PeerEvaluation = ({ state, taskActions, members, setMembers, getUserInfo, 
                 },
                 data: {
                     homeworkId: +homeworkId,
-                    targetUuid: student.uuid,
-                    cooperation: peerState[i].cooperation,
-                    communication: peerState[i].communication,
+                    targetUuid: +student.userId,
+                    cooperation: +peerState[i].cooperation,
+                    communication: +peerState[i].communication,
                 }
             }).catch((error) => {
                 if (typeof error.response === "undefined") return;
