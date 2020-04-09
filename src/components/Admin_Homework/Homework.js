@@ -4,7 +4,7 @@ import * as S from './style/HomeworkStyle';
 import { HomeworkNav, HomeworkButtonBar, HomeworkMain } from './component';
 import axios from 'axios';
 import { homeworkURL, getUserInfoURL } from '../resource/serverURL';
-import { parseDate, reparseDate, isDataAllow, isAllFile, getUserInfo, getSubscribe, errorTypeCheck, refreshCallback } from '../resource/publicFunction';
+import { parseDate, reparseDate, isDataAllow, isAllFile, getUserInfo, getSubscribe, refreshCallback } from '../resource/publicFunction';
 
 import { withRouter, useParams } from 'react-router-dom';
 
@@ -133,7 +133,7 @@ const Admin_Homework = ({ state, type, history, actions, stomp }) => {
             dateChange(dateBuffer);
         })
         .catch((e)=> {
-            refreshCallback(refreshToken,actions,e,()=> {});
+            refreshCallback(refreshToken,actions,e,()=> {},history);
         });
     }
 

@@ -119,10 +119,13 @@ export const getUserInfo = (url, accessToken) => {
         axios.get(url, header)
         .then((e) => {
             const userType = e.data.userType;
-            if (userType === 0) {
+            if (!userType) {
+                reject();
+            } else if(userType !== 0){
+                resolve(true);
+            } else {
                 resolve(false);
             }
-            resolve(true);
         })
         .catch((e) => {
             reject(e);
@@ -133,14 +136,25 @@ export const getUserInfo = (url, accessToken) => {
 export const getIsExpiration = (err) => {
     try {
         const statusCode = err.response.status;
-        console.log(statusCode);
-        if (statusCode === 401 || statusCode === 410 || statusCode === 422) {
+        if (statusCode === 401 || statusCode === 422) {
             return true;
         } else {
             return false;
         }
     } catch {
+        return false;
     }
+}
+
+export const getIsRefreshExpiration = (err) => {
+    try {
+        const statusCode = err.response.status;
+        if(statusCode === 410) {
+            return true;
+        } else {
+            return false;
+        }
+    } catch {}
 }
 
 export const getAccessTokenUsingRefresh = (state, actions) => {
@@ -190,27 +204,27 @@ export const getSubscribe = (stomp,subscribeChange) => {
 
 const setSubscribe = (stomp) => {
     stomp.subscribe('/receive', (e)=> {
-        console.log(e);
     })
 }
 
-const setNotification = (data) => {
-    const notificate = new Notification();
-}
-
-export const errorTypeCheck = (e,refreshToken,actions) => {
+export const errorTypeCheck = (e,refreshToken,actions,history) => {
     getIsExpiration(e) 
     ? refreshAccessToken(refreshToken,actions) 
-    : alert("네트워크를 확인해 주세요.");
+    : getIsRefreshExpiration(e) 
+        ? history.push("/admin/login")
+        : alert("네트워크를 확인해 주세요.");
 }
 
-export const refreshCallback = (refreshToken,actions,error,callback) => {
+export const refreshCallback = (refreshToken,actions,error,callback,history) => {
     if(getIsExpiration(error)){
         refreshAccessToken(refreshToken,actions)
         .then(()=> {
             callback();
         });
-    } else {
+    } else if(getIsRefreshExpiration(error)){
+        history.push('/admin/login');
+    }
+    else {
         alert("네트워크를 확인해 주세요.");
     }
 }

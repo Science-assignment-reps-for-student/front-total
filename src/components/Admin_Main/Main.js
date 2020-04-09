@@ -82,6 +82,7 @@ const AdminMain = ({ state, actions, history, stomp }) => {
         const isAdmin = getUserInfo(getUserInfoURL,accessToken);
         isAdmin
         .then((userType)=> {
+            console.log(userType)
             if(userType){
                 // yes admin
                 getPersonalHomework(personalHomeworkURL,header,checked,data,content);
@@ -91,10 +92,11 @@ const AdminMain = ({ state, actions, history, stomp }) => {
             history.push('/');
         })
         .catch((err)=> {
-            if(!getIsExpiration(err)){
-                history.push('/admin/Login');
-            } else {
+            console.log(err);
+            if(getIsExpiration(err)){
                 refreshAccessToken(refreshToken,actions);
+            } else {
+                history.push('/admin/Login');
             }
         })
     },[]);
@@ -136,7 +138,7 @@ const AdminMain = ({ state, actions, history, stomp }) => {
             } else if(statusCode === 412) {
                 alert("파일이 생성되지 않았습니다.");
             } else {
-                errorTypeCheck(errResponse,refreshToken,actions);
+                errorTypeCheck(errResponse,refreshToken,actions,history);
             }
         } catch{
             alert("네트워크를 확인해 주세요.");
@@ -201,7 +203,7 @@ const AdminMain = ({ state, actions, history, stomp }) => {
             loadedChange(true);
         })
         .catch((e)=> {
-            errorTypeCheck(e,refreshToken,actions);
+            errorTypeCheck(e,refreshToken,actions,history);
         })
     }
 
@@ -215,7 +217,7 @@ const AdminMain = ({ state, actions, history, stomp }) => {
             getExperimentHomework(experimentHomeworkURL,header,checked,data,content);
         })
         .catch((e)=> {
-            errorTypeCheck(e,refreshToken,actions);
+            errorTypeCheck(e,refreshToken,actions,history);
         })
     }
 
@@ -231,7 +233,7 @@ const AdminMain = ({ state, actions, history, stomp }) => {
             getTeamHomework(teamHomeworkURL,header,checked,dataBuffer,contentBuffer);
         })
         .catch((e)=> {
-            errorTypeCheck(e,refreshToken,actions);
+            errorTypeCheck(e,refreshToken,actions,history);
         })
     }
 
