@@ -3,8 +3,8 @@ import { Header } from '../public/Header';
 import * as S from './style/ChattingStyle';
 import { enter } from './img';
 import axios from 'axios';
-import { messageURL, refreshAccessTokenURL, getUserInfoURL } from '../resource/serverURL';
-import { getIsExpiration, refreshAccessToken, getUserInfo } from '../resource/publicFunction';
+import { messageURL, getUserInfoURL } from '../resource/serverURL';
+import { getUserInfo, errorTypeCheck } from '../resource/publicFunction';
 import { useParams } from 'react-router-dom';
 import { ChattingBubble } from './components';
 import { withRouter } from 'react-router-dom'
@@ -98,9 +98,7 @@ const Chatting = ({ state, actions, history, stomp }) => {
             resolve(e);
         })
         .catch((e)=> {
-            getIsExpiration(e) 
-            ? refreshAccessToken(refreshToken,actions,refreshAccessTokenURL) 
-            : alert("네트워크를 확인해 주세요.");
+            errorTypeCheck(e,refreshToken,actions,history)
             reject(e);
         })
     })
@@ -143,9 +141,7 @@ const Chatting = ({ state, actions, history, stomp }) => {
     const readMessage = (messageId) => {
         axios.post(`${messageURL}/${messageId}`,{},header)
         .catch((e)=> {
-            getIsExpiration(e) 
-            ? refreshAccessToken(refreshToken,actions,refreshAccessTokenURL) 
-            : alert("네트워크를 확인해 주세요.");
+            errorTypeCheck(e,refreshToken,actions,history)
         })
     }
 

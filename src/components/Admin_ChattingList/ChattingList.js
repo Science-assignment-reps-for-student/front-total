@@ -45,7 +45,7 @@ const ChattingList = ({ actions, state, history, stomp }) => {
                     listChange(messageList);
                 })
                 .catch((err)=> {
-                    errorTypeCheck(err,refreshToken,actions)
+                    errorTypeCheck(err,refreshToken,actions,history)
                 })
             }
         })

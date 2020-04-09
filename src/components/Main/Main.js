@@ -4,7 +4,6 @@ import * as S from './styles';
 import { Login } from '../Login';
 import { SignUp } from '../SignUp';
 import { MyProfile, HomeWorkList, HomeWorkBoardList } from './component';
-import list from './img/list.png';
 import logo from './img/SCARFS.png';
 import Background from './img/background.png';
 import scrollDown from './img/scrollDown.png';
@@ -15,7 +14,6 @@ import logoutButton from './img/logOutButton.png';
 import signUpButton from './img/signUpButton.png';
 
 const Main = ({ state, actions, taskActions, taskState, setHomeworkDataInState, setIsLogin }) => {
-    console.log(5);
     const scrollButon = useRef();
     const pageBackground = useRef();
     const homeWorkStateBlock = useRef();
