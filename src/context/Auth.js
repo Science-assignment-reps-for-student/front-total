@@ -19,8 +19,9 @@ const AuthProvider = ({ children }) => {
         if (refreshToken === null) return;
         try {
             const putAuth = await ApiDefault.put('/auth', undefined, {
-                headers: { Authorization: refreshToken }
+                headers: { Authorization: 'refreshToken' }
             })
+            console.log(putAuth);
             localStorage.setItem('accessToken', putAuth.data.accessToken);
             localStorage.setItem('refreshToken', putAuth.data.refreshToken);
             setAccessToken(putAuth.data.accessToken);
@@ -31,7 +32,14 @@ const AuthProvider = ({ children }) => {
     
     useEffect(() => {
         IssuingToken().then(res => { 
-            if (res === 'success') setLogged(true);
+            if (res === 'success')
+                ApiDefault.get('user', {
+                    headers: {
+                        Authorization: accessToken
+                    }
+                }).then(_ => {
+                    setLogged(true);
+                }).catch();
         })
     }, []);
 
