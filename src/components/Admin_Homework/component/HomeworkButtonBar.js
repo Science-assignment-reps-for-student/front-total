@@ -1,9 +1,18 @@
 import React from 'react';
 import * as S from '../style/HomeworkStyle';
-import { save, trash } from '../imgs';
-import { withRouter } from 'react-router-dom'
+import { 
+    save, 
+    trash,
+} from '../imgs';
+import { withRouter } from 'react-router-dom';
 
-const HomeworkButtonBar = ({ setHomework, patchHomework, deleteHomework, type, history }) => {
+const HomeworkButtonBar = ({ 
+    setHomework, 
+    patchHomework, 
+    deleteHomework, 
+    type, 
+    history 
+}) => {
     return (
         <S.HomeworkButtonDiv>
             <S.HomeworkButton onClick={type === "Fix" ? patchHomework : setHomework}>
@@ -18,4 +27,6 @@ const HomeworkButtonBar = ({ setHomework, patchHomework, deleteHomework, type, h
     )
 }
 
-export default React.memo(withRouter(HomeworkButtonBar));
+export default React.memo(
+    withRouter(HomeworkButtonBar)
+);

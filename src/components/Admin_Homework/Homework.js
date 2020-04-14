@@ -1,15 +1,44 @@
-import React, { useState, useCallback, useEffect } from 'react';
-import { Header, BackgroundBlack } from '../public';
+import React, { 
+    useState, 
+    useCallback, 
+    useEffect 
+} from 'react';
+import { 
+    Header, 
+    BackgroundBlack 
+} from '../public';
 import * as S from './style/HomeworkStyle';
-import { HomeworkNav, HomeworkButtonBar, HomeworkMain } from './component';
+import { 
+    HomeworkNav, 
+    HomeworkButtonBar, 
+    HomeworkMain 
+} from './component';
 import axios from 'axios';
-import { homeworkURL, getUserInfoURL } from '../resource/serverURL';
-import { parseDate, reparseDate, isDataAllow, isAllFile, getUserInfo, getSubscribe, refreshCallback } from '../resource/publicFunction';
+import { 
+    homeworkURL, 
+    getUserInfoURL 
+} from '../resource/serverURL';
+import { 
+    parseDate, 
+    reparseDate,
+    getUserInfo, 
+    getSubscribe, 
+    errorTypeCheck
+} from '../resource/publicFunction';
 
-import { withRouter, useParams } from 'react-router-dom';
+import { 
+    withRouter,
+    useParams 
+} from 'react-router-dom';
 
 
-const Admin_Homework = ({ state, type, history, actions, stomp }) => {
+const Admin_Homework = ({ 
+    state, 
+    type, 
+    history, 
+    actions, 
+    stomp 
+}) => {
     const { homeworkNum } = useParams();
     const { accessToken, refreshToken } = state;
     const header = {
@@ -49,28 +78,6 @@ const Admin_Homework = ({ state, type, history, actions, stomp }) => {
         _categoryChange(e);
     },[]);
 
-    const MainInfo = {
-        content,
-        title,
-        category,
-    };
-
-    const MainInfoChange = {
-        categoryChange,
-        titleChange,
-        contentChange,
-    };
-
-    const NavInfo = {
-        file,
-        date,
-    };
-
-    const NavInfoChange = {
-        fileChange,
-        dateChange,
-    };
-
     useEffect(()=> {
         const isAdmin = getUserInfo(getUserInfoURL,accessToken);
         isAdmin
@@ -79,8 +86,8 @@ const Admin_Homework = ({ state, type, history, actions, stomp }) => {
                 history.push('/admin/Login');
             }
         })
-        .catch(()=> {
-            history.push('/admin/Login');
+        .catch((errResponse)=> {
+            errorTypeCheck(errResponse,refreshToken,actions,history);
         })
     },[])
 
@@ -111,6 +118,51 @@ const Admin_Homework = ({ state, type, history, actions, stomp }) => {
         return dateBuffer;
     }
 
+    const isDataAllow = (title, content, type, date) => {
+        if (title.length < 1) {
+            return false;
+        } else if (content.length < 1) {
+            return false;
+        } else if (type === -1) {
+            return false;
+        } else if (!isDateAllow(date)) {
+            return false;
+        }
+        else {
+            return true;
+        }
+    }
+
+    const isFile = (obj) => {
+        if (obj.type) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+    
+
+    const isAllFile = (array) => {
+        let flag = true;
+        array.map((e) => {
+            isFile(e) ? flag = true : flag = false;
+            return e;
+        });
+        return flag;
+    }
+
+    const isDateAllow = (date) => {
+        const value = Object.values(date);
+        let flag = true;
+        value.map(e => {
+            if (e.length < 10) {
+                flag = false;
+            }
+            return e;
+        })
+        return flag;
+    }
+
     const getHomework = () => {
         axios.get(`${homeworkURL}/${homeworkNum}`,header)
         .then((e)=> {
@@ -132,8 +184,8 @@ const Admin_Homework = ({ state, type, history, actions, stomp }) => {
             contentChange(homework_description);
             dateChange(dateBuffer);
         })
-        .catch((e)=> {
-            refreshCallback(refreshToken,actions,e,()=> {},history);
+        .catch((errResponse)=> {
+            errorTypeCheck(errResponse,refreshToken,actions,history);
         });
     }
 
@@ -163,8 +215,8 @@ const Admin_Homework = ({ state, type, history, actions, stomp }) => {
             .then(()=> {
                 history.push('/Admin');
             })
-            .catch((e)=> {
-                refreshCallback(refreshToken,actions,e,setHomework);
+            .catch((errResponse)=> {
+                errorTypeCheck(errResponse,refreshToken,actions,history);
             });
         } else {
             alert("요소들을 다시 한번 확인해 주세요.");
@@ -178,8 +230,8 @@ const Admin_Homework = ({ state, type, history, actions, stomp }) => {
             .then(()=> {
                 history.push('/Admin')
             })
-            .catch((e)=>{
-                refreshCallback(refreshToken,actions,e,patchHomework)
+            .catch((errResponse)=>{
+                errorTypeCheck(errResponse,refreshToken,actions,history);
             });
         } else {
             alert("요소들을 다시 한번 확인해 주세요.");
@@ -191,24 +243,48 @@ const Admin_Homework = ({ state, type, history, actions, stomp }) => {
         .then(()=> {
             history.push('/Admin');
         })
-        .catch((e)=> {
-            refreshCallback(refreshToken,actions,e,deleteHomework);
+        .catch((errResponse)=> {
+            errorTypeCheck(errResponse,refreshToken,actions,history);
         });
     }
 
     return (
         <BackgroundBlack>
-            <Header actions={actions} state={state}/>
+            <Header 
+                actions={actions} 
+                state={state}
+            />
             <S.HomeworkDiv>
-                <h1>{type === "Fix" ? "과제수정" : "과제생성"}</h1>
-                <HomeworkButtonBar setHomework={setHomework} patchHomework={patchHomework} deleteHomework={deleteHomework} type={type}/>
+                <h1>
+                    {type === "Fix" ? "과제수정" : "과제생성"}
+                </h1>
+                <HomeworkButtonBar 
+                    setHomework={setHomework} 
+                    patchHomework={patchHomework}
+                    deleteHomework={deleteHomework} 
+                    type={type}
+                />
                 <div className="wrapper">
-                    <HomeworkMain MainInfo={MainInfo} MainInfoChange={MainInfoChange}/>
-                    <HomeworkNav NavInfo={NavInfo} NavInfoChange={NavInfoChange}/>
+                    <HomeworkMain 
+                        content={content}
+                        title={title}
+                        category={category}
+                        categoryChange={categoryChange}
+                        titleChange={titleChange}
+                        contentChange={contentChange}
+                    />
+                    <HomeworkNav 
+                        file={file}
+                        date={date}
+                        fileChange={fileChange}
+                        dateChange={dateChange}
+                    />
                 </div>
             </S.HomeworkDiv>
         </BackgroundBlack>
     )
 }
 
-export default withRouter(Admin_Homework);
+export default React.memo(
+        withRouter(Admin_Homework)
+    );

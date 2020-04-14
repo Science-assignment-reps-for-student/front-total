@@ -1,9 +1,15 @@
-import React, { useState, useCallback } from 'react';
+import React, { 
+    useState, 
+    useCallback 
+} from 'react';
 import * as S from './style/LoginStyle';
 import background from './imgs/background.png';
 import axios from 'axios';
 import { withRouter } from 'react-router-dom';
-import { setLocalStorage, setContext } from '../resource/publicFunction';
+import { 
+    setLocalStorage, 
+    setContext 
+} from '../resource/publicFunction';
 import { LoginServerURL } from '../resource/serverURL.js';
 
 const AdminLogin = ({ actions, history }) => {
@@ -37,11 +43,12 @@ const AdminLogin = ({ actions, history }) => {
         });
     },[history])
 
-    const keyboardEnterHandler = ({key}) => {
+    const keyboardEnterHandler = useCallback(
+        ({key}) => {
         if(key === "Enter"){
             loginRequest(id,pw,actions);
         }
-    }
+    },[actions, loginRequest, id, pw])
 
 
     return (

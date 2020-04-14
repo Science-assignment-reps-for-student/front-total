@@ -1,13 +1,21 @@
-import React from 'react';
+import React, { useCallback } from 'react';
 import * as S from '../style/MainStyle';
 import { MainList } from '../component';
 import { AccessTokenConsumer } from '../../../context/AccessTokenContext';
 import { reparseDate } from '../../resource/publicFunction';
 import { importantIcon } from '../imgs';
 
-const MainClass = ({ num, title, studentList, deadline, contentId, created_at }) => {
+const MainClass = ({ 
+    num, 
+    title, 
+    studentList, 
+    deadline, 
+    contentId, 
+    created_at 
+}) => {
 
-    const countChecked = (studentList) => {
+    const countChecked = useCallback(
+    (studentList) => {
         let counter = 0;
         if(Array.isArray(studentList)){
             studentList.map((e)=>{
@@ -18,13 +26,14 @@ const MainClass = ({ num, title, studentList, deadline, contentId, created_at })
             })
         }
         return counter;
-    }
+    },[])
     
-    const isHomeworkOver = (deadline) => {
+    const isHomeworkOver = useCallback(
+    (deadline) => {
         const nowDate = new Date();
         const currentDate = new Date(deadline * 1000);
         return nowDate > currentDate;
-    }
+    },[])
     
     const max = studentList.length;
     const count = countChecked(studentList);

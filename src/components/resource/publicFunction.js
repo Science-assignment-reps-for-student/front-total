@@ -65,50 +65,6 @@ export const reparseDate = (parsedDate) => {
     return `${year}-${month}-${day}`;
 }
 
-export const isDateAllow = (date) => {
-    const value = Object.values(date);
-    let flag = true;
-    value.map(e => {
-        if (e.length < 10) {
-            flag = false;
-        }
-        return e;
-    })
-    return flag;
-}
-
-export const isDataAllow = (title, content, type, date) => {
-    if (title.length < 1) {
-        return false;
-    } else if (content.length < 1) {
-        return false;
-    } else if (type === -1) {
-        return false;
-    } else if (!isDateAllow(date)) {
-        return false;
-    }
-    else {
-        return true;
-    }
-}
-
-export const isFile = (obj) => {
-    if (obj.type) {
-        return true;
-    } else {
-        return false;
-    }
-}
-
-export const isAllFile = (array) => {
-    let flag = true;
-    array.map((e) => {
-        isFile(e) ? flag = true : flag = false;
-        return e;
-    });
-    return flag;
-}
-
 export const getUserInfo = (url, accessToken) => {
     const header = {
         headers: {
@@ -149,7 +105,7 @@ export const getIsExpiration = (err) => {
 export const getIsRefreshExpiration = (err) => {
     try {
         const statusCode = err.response.status;
-        if(statusCode === 410) {
+        if(statusCode === 410 || statusCode === 403) {
             return true;
         } else {
             return false;

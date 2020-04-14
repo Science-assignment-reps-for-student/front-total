@@ -1,10 +1,31 @@
-import React, { useState, useCallback } from 'react';
+import React, { 
+    useState, 
+    useCallback 
+} from 'react';
 import * as S from '../style/MainStyle';
-import { MainClass, MainTeamClass, MainExperimentClass } from '../component';
-import { edit, excel, download } from '../imgs';
+import { 
+    MainClass, 
+    MainTeamClass, 
+    MainExperimentClass
+} from '../component';
+import { 
+    edit, 
+    excel, 
+    download 
+} from '../imgs';
 import { withRouter } from 'react-router-dom';
 
-const MainContent = ({ checked, title, classData, type, contentId, history, fileDownload, created_at, getExcelFile }) => {
+const MainContent = ({ 
+    checked, 
+    title, 
+    classData, 
+    type, 
+    contentId, 
+    history, 
+    fileDownload, 
+    created_at, 
+    getExcelFile 
+}) => {
 
     const classDataKey = Object.keys(classData);
     const filteredData = classDataKey.filter((e)=> checked[e]);
@@ -13,7 +34,8 @@ const MainContent = ({ checked, title, classData, type, contentId, history, file
         _folderChange(e);
     },[]);
 
-    const classToInt = (string) => {
+    const classToInt = useCallback(
+    (string) => {
         switch(string){
             case "class_1":
                 return 1;
@@ -26,9 +48,10 @@ const MainContent = ({ checked, title, classData, type, contentId, history, file
             default:
                 return 0;
         }
-    }
+    },[])
 
-    const getClass = (classData, classDataKey, title) => {
+    const getClass = useCallback(
+    (classData, classDataKey, title) => {
         let buffer = [];
         classDataKey.map((key) => {
             const data = classData[key];
@@ -48,9 +71,10 @@ const MainContent = ({ checked, title, classData, type, contentId, history, file
             return key;
         })
         return buffer;
-    }   
+    },[])
 
-    const getTeamClass = (classData, classDataKey, title) => {
+    const getTeamClass = useCallback(
+    (classData, classDataKey, title) => {
         let buffer = [];
         classDataKey.map((key) => {
             const data = classData[key];
@@ -70,9 +94,10 @@ const MainContent = ({ checked, title, classData, type, contentId, history, file
             return key;
         })
         return buffer;
-    }
+    },[])
 
-    const getExperimentClass = (classData, classDataKey, title) => {
+    const getExperimentClass = useCallback(
+    (classData, classDataKey, title) => {
         let buffer = [];
         classDataKey.map((key) => {
             const data = classData[key];
@@ -92,13 +117,15 @@ const MainContent = ({ checked, title, classData, type, contentId, history, file
             return key;
         })
         return buffer;
-    }
+    },[])
 
-    const getTitle = (type,title) => {
+    const getTitle = useCallback(
+    (type,title) => {
         return getType(type) + title;
-    }
+    },[])
 
-    const getType = (type) => { 
+    const getType = useCallback(
+    (type) => { 
         switch(type){
             case 0: 
                 return "[개인]";
@@ -109,7 +136,7 @@ const MainContent = ({ checked, title, classData, type, contentId, history, file
             default:
                 return "error";
         }
-    }
+    },[])
 
     return (
         <S.MainContent button={type !== 0} isFolder={isFolder}>

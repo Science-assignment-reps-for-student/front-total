@@ -4,9 +4,18 @@ import { MainList } from '../component';
 import { AccessTokenConsumer } from '../../../context/AccessTokenContext';
 import { reparseDate } from '../../resource/publicFunction';
 
-const MainExperimentClass = ({ num, title, studentList, teamList, contentId, deadline, created_at }) => {
+const MainExperimentClass = ({ 
+    num, 
+    title, 
+    studentList, 
+    teamList, 
+    contentId, 
+    deadline, 
+    created_at 
+}) => {
 
-    const countChecked = (studentList) => {
+    const countChecked = useCallback(
+    (studentList) => {
         let counter = 0;
         if(Array.isArray(studentList)){
             studentList.map((e)=>{
@@ -17,7 +26,7 @@ const MainExperimentClass = ({ num, title, studentList, teamList, contentId, dea
             })
         }
         return counter;
-    }
+    },[])
 
     
     const max = studentList.length;

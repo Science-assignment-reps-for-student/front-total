@@ -1,10 +1,21 @@
 import React from 'react';
 import * as S from '../style/MainStyle';
-import { MainTeamList, MainList } from '../component';
+import { 
+    MainTeamList, 
+    MainList 
+} from '../component';
 import { AccessTokenConsumer } from '../../../context/AccessTokenContext';
 import { reparseDate } from '../../resource/publicFunction';
 
-const MainTeamClass = ({ num, title, studentList, teamList, contentId, deadline, created_at }) => {
+const MainTeamClass = ({ 
+    num,    
+    title, 
+    studentList, 
+    teamList, 
+    contentId, 
+    deadline, 
+    created_at 
+}) => {
 
     const countChecked = (studentList) => {
         let counter = 0;
@@ -76,4 +87,4 @@ const MainTeamClass = ({ num, title, studentList, teamList, contentId, deadline,
     )
 }
 
-export default MainTeamClass;
+export default React.memo(MainTeamClass);
