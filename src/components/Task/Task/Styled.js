@@ -66,9 +66,11 @@ const TaskTop = styled.div`
                 font-size: 17px;
                 color: #FF5700;
             }
-            > p {
+            > pre {
                 line-height: 2;
+                color: #1A1A1A;
                 font-size: 12px;
+                font-family: 'Roboto'
             }
         }
         > div.file {

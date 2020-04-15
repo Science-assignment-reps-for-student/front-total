@@ -21,7 +21,6 @@ const HomeworkBoardItem = ({ data, isTeam, isImportant, taskState, setHomeworkDa
             </span>
             <span>{data !== "undefined" && new Date(data['created_at']).yyyymmddWithDot()}</span>
             <span>{data !== "undefined" && new Date(data['homework_deadline']).yyyymmddWithDot()}</span>
-            <span><img alt="팀아이콘" src={isTeam !== null && isTeam ? oIcon : xIcon} /></span>
             <span><img alt="제출현황아이콘" src={data !== "undefined" && data.submissionStatus ? oIcon : xIcon} /></span>
             {isImportant && <img alt="중요아이콘" src={importantIcon} />}
         </HomeWorkBoardItemWrapper>

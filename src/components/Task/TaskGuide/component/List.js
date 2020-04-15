@@ -31,7 +31,11 @@ const List = ({ state, data, setHomeworkDataInState }) => {
     const compareNowToDeadline = useCallback((deadline) => {
         const deadlineTime = new Date(deadline).getTime();
         const nowTime = new Date().getTime();
-        return (deadlineTime - 172800000) <= nowTime; // 172800000 : A week
+        if (deadlineTime - nowTime + 86400000 < 0) {
+            return false;
+        } else {
+            return (deadlineTime - 86400000) <= nowTime; // 86400000 : 1Day
+        }
     }, []);
 
     return (
@@ -42,8 +46,8 @@ const List = ({ state, data, setHomeworkDataInState }) => {
             </td>
             <td>
                 <span>
-                    <Link 
-                        to={`/task/${id}`} 
+                    <Link
+                        to={`/task/${id}`}
                         onClick={() => {
                             if (typeof accessToken === "object") return;
                             setHomeworkDataInState(wooServer, accessToken, id);
@@ -57,11 +61,6 @@ const List = ({ state, data, setHomeworkDataInState }) => {
             <td className={compareNowToDeadline(homework_deadline) ? "urgent" : "relaxed"}>
                 {getFullTime(homework_deadline)}
             </td>
-            {homeworkType !== 0 
-                ? (submissionStatus
-                    ? <td><img src={yes} alt="yes" /></td>
-                    : <td><img src={no} alt="no" /></td>)
-                : (<td></td>)}
             {submissionStatus
                 ? <td><img src={yes} alt="yes" /></td>
                 : <td><img src={no} alt="no" /></td>}

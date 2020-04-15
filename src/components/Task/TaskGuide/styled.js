@@ -34,11 +34,6 @@ const TaskGuide = styled.main`
                         width: 230px;
                         box-sizing: border-box;
                     }
-                    > button {
-                        color: #F8F8F8;
-                        background-color: #1A1A1A;
-                        cursor: pointer;
-                    }
                 }
             }
         }
@@ -59,7 +54,7 @@ const TaskGuide = styled.main`
                     border-bottom: 1px solid #858585;
                     padding: 15px 0;
                     font-size: 13px;
-                    &.type, &.submissionStatus, &.member { width: 10%; }
+                    &.type, &.submissionStatus { width: 10%; }
                     &.dueDate,  &.creationDate { width: 15%; }
                     &.title { width: 30%; }
                 }

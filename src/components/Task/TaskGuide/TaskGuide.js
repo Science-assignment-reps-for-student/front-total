@@ -53,20 +53,29 @@ const TaskGuide = ({ state, taskActions, setHomework, setHomeworkDataInState }) 
                 getAccessTokenUsingRefresh(state, taskActions);
         })
     }, [setListDatas, state]);
-    const createList = useCallback((_list) => {
+    const dispatchList = useCallback((_list) => {
         const list = [];
         for (let i = (curPage * 8) - 7; i <= curPage * 8; i++) { // (1 ~ 8) * n ~~
-            if (i > listDatas.length) break;
+            if (i > _list.length) break;
             list.push(<List
                 key={i}
                 state={state}
-                data={listDatas[i - 1]}
+                data={_list[i - 1]}
                 setHomework={setHomework}
-                setHomeworkDataInState={setHomeworkDataInState}
+                setHomeworkDataInState={setHomeworkDataInState}s
             />)
         };
         return list;
-    }, [listDatas, curPage, setHomework]);
+    }, [curPage, state, setHomework, setHomeworkDataInState]);
+    const createList = useCallback(() => {
+        if (!listDatas || typeof listDatas !== "object") return;
+        if (search.trim() === "") {
+            return dispatchList(listDatas);
+        } else {
+            const copy = [...listDatas].filter(item => item.homeworkTitle.indexOf(search) !== -1);
+            return copy;
+        }
+    }, [listDatas, curPage, setHomework, search]);
     const setAllPageList = useCallback(() => {
         const isOnePage = (Math.floor(listDatas.length / 8) && listDatas.length % 8 !== 0);
         isOnePage ? setAllPages(Math.floor(listDatas.length / 8) + 1) : setAllPages(1);
@@ -98,7 +107,7 @@ const TaskGuide = ({ state, taskActions, setHomework, setHomeworkDataInState }) 
             } else {
                 setCurPage(curPage - 1);
             }
-        } 
+        }
     }, [pageState]);
 
     useEffect(() => {
@@ -110,22 +119,22 @@ const TaskGuide = ({ state, taskActions, setHomework, setHomeworkDataInState }) 
 
     return (
         <>
-            <Header/>
+            <Header />
             <Styled.TaskGuide>
                 <div>
                     <div className="task-guide-top">
                         <h1>과제 안내</h1>
                         <div>
                             <div>
-                                <input 
-                                    type="text" 
+                                <input
+                                    type="text"
                                     onChange={(e) => {
                                         searchChange(e);
-                                    }} 
+                                    }}
                                     value={search}
+                                    placeholder="검색할 제목을 입력하세요."
                                 />
                             </div>
-                            <div><button>검색</button></div>
                         </div>
                     </div>
                     <div className="task-guide-table">
@@ -136,7 +145,6 @@ const TaskGuide = ({ state, taskActions, setHomework, setHomeworkDataInState }) 
                                     <th className="title">제목</th>
                                     <th className="creationDate">작성일</th>
                                     <th className="dueDate">기한</th>
-                                    <th className="member">동료평가</th>
                                     <th className="submissionStatus">제출여부</th>
                                 </tr>
                                 {createList()}

@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { HomeWorkBoardWrapper, PaginationWrapper, PaginationItemBlock } from '../styles';
 import HomeworkBoardItem from './HomeWorkBoardItem';
-import ApiDefault from '../../utils';
 import prevButton from '../img/prevButton.png';
 import nextButton from '../img/nextButton.png';
 
@@ -45,7 +44,6 @@ const HomeWorkBoardList = ({ state, homework, taskState, setHomeworkDataInState 
                         <span>제목</span>
                         <span>작성일</span>
                         <span>기한</span>
-                        <span>팀원</span>
                         <span>제출여부</span>
                     </div>
                 </header>
