@@ -5,7 +5,7 @@ const AccessTokenContext = createContext({
         accessToken: "",
         refreshToken: "",
     },
-    actuibs: {
+    actions: {
         accessTokenChange: ()=> {},
         refreshTokenChange: () => {},
     }

@@ -67,10 +67,16 @@ const TaskTop = styled.div`
                 color: #FF5700;
             }
             > pre {
+                width:100%;
                 line-height: 2;
                 color: #1A1A1A;
                 font-size: 12px;
-                font-family: 'Roboto'
+                font-family: 'Roboto';
+                overflow:hidden;
+                word-break:break-all;
+                word-break:break-word;
+                line-height:21px;
+                white-space: pre-wrap;
             }
         }
         > div.file {
