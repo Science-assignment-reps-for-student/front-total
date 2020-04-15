@@ -2,10 +2,19 @@ import React, { useCallback } from 'react';
 import * as S from '../style/MainStyle';
 import { MainListContent } from '../component';
 import axios from 'axios';
-import { getFileCodeURL, personalFileDownloadURL } from '../../resource/serverURL.js';
+import { 
+    getFileCodeURL, 
+    personalFileDownloadURL 
+} from '../../resource/serverURL.js';
 import { errorTypeCheck } from '../../resource/publicFunction';
 
-const MainList = ({ studentList, text, contentId, state, actions }) => {
+const MainList = ({ 
+    studentList, 
+    text, 
+    contentId, 
+    state, 
+    actions 
+}) => {
 
     const { accessToken, refreshToken } = state;
     const header = {
@@ -14,7 +23,8 @@ const MainList = ({ studentList, text, contentId, state, actions }) => {
         }
     }
     
-    const personalFileDownload = (codeList,number) => {
+    const personalFileDownload = useCallback(
+    (codeList,number) => {
         const downloadHeader = {
             headers: {
                 "Authorization": `Bearer ${accessToken}`,
@@ -37,9 +47,10 @@ const MainList = ({ studentList, text, contentId, state, actions }) => {
             }
             return e;
         })
-    }
+    },[])
 
-    const fileErrorCheck = (errResponse) => {
+    const fileErrorCheck = useCallback(
+        (errResponse) => {
         try{
             const statusCode = errResponse.response.status
             if(statusCode === 404){
@@ -50,9 +61,10 @@ const MainList = ({ studentList, text, contentId, state, actions }) => {
         } catch{
             alert("네트워크를 확인해 주세요.")
         }
-    }
+    },[])
 
-    const getFileCode = (number) => {
+    const getFileCode = useCallback(
+        (number) => {
         if(contentId){
             axios.get(`${getFileCodeURL}/${contentId}`,header)
             .then((e)=> {
@@ -67,7 +79,7 @@ const MainList = ({ studentList, text, contentId, state, actions }) => {
                 }
             })
         }
-    }
+    },[])
 
     return ( 
         <S.MainList>

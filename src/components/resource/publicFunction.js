@@ -65,50 +65,6 @@ export const reparseDate = (parsedDate) => {
     return `${year}-${month}-${day}`;
 }
 
-export const isDateAllow = (date) => {
-    const value = Object.values(date);
-    let flag = true;
-    value.map(e => {
-        if (e.length < 10) {
-            flag = false;
-        }
-        return e;
-    })
-    return flag;
-}
-
-export const isDataAllow = (title, content, type, date) => {
-    if (title.length < 1) {
-        return false;
-    } else if (content.length < 1) {
-        return false;
-    } else if (type === -1) {
-        return false;
-    } else if (!isDateAllow(date)) {
-        return false;
-    }
-    else {
-        return true;
-    }
-}
-
-export const isFile = (obj) => {
-    if (obj.type) {
-        return true;
-    } else {
-        return false;
-    }
-}
-
-export const isAllFile = (array) => {
-    let flag = true;
-    array.map((e) => {
-        isFile(e) ? flag = true : flag = false;
-        return e;
-    });
-    return flag;
-}
-
 export const getUserInfo = (url, accessToken) => {
     const header = {
         headers: {
@@ -119,10 +75,13 @@ export const getUserInfo = (url, accessToken) => {
         axios.get(url, header)
         .then((e) => {
             const userType = e.data.userType;
-            if (userType === 0) {
+            if (!userType) {
+                reject();
+            } else if(userType !== 0){
+                resolve(true);
+            } else {
                 resolve(false);
             }
-            resolve(true);
         })
         .catch((e) => {
             reject(e);
@@ -133,14 +92,25 @@ export const getUserInfo = (url, accessToken) => {
 export const getIsExpiration = (err) => {
     try {
         const statusCode = err.response.status;
-        console.log(statusCode);
-        if (statusCode === 401 || statusCode === 410 || statusCode === 422) {
+        if (statusCode === 401 || statusCode === 422) {
             return true;
         } else {
             return false;
         }
     } catch {
+        return false;
     }
+}
+
+export const getIsRefreshExpiration = (err) => {
+    try {
+        const statusCode = err.response.status;
+        if(statusCode === 410 || statusCode === 403) {
+            return true;
+        } else {
+            return false;
+        }
+    } catch {}
 }
 
 export const getAccessTokenUsingRefresh = (state, actions) => {
@@ -190,27 +160,27 @@ export const getSubscribe = (stomp,subscribeChange) => {
 
 const setSubscribe = (stomp) => {
     stomp.subscribe('/receive', (e)=> {
-        console.log(e);
     })
 }
 
-const setNotification = (data) => {
-    const notificate = new Notification();
-}
-
-export const errorTypeCheck = (e,refreshToken,actions) => {
+export const errorTypeCheck = (e,refreshToken,actions,history,link="/admin/login") => {
     getIsExpiration(e) 
     ? refreshAccessToken(refreshToken,actions) 
-    : alert("네트워크를 확인해 주세요.");
+    : getIsRefreshExpiration(e) 
+        ? history.push(link)
+        : alert("네트워크를 확인해 주세요.");
 }
 
-export const refreshCallback = (refreshToken,actions,error,callback) => {
+export const refreshCallback = (refreshToken,actions,error,callback,history) => {
     if(getIsExpiration(error)){
         refreshAccessToken(refreshToken,actions)
         .then(()=> {
             callback();
         });
-    } else {
+    } else if(getIsRefreshExpiration(error)){
+        history.push('/admin/login');
+    }
+    else {
         alert("네트워크를 확인해 주세요.");
     }
 }

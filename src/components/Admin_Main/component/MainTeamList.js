@@ -1,11 +1,20 @@
-import React from 'react';
+import React, { useCallback } from 'react';
 import * as S from '../style/MainStyle';
 import { MainTeamListContent } from '../component';
 import axios from 'axios';
-import { getFileCodeURL, teamFileDownloadURL } from '../../resource/serverURL.js';
+import { 
+    getFileCodeURL, 
+    teamFileDownloadURL 
+} from '../../resource/serverURL.js';
 import { errorTypeCheck } from '../../resource/publicFunction';
 
-const MainTeamList = ({ teamList, text, state, actions, contentId }) => {
+const MainTeamList = ({ 
+    teamList, 
+    text, 
+    state, 
+    actions, 
+    contentId
+}) => {
     let count = 0;
     const { refreshToken, accessToken } = state;
     const header = {
@@ -14,7 +23,8 @@ const MainTeamList = ({ teamList, text, state, actions, contentId }) => {
         }
     }
 
-    const teamFileDownload = (codeList,teamName) => {
+    const teamFileDownload = useCallback(
+    (codeList,teamName) => {
         const downloadHeader = {
             headers: {
                 "Authorization": `Bearer ${accessToken}`,
@@ -36,10 +46,11 @@ const MainTeamList = ({ teamList, text, state, actions, contentId }) => {
                 })
             }
             return e;
-        })
-    }
 
-    const fileErrorCheck = (errResponse) => {
+        })
+    },[])
+
+    const fileErrorCheck = useCallback((errResponse) => {
         try{
             const statusCode = errResponse.response.status
             if(statusCode === 404){
@@ -50,9 +61,10 @@ const MainTeamList = ({ teamList, text, state, actions, contentId }) => {
         } catch{
             alert("네트워크를 확인해 주세요.")
         }
-    }
+    },[])
 
-    const getFileCode = (teamName) => {
+    const getFileCode = useCallback(
+    (teamName) => {
         if(contentId){
             axios.get(`${getFileCodeURL}/${contentId}`,header)
             .then((e)=> {
@@ -67,7 +79,7 @@ const MainTeamList = ({ teamList, text, state, actions, contentId }) => {
                 }
             })
         }
-    }
+    },[])
 
 
     return ( 

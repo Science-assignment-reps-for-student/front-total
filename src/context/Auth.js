@@ -2,8 +2,8 @@ import React, { createContext, useState, useEffect } from 'react';
 import ApiDefault from '../components/utils';
 
 const AuthContext = createContext({ 
-    state: { logged: false, accessToken: null, refreshToken: null },
-    actions: {
+    authState: { logged: false, accessToken: null, refreshToken: null },
+    authActions: {
         setLogged: () => {},
         setAccessToken: () => {},
         setRefreshToken: () => {},
@@ -19,8 +19,9 @@ const AuthProvider = ({ children }) => {
         if (refreshToken === null) return;
         try {
             const putAuth = await ApiDefault.put('/auth', undefined, {
-                headers: { Authorization: refreshToken }
+                headers: { Authorization: 'refreshToken' }
             })
+            console.log(putAuth);
             localStorage.setItem('accessToken', putAuth.data.accessToken);
             localStorage.setItem('refreshToken', putAuth.data.refreshToken);
             setAccessToken(putAuth.data.accessToken);
@@ -31,13 +32,20 @@ const AuthProvider = ({ children }) => {
     
     useEffect(() => {
         IssuingToken().then(res => { 
-            if (res === 'success') setLogged(true);
+            if (res === 'success')
+                ApiDefault.get('user', {
+                    headers: {
+                        Authorization: accessToken
+                    }
+                }).then(_ => {
+                    setLogged(true);
+                }).catch();
         })
     }, []);
 
     const value = {
-        state: { logged, accessToken, refreshToken },
-        actions: { setLogged, setAccessToken, setRefreshToken, IssuingToken }
+        authState: { logged, accessToken, refreshToken },
+        authActions: { setLogged, setAccessToken, setRefreshToken, IssuingToken }
     };
     return (
         <AuthContext.Provider value={value}>

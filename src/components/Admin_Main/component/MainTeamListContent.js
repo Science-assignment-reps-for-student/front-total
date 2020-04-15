@@ -1,7 +1,13 @@
 import React from 'react';
 import * as S from '../style/MainStyle';
 
-const MainTeamListContent = ({ teamList, submit, teamName, count, getFileCode }) => {
+const MainTeamListContent = ({ 
+    teamList, 
+    submit, 
+    teamName, 
+    count, 
+    getFileCode 
+}) => {
     const color = count % 2 === 0 ? "#F5F5F5" : "white";  
     return (
         <>

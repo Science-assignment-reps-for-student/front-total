@@ -1,34 +1,36 @@
 import React, { useEffect, useState } from 'react';
 import { Header } from '../Header';
 import * as S from './style/BoardInputStyle';
-import { withRouter } from 'react-router-dom';
+import { withRouter, useParams } from 'react-router-dom';
 import { errorTypeCheck } from '../resource/publicFunction';
 import BoardInputImg from './components/BoardInputImg';
 import Axios from 'axios';
 
-const BoardInput = ({ 
+const BoardFix = ({ 
     state, 
-    getUserInfo,
+    getUserInfo, 
     history, 
     taskActions 
 }) => {
     const [title, titleChange] = useState("");
     const [describe, describeChange] = useState("")
     const [userInfo, userInfoChange] = useState({});
-    const [imgs, imgChange] = useState([]);
     const [classNum, classNumChange] = useState()
+    const [imgs, imgChange] = useState([]);
     const { limServer, wooServer, accessToken, refreshToken } = state;
+    const { number } = useParams();
     useEffect(()=> {
         const userInfoPro = getUserInfo(limServer,accessToken);
         userInfoPro
         .then((response)=> {
             const data = response.data;
             userInfoChange(data);
+            setBoardInfo(number);
         })
         .catch((err)=> {
             errorTypeCheck(err,refreshToken,taskActions,history,"/");
         })
-    },[]);
+    },[])
     const titleChangeHandler = (event) => {
         const data = event.target.value;
         titleChange(data);
@@ -44,7 +46,6 @@ const BoardInput = ({
     }
     const setImg = () => {
         let buffer = [];
-        console.log(imgs.map);
         for(let i = 0;i < imgs.length; i++){
             buffer.push(<BoardInputImg 
                 imgs={imgs} 
@@ -58,7 +59,7 @@ const BoardInput = ({
         const value = event.target.value;
         classNumChange(value);
     }
-    const setBoard = (title,describe,imgs,classNum) => {
+    const fixBoard = (title,describe,imgs,classNum) => {
         const header = {
             headers: {   
                 "Authorization": `Bearer ${accessToken}`
@@ -66,8 +67,8 @@ const BoardInput = ({
         }
         const data = setData(title,describe,imgs,classNum);
         if(isAble(title,describe)){
-            Axios.post(
-                `${wooServer}/board`,
+            Axios.put(
+                `${wooServer}/board/${number}`,
                 data,
                 header
             )
@@ -100,17 +101,47 @@ const BoardInput = ({
         }
         return false;
     }
+    const getBoardInfo = (number) => 
+    new Promise((resolve,reject)=>{
+        const header = {
+            headers: {
+                Authorization: `Bearer ${accessToken}`,
+            }
+        }
+        Axios.get(`${wooServer}/board/${number}`,header)
+        .then((data)=> {
+            resolve(data)
+        })
+        .catch((err)=> {
+            reject(err);
+        })
+    });
+    const setBoardInfo = (number) => {
+        getBoardInfo(number)
+        .then((response)=> {
+            const data = response.data;
+            titleChange(data.title);
+            describeChange(data.description);
+            if(data.file_id){
+                imgChange(data.file_id);
+            }
+        })
+        .catch((err)=> {
+            errorTypeCheck(err,refreshToken,taskActions,history,"/board");
+        })
+    }
     return (
         <>
             <S.BoardInput>
                 <Header/>
                 <S.BoardInputBody>
                     <div>
-                        <h1>게시글 작성</h1>
+                        <h1>게시글 수정</h1>
                         <p>제목</p>
                         <input 
                             placeholder="제목을 입력해주세요..." 
                             onChange={titleChangeHandler}
+                            value={title}
                         />
                         <div className="imgDiv">
                             {
@@ -137,6 +168,7 @@ const BoardInput = ({
                         <p>내용</p>
                         <textarea 
                             placeholder="내용을 입력해주세요..." 
+                            value={describe}
                             onChange={describeChangeHandler}
                         />
                         <div className="img">
@@ -147,7 +179,7 @@ const BoardInput = ({
                         <div>
                             <div 
                                 className="upload"
-                                onClick={()=> setBoard(title,describe,imgs,classNum)}
+                                onClick={()=> fixBoard(title,describe,imgs,classNum)}
                             >
                                 <p>등록하기</p>
                             </div>
@@ -165,4 +197,4 @@ const BoardInput = ({
     )
 }
 
-export default withRouter(BoardInput);
+export default withRouter(BoardFix);
