@@ -43,6 +43,7 @@ export const TaskTop = styled.div`
                 > li {
                     font-size: 11px;
                     padding: 0 12px;
+                    cursor: default;
                     &:first-child {
                         border-right: 1px solid #858585;
                     }

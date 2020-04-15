@@ -73,11 +73,11 @@ export const BoardGuide = styled.main`
                     border-bottom: 1px solid #858585;
                     padding: 15px 0;
                     font-size: 13px;
-                    &.write, &.viewCount, &.comment { width: 10%; }
-                    &.creationDate { width: 15%; }
-                    &.title { width: 55%; }
+                    &.write, &.creationDate { width: 15%; }
+                    &.title { width: 70%; }
                 }
                 > td {
+                    cursor: pointer;
                     position: relative;
                     text-align: center;
                     font-size: 13px;
@@ -87,46 +87,11 @@ export const BoardGuide = styled.main`
                         color: black;
                         text-decoration: none;
                     }
-                    &:nth-child(2) {
-                        > span {
-                            display: block;
-                            cursor: pointer;
-                            a {
-                                display: block;
-                                width: 340px;
-                                margin: auto;
-                                overflow: hidden;
-                                white-space: nowrap;
-                                text-overflow: ellipsis;
-                            }
-                        }
-                    }
                     &.urgent { color: #FF5700; }
                     &.relaxed { color: #1D73FF; }
                     > img {
                         width: 12px;
                         height: 12px;
-                    }
-                    > div { 
-                        width: 36px;
-                        height: 36px;
-                        position: absolute;
-                        background-color: #FF5700;
-                        border-radius: 24px;
-                        left: -18px;
-                        top: 9px;
-                        display: flex;
-                        justify-content: center;
-                        align-items: center;
-                        > i {
-                            position: absolute;
-                            width: 20px;
-                            height: 14px;
-                            background-image: url(${New});
-                            background-position: center;
-                            background-repeat: no-repeat;
-                            background-size: contain;
-                        }
                     }
                 }
             }
@@ -167,3 +132,9 @@ export const BoardGuide = styled.main`
         }
     }
 `;
+
+export const BoardDropdown = styled.select`
+    width: 100px;
+    height: 30px;
+    outline: none;
+`

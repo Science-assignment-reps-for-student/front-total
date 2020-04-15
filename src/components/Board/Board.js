@@ -3,124 +3,31 @@ import { Header } from '../Header';
 import * as S from './style/boardStyle';
 import { BoardComponent } from './components';
 import { withRouter } from 'react-router-dom';
+import { errorTypeCheck } from '../resource/publicFunction';
+import Axios from 'axios';
 
-const Board = ({ state, getUserInfo, history }) => {
+const Board = ({ state, getUserInfo, history, taskActions }) => {
     const { limServer, wooServer, accessToken, refreshToken } = state;
-    const [search, searchChange] = useState();
-    const [postList, postListChange] = useState([
-        {
-            title: "이성진 바보",
-            writer: "오준상",
-            createDate: "2020-03-16",
-            comment: 3,
-            viewCount: 3,
-            isNew: true,
-        },
-        {
-            title: "이성진 바보",
-            writer: "오준상",
-            createDate: "2020-03-16",
-            comment: 3,
-            viewCount: 3,
-            isNew: true,
-        },
-        {
-            title: "이성진 바보",
-            writer: "오준상",
-            createDate: "2020-03-16",
-            comment: 3,
-            viewCount: 3,
-            isNew: true,
-        },
-        {
-            title: "이성진 바보",
-            writer: "오준상",
-            createDate: "2020-03-16",
-            comment: 3,
-            viewCount: 3,
-            isNew: true,
-        },
-        {
-            title: "이성진 바보",
-            writer: "오준상",
-            createDate: "2020-03-16",
-            comment: 3,
-            viewCount: 3,
-            isNew: true,
-        },
-        {
-            title: "이성진 바보",
-            writer: "오준상",
-            createDate: "2020-03-16",
-            comment: 3,
-            viewCount: 3,
-            isNew: true,
-        },
-        {
-            title: "이성진 바보",
-            writer: "오준상",
-            createDate: "2020-03-16",
-            comment: 3,
-            viewCount: 3,
-            isNew: true,
-        },{
-            title: "이성진 바보",
-            writer: "오준상",
-            createDate: "2020-03-16",
-            comment: 3,
-            viewCount: 3,
-            isNew: true,
-        }
-        ,{
-            title: "이성진 바보",
-            writer: "오준상",
-            createDate: "2020-03-16",
-            comment: 3,
-            viewCount: 3,
-            isNew: true,
-        }
-        ,{
-            title: "이성진 바보",
-            writer: "오준상",
-            createDate: "2020-03-16",
-            comment: 3,
-            viewCount: 3,
-            isNew: true,
-        }
-        ,{
-            title: "이성진 바보",
-            writer: "오준상",
-            createDate: "2020-03-16",
-            comment: 3,
-            viewCount: 3,
-            isNew: true,
-        }
-        ,{
-            title: "이성진 바보",
-            writer: "오준상",
-            createDate: "2020-03-16",
-            comment: 3,
-            viewCount: 3,
-            isNew: true,
-        }
-
-    ])
+    const [userInfo, userInfoChange] = useState({});
+    const [classNum, classNumChange] = useState();
+    const [postList, postListChange] = useState([])
+    const [isLoading, isLoadChange] = useState(false);
     const [page, pageChange] = useState(0);
     const createList = (postList) => {
         let buffer = [];
             const pageMaxComponent = 8;
             for(let i = getComponentCount();i < getComponentCount() + pageMaxComponent;i++){
-                if(!postList[i]){break;}
-                const { title, writer, createDate, viewCount, comment, isNew } = postList[i];
+                if(!postList[i]){break}
+                else if(isLoading){break}
+                const { title, writer, created_at , viewCount, board_id } = postList[i];
+                const time = created_at.split('T')[0];
                 buffer.push(
                     <BoardComponent
                         title={title}
                         writer={writer}
-                        createDate={createDate}
-                        viewCount={viewCount}
-                        comment={comment}
-                        isNew = {isNew}
+                        createDate={time}
                         key={title+viewCount}
+                        onClick={() => history.push(`/board/${board_id}`)}
                     />
                 )
             }
@@ -133,7 +40,7 @@ const Board = ({ state, getUserInfo, history }) => {
             list.push(<li 
                     key={i} 
                     className={page === i ? "clicked" : ""}
-                    onClick={() =>  pageChange(i)}
+                    onClick={() =>  {pageChange(i); isLoadChange(true)}}
                 >
                     <span>{i+1}</span>
                 </li>
@@ -161,10 +68,76 @@ const Board = ({ state, getUserInfo, history }) => {
         return page * 8;
     }
 
+    const selectChangeHandler = ({ target }) => {
+        const value = target.value;
+        classNumChange(value);
+    }
+
+    const getUserClass = (userNumber) => {
+        return userNumber.toString().split('')[1];
+    }
+
+    const setUserClass = (userData) => {
+        if(userData.userType !== 0){
+            classNumChange(1); 
+        } else {
+            const userClass = getUserClass(userData.userNumber);
+            classNumChange(userClass);
+        }
+    }
+
+    const getBoard = (classNum) => 
+    new Promise((resolve,reject) => {
+        const header = {
+            headers: {
+                "Authorization": `Bearer ${accessToken}`,
+            }
+        }
+        Axios.get(`${wooServer}/board/?class_number=${classNum}`,header)
+        .then(({ data })=> {
+            resolve(data);
+        })
+        .catch((err)=> {
+            reject(err);
+        })
+    })
+
+    const setBoard = () => {
+        getBoard(classNum)
+        .then((data)=> {
+            isLoadChange(true)
+            postListChange(data);
+        })
+        .catch((err)=> {
+            errorTypeCheck(err,refreshToken,taskActions,history,"/");
+        })
+    }
+
     useEffect(()=> {
         const userInfoPro = getUserInfo(limServer,accessToken);
-        if(!userInfoPro){ history.push('/'); }
-    },[])
+        userInfoPro
+        .then((response)=> {
+            const data = response.data;
+            getUserClass(data.userNumber);
+            userInfoChange(data);
+            setUserClass(data);
+        })
+        .catch((err)=> {
+            errorTypeCheck(err,refreshToken,taskActions,history,"/");
+        })
+    },[]);
+
+    useEffect(()=> {
+        if(classNum){
+            setBoard();
+            pageChange(0);
+        }
+    },[classNum])
+
+    useEffect(()=> {
+        isLoadChange(false);
+    },[postList,page])
+
 
     return (
         <>
@@ -172,31 +145,31 @@ const Board = ({ state, getUserInfo, history }) => {
             <S.BoardGuide>
                 <div>
                     <div className="task-guide-top">
-                        <h1>n반 게시판</h1>
+                    <h1>{classNum}반 게시판</h1>
                         <div>
-                            <div>
-                                <input 
-                                    type="text" 
-                                    onChange={(e) => {
-                                        searchChange(e);
-                                    }} 
-                                    value={search}
-                                />
-                            </div>
-                            <div><button>검색</button></div>
-                            <div className="button" onClick={()=> history.push('/write')}>글쓰기</div>
+                            {
+                                userInfo.userType !== 0 ?
+                                <S.BoardDropdown onChange={selectChangeHandler}>
+                                    <option value="1">1반</option>
+                                    <option value="2">2반</option>
+                                    <option value="3">3반</option>
+                                    <option value="4">4반</option>
+                                </S.BoardDropdown> :
+                                ""
+                            }
+                            <div 
+                                className="button" 
+                                onClick={()=> history.push('/write')}
+                            >글쓰기</div>
                         </div>
                     </div>
                     <div className="task-guide-table">
                         <table>
                             <tbody>
                                 <tr>
-                                    <th></th>
                                     <th className="writer">작성이</th>
                                     <th className="title">제목</th>
                                     <th className="creationDate">작성일</th>
-                                    <th className="viewCount">조회수</th>
-                                    <th className="comment">댓글</th>
                                 </tr>
                                 {createList(postList)}
                             </tbody>
@@ -204,9 +177,19 @@ const Board = ({ state, getUserInfo, history }) => {
                     </div>
                     <div className="task-guide-page">
                         <ul>
-                            <li className="clicked" onClick={() => setPageCurrent(page)}><i></i></li>
+                            <li 
+                                className="clicked" 
+                                onClick={() => setPageCurrent(page)}
+                            >
+                                <i></i>
+                            </li>
                             {getBottomPageList()}
-                            <li className="clicked" onClick={() => setPageNext(page)}><i></i></li>
+                            <li 
+                                className="clicked" 
+                                onClick={() => setPageNext(page)}
+                            >
+                                <i></i>
+                            </li>
                         </ul>
                     </div>
                 </div>

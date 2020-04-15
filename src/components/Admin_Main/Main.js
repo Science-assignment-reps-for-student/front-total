@@ -265,7 +265,6 @@ const AdminMain = ({ state, actions, history, stomp }) => {
             data.experiment = homeworkData;
             dataChange(data);
             contentChange(content);
-            console.log(content);
             loadedChange(true);
         })
         .catch((e)=> {
@@ -324,9 +323,7 @@ const AdminMain = ({ state, actions, history, stomp }) => {
         const typeKey = Object.keys(homeworkType);
         let buffer = [];
         let result = [];
-        console.log(content);
         typeKey.map((key)=> {
-            console.log(content[key]);
             if(homeworkType[key]){
                 buffer = [...buffer,...content[key]];
             }

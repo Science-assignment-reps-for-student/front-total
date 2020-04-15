@@ -163,11 +163,11 @@ const setSubscribe = (stomp) => {
     })
 }
 
-export const errorTypeCheck = (e,refreshToken,actions,history) => {
+export const errorTypeCheck = (e,refreshToken,actions,history,link="/admin/login") => {
     getIsExpiration(e) 
     ? refreshAccessToken(refreshToken,actions) 
     : getIsRefreshExpiration(e) 
-        ? history.push("/admin/login")
+        ? history.push(link)
         : alert("네트워크를 확인해 주세요.");
 }
 
