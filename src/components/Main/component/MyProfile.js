@@ -5,7 +5,6 @@ import ApiDefault from '../../utils';
 const MyProfile = ({ state }) => {
     const [myInfo, setMyInfo] = useState(undefined);
     useEffect(() => {
-        console.log(state);
         ApiDefault.get('user', {
             headers: {
                 Authorization: state.accessToken
