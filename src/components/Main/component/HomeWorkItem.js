@@ -10,7 +10,7 @@ const HomeWorkItem = ({ data, taskState, setHomeworkDataInState }) => {
             <main>
                 <h1>{data !== "undefined" && data.homeworkTitle}</h1>
                 <div>
-                    <p>{data !== "undefined" && new Date(data['created_at']).yyyymmddWithDot()} - {data !== "undefined" && new Date(data['homework_deadline']).yyyymmddWithDot()}</p>
+                    <p>{data !== "undefined" && new Date(data['created_at']).yyyymmddWithDot()} - {data['homework_deadline'] ? data !== "undefined" && new Date(data['homework_deadline']).yyyymmddWithDot() : '확인불가'}</p>
                     <span>{data !== "undefined" && Date.prototype.getDDay(data['homework_deadline'])}</span>
                 </div>
             </main>
