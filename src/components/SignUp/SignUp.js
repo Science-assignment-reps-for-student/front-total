@@ -67,6 +67,7 @@ const SignUp = ({modalOn, setModalOn}) => {
         }
     }, [signupInfo, page]);
     const onCheckEmail = useCallback(() => {
+        if (!signupInfo.email || signupInfo.email.indexOf(' ') !== -1)  return alert('올바른 이메일을 입력하여 주세요.');
         let form = new FormData();
         form.append('email', signupInfo.email);
         ApiDefault.post('user/authemail', form).then(res => {
