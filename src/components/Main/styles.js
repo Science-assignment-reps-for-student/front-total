@@ -1,7 +1,11 @@
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 import scrollDown from './img/scrollButton.png';
 import scrollUp from './img/scrollUpButton.png';
 import Background from './img/background.png';
+
+const pointer = css`
+    cursor:pointer;
+`;
 
 export const MainBackground = styled.div`
     width: 100vw;
@@ -104,6 +108,7 @@ export const MainBackground = styled.div`
             object-fit: contain;
             width: 106px;
             height: 106px;
+            ${pointer}
         }
     }
 `;

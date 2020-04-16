@@ -1,6 +1,10 @@
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 import signupBackground from './img/signupBackground.png';
 import loginBackground from './img/loginBackground.png';
+
+const pointer = css`
+    cursor:pointer;
+`;
 
 export const ModalBackground = styled.div`
     width: 100vw;
@@ -58,6 +62,7 @@ export const SignUpRightBlock = styled.div`
     background-color: #F8F8F8;
     border-radius: 0 10px 10px 0;
     > img {
+        ${pointer};
         width: 15px;
         height: 15px;
         position: relative;
@@ -122,6 +127,7 @@ export const InputWrapperWithAuthorization = styled.div`
             border-radius: 2px 0px 0px 2px;
         }
         > button {
+            ${pointer};
             width: 78px;
             height: 40px;
             background-color: #1A1A1A;
@@ -155,6 +161,7 @@ export const LoginLeftBlock = styled.div`
     background-color: #F8F8F8;
     border-radius: 10px 0 0 10px;
     > img {
+        ${pointer};
         width: 15px;
         height: 15px;
         position: relative;
@@ -182,6 +189,7 @@ export const LoginRightBlock = styled.div`
     color: #ffffff;
     border-radius: 0 10px 10px 0;
     > img {
+        ${pointer};
         width: 15px;
         height: 15px;
         position: relative;
@@ -207,6 +215,7 @@ export const LoginRightBlock = styled.div`
             background-color: transparent;
             width: 267px;
             height: 54px;
+            ${pointer};
             > a, > span {
                 margin: 0 auto;
                 line-height: 54px;
@@ -226,6 +235,7 @@ export const LoginRightBlock = styled.div`
 `;
 
 export const NextButtonBlock = styled.footer`
+    ${pointer};
     background-color: ${props => props.isPaint !== undefined ? (props.isPaint === false ? '#858585' : '#1D73FF') : '#1A1A1A'};
     transition: all 0.5s linear;
     margin-top: 32px;
