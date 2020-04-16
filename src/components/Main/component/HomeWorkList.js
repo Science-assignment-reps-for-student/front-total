@@ -34,8 +34,6 @@ const HomeWorkList = ({ state, homework, setHomework, taskState, setHomeworkData
             }).then(res => {
                 if(res.data){
                     setHomework(res.data);
-                } else {
-                    history.push('/Admin');
                 }
             })
         };
