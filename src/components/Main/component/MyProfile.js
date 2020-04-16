@@ -18,7 +18,7 @@ const MyProfile = ({ state }) => {
     return (
         myInfo !== undefined &&  
         <MyProfileBlock>
-            <h3><pre>{String(myInfo.userNumber)[0]}학년 {String(myInfo.userNumber)[1]}반 {myInfo.userName}</pre></h3>
+            <h3><pre>{myInfo.userType ? 0 : String(myInfo.userNumber)[0]}학년 {myInfo.userType ? 0 : String(myInfo.userNumber)[1]}반 {myInfo.userType ? 'Hello, Teacher!' : myInfo.userName}</pre></h3>
             <section>
                 <article>
                     <span>남은과제</span>
