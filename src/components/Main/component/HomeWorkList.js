@@ -1,11 +1,9 @@
 import React, { useEffect } from 'react';
-import { useHistory } from 'react-router-dom';
 import { HomeWorkListWrapper } from '../styles';
 import HomeWorkItem from './HomeWorkItem';
 import ApiDefault from '../../utils';
 
 const HomeWorkList = ({ state, homework, setHomework, taskState, setHomeworkDataInState }) => {
-    const history = useHistory();
 
     useEffect(() => {
         Date.prototype.yyyymmddWithDot = function() {
