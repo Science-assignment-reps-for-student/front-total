@@ -121,7 +121,7 @@ export const BoardInputImg = styled.div`
         width: 2px;
         background-color: black;
         transform: rotate(45deg);
-        Z-index: 1;
+        z-index: 1;
             > .md {
             height: 20px;
             width: 2px;

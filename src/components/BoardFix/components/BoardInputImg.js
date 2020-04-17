@@ -2,7 +2,12 @@ import React from 'react';
 import * as S from '../style/BoardInputStyle';
 const BoardInputImg = ({ imgs , imgChange, index }) => {
     const img = imgs[index];
-    const url = URL.createObjectURL(img);
+    let url = "";
+    if(typeof img === "number"){
+        url = `https://api.dsm-scarfs.hs.kr/t-bone/image/${img}`;
+    } else {
+        url = URL.createObjectURL(img);
+    }
     const deleteButtonClickHandler = () => {
         const buffer = [...imgs];
         buffer.splice(index,1);

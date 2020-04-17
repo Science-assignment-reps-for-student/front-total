@@ -1,5 +1,6 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import * as S from '../style/BoardDetailStyle';
+import axios from 'axios';
 
 const BoardTop = ({ 
     title, 
@@ -9,6 +10,7 @@ const BoardTop = ({
     fixClickHandler,
     deleteClickHandler,
     board_id,
+    imgs = [],
 }) => {
     return (
         <S.TaskTop className="task-top">
@@ -28,6 +30,21 @@ const BoardTop = ({
             <div className="task-desc">
                 <div className="desc">
                     <p>{description}</p>
+                    <div>
+                        {
+                            imgs.map((id)=> {
+                                return (
+                                    <S.BoardInputImg>
+                                        <img 
+                                            src={`https://api.dsm-scarfs.hs.kr/t-bone/image/${id}`} 
+                                            alt=""
+                                            onClick={()=> {window.open(`https://api.dsm-scarfs.hs.kr/t-bone/image/${id}`)}}
+                                        />
+                                    </S.BoardInputImg>
+                                )
+                            })
+                        }
+                    </div>
                 </div>
             </div>
         </S.TaskTop>

@@ -14,15 +14,19 @@ const BoardDetail = ({ state, getUserInfo, history, taskActions }) => {
     const { number } = useParams();
     useEffect(()=> {
         const userInfoPro = getUserInfo(limServer,accessToken);
-        userInfoPro.
-        then((response)=> {
-            const data = response.data;
-            userInfoChange(data);
-            setBoardInfo(number);
-        })
-        .catch((err)=> {
-            errorTypeCheck(err,refreshToken,taskActions,history);
-        })
+        if(userInfoPro){
+            userInfoPro
+            .then((response)=> {
+                const data = response.data;
+                userInfoChange(data);
+                setBoardInfo(number);
+            })
+            .catch((err)=> {
+                errorTypeCheck(err,refreshToken,taskActions,history);
+            })
+        } else {
+            history.push('/');
+        }
     },[]);
     const getBoardInfo = (number) => 
     new Promise((resolve,reject)=>{
@@ -43,6 +47,7 @@ const BoardDetail = ({ state, getUserInfo, history, taskActions }) => {
         getBoardInfo(number)
         .then((response)=> {
             const data = response.data;
+            console.log(data);
             data.created_at = data.created_at.split("T")[0];// 시간 이상하게 나오는거 일시적인 처리
             boardInfoChange(data);
         })
@@ -63,7 +68,6 @@ const BoardDetail = ({ state, getUserInfo, history, taskActions }) => {
                 history.push('/board');
             })
             .catch((err)=> {
-                console.log(err)
                 alert('권한이 없습니다.')
             })
         }
@@ -81,6 +85,7 @@ const BoardDetail = ({ state, getUserInfo, history, taskActions }) => {
                         board_id={boardInfo.board_id}
                         fixClickHandler={gofixBoardPage}
                         deleteClickHandler={deleteBoard}
+                        imgs={boardInfo.file_id}
                     />
                     <BoardComments/>
                 </div>

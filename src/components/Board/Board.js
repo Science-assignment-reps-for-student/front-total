@@ -115,16 +115,20 @@ const Board = ({ state, getUserInfo, history, taskActions }) => {
 
     useEffect(()=> {
         const userInfoPro = getUserInfo(limServer,accessToken);
-        userInfoPro
-        .then((response)=> {
-            const data = response.data;
-            getUserClass(data.userNumber);
-            userInfoChange(data);
-            setUserClass(data);
-        })
-        .catch((err)=> {
-            errorTypeCheck(err,refreshToken,taskActions,history,"/");
-        })
+        if(userInfoPro){
+            userInfoPro
+            .then((response)=> {
+                const data = response.data;
+                getUserClass(data.userNumber);
+                userInfoChange(data);
+                setUserClass(data);
+            })
+            .catch((err)=> {
+                errorTypeCheck(err,refreshToken,taskActions,history,"/");
+            })
+        } else {
+            history.push('/');
+        }
     },[]);
 
     useEffect(()=> {

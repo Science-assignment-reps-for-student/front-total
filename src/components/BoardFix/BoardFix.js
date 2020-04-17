@@ -3,7 +3,6 @@ import { Header } from '../Header';
 import * as S from './style/BoardInputStyle';
 import { withRouter, useParams } from 'react-router-dom';
 import { errorTypeCheck } from '../resource/publicFunction';
-import BoardInputImg from './components/BoardInputImg';
 import Axios from 'axios';
 
 const BoardFix = ({ 
@@ -15,8 +14,7 @@ const BoardFix = ({
     const [title, titleChange] = useState("");
     const [describe, describeChange] = useState("")
     const [userInfo, userInfoChange] = useState({});
-    const [classNum, classNumChange] = useState()
-    const [imgs, imgChange] = useState([]);
+    const [classNum, classNumChange] = useState();
     const { limServer, wooServer, accessToken, refreshToken } = state;
     const { number } = useParams();
     useEffect(()=> {
@@ -39,33 +37,17 @@ const BoardFix = ({
         const data = event.target.value;
         describeChange(data);
     }
-    const imgChangeHandler = (event) => {
-        const data = event.target.files;
-        const buffer = [...imgs, ...data];
-        imgChange(buffer);
-    }
-    const setImg = () => {
-        let buffer = [];
-        for(let i = 0;i < imgs.length; i++){
-            buffer.push(<BoardInputImg 
-                imgs={imgs} 
-                imgChange={imgChange} 
-                index={i}
-            />)
-        }
-        return buffer;
-    }
     const classNumselectHandler = (event) => {
         const value = event.target.value;
         classNumChange(value);
     }
-    const fixBoard = (title,describe,imgs,classNum) => {
+    const fixBoard = (title,describe,classNum) => {
         const header = {
             headers: {   
                 "Authorization": `Bearer ${accessToken}`
             }
         }
-        const data = setData(title,describe,imgs,classNum);
+        const data = setData(title,describe,classNum);
         if(isAble(title,describe)){
             Axios.put(
                 `${wooServer}/board/${number}`,
@@ -82,12 +64,8 @@ const BoardFix = ({
             alert("내용을 모두 채웠는지 확인해 주세요.")
         }
     }
-    const setData = (title,describe,imgs,classNum) => {
+    const setData = (title,describe,classNum) => {
         const data = new FormData();
-        imgs.map((img)=> {
-            data.append("file[]",img);
-            return img;
-        })
         data.append("title",title);
         data.append("description",describe);
         if(classNum){
@@ -97,7 +75,9 @@ const BoardFix = ({
     }
     const isAble = (title,describe) => {
         if(title && describe){
-            return true;
+            if(userInfo.userType !== 0 && classNum){
+                return true;
+            }
         }
         return false;
     }
@@ -117,18 +97,19 @@ const BoardFix = ({
         })
     });
     const setBoardInfo = (number) => {
-        getBoardInfo(number)
-        .then((response)=> {
-            const data = response.data;
-            titleChange(data.title);
-            describeChange(data.description);
-            if(data.file_id){
-                imgChange(data.file_id);
-            }
-        })
-        .catch((err)=> {
-            errorTypeCheck(err,refreshToken,taskActions,history,"/board");
-        })
+        if(getBoardInfo){
+            getBoardInfo(number)
+            .then((response)=> {
+                const data = response.data;
+                titleChange(data.title);
+                describeChange(data.description);
+            })
+            .catch((err)=> {
+                errorTypeCheck(err,refreshToken,taskActions,history,"/board");
+            })
+        } else {
+            history.push('/');
+        }
     }
     return (
         <>
@@ -154,16 +135,6 @@ const BoardFix = ({
                                     <option>4반</option>
                                 </select> : ""
                             }
-                            <label>
-                                <p>+ 사진 첨부하기</p>
-                                <input 
-                                    className="img"
-                                    type="file"
-                                    accept=".jpg, .jpeg, .png, .bmp, .gif"
-                                    multiple
-                                    onChange={imgChangeHandler}
-                                />
-                            </label>
                         </div>
                         <p>내용</p>
                         <textarea 
@@ -171,15 +142,10 @@ const BoardFix = ({
                             value={describe}
                             onChange={describeChangeHandler}
                         />
-                        <div className="img">
-                            {
-                                setImg()
-                            }
-                        </div>
                         <div>
                             <div 
                                 className="upload"
-                                onClick={()=> fixBoard(title,describe,imgs,classNum)}
+                                onClick={()=> fixBoard(title,describe,classNum)}
                             >
                                 <p>등록하기</p>
                             </div>

@@ -20,14 +20,18 @@ const BoardInput = ({
     const { limServer, wooServer, accessToken, refreshToken } = state;
     useEffect(()=> {
         const userInfoPro = getUserInfo(limServer,accessToken);
-        userInfoPro
-        .then((response)=> {
-            const data = response.data;
-            userInfoChange(data);
-        })
-        .catch((err)=> {
-            errorTypeCheck(err,refreshToken,taskActions,history,"/");
-        })
+        if(userInfoPro){
+            userInfoPro
+            .then((response)=> {
+                const data = response.data;
+                userInfoChange(data);
+            })
+            .catch((err)=> {
+                errorTypeCheck(err,refreshToken,taskActions,history,"/");
+            })
+        } else {
+            history.push('/');
+        }
     },[]);
     const titleChangeHandler = (event) => {
         const data = event.target.value;

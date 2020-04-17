@@ -70,6 +70,12 @@ export const TaskTop = styled.div`
                 line-height: 2;
                 font-size: 15px;
             }
+            > div {
+                display: flex;
+                > img {
+                    
+                }
+            }
         }
         > div.file {
             position: relative;
@@ -201,4 +207,15 @@ export const BoardCommentInput = styled.div`
         justify-content: center;
         align-items: center;
     }
+`
+
+export const BoardInputImg = styled.div`
+    max-width: 400px;
+    position: relative;
+    margin: 10px;
+    > img {
+        border-radius: 3px;
+        max-width: 400px;
+    }
+
 `
