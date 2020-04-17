@@ -15,5 +15,16 @@
   </head>
   <body>
     <div id="root"></div>
+    <script>
+      function isIE() {
+        var browse = navigator.userAgent.toLowerCase();
+        if((navigator.appName == 'Netscape' && browse.indexOf('trident') != -1) || (browse.indexOf("msie") != -1)){
+          alert("이 사이트는 Internet explore를 지원하지 않습니다 chrome이나 firefox를 이용해 주세요.");
+          window.location.href="https://www.google.com/chrome";
+        }
+      }
+      isIE();
+      console.log(navigator)
+    </script>
   </body>
 </html>
