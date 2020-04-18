@@ -29,7 +29,7 @@ const ContentBlock = styled.section`
     > p {
         margin: 12px 0 24px 0;
     }
-    > p: last-child {
+    > p:last-child {
         cursor: pointer;
         color: #FF5700;
     }
@@ -49,7 +49,7 @@ const NoMatch = ({ history }) => {
             <ContentBlock>
                 <h1>404</h1>
                 <p>요청하신 페이지를 찾을 수 없습니다.</p>
-                <p onClick={onClick}>◀︎ 이전 페이지로 이동</p>
+                <p onClick={onClick}>◀︎ 메인 페이지로 이동</p>
             </ContentBlock>
         </NoMatchWrapper>
     );

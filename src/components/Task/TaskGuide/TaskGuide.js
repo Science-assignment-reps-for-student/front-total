@@ -22,7 +22,6 @@ const reducer = (state, action) => {
 const TaskGuide = ({ state, taskActions, setHomework, setHomeworkDataInState }) => {
     const history = useHistory();
     const { limServer, accessToken } = state;
-    const [search, setSearch] = useState("");
     const [listDatas, setListDatas] = useState([]);
     const [pageState, pageDispatch] = useReducer(reducer, {
         curPage: 1,
@@ -31,7 +30,6 @@ const TaskGuide = ({ state, taskActions, setHomework, setHomeworkDataInState }) 
     });
     const { curPage, allPages, bottomList } = pageState;
 
-    const searchChange = useCallback((e) => setSearch(e.target.value), []);
     const setAllPages = useCallback((all) => pageDispatch({ type: "allPages", allPages: all }), []);
     const setCurPage = useCallback((current) => pageDispatch({ type: "curPage", curPage: current }), []);
     const setBottomList = useCallback((bottom) => pageDispatch({ type: "bottomList", bottomList: bottom }), []);
@@ -53,7 +51,7 @@ const TaskGuide = ({ state, taskActions, setHomework, setHomeworkDataInState }) 
                 getAccessTokenUsingRefresh(state, taskActions);
         })
     }, [setListDatas, state]);
-    const dispatchList = useCallback((_list) => {
+    const createList = useCallback(() => {
         const list = [];
         for (let i = (curPage * 8) - 7; i <= curPage * 8; i++) { // (1 ~ 8) * n ~~
             if (i > _list.length) break;
@@ -126,15 +124,15 @@ const TaskGuide = ({ state, taskActions, setHomework, setHomeworkDataInState }) 
                         <h1>과제 안내</h1>
                         <div>
                             <div>
-                                <input
-                                    type="text"
+                                <input 
+                                    type="text" 
                                     onChange={(e) => {
                                         searchChange(e);
-                                    }}
+                                    }} 
                                     value={search}
-                                    placeholder="검색할 제목을 입력하세요."
                                 />
                             </div>
+                            <div><button>검색</button></div>
                         </div>
                     </div>
                     <div className="task-guide-table">

@@ -103,7 +103,6 @@ const TaskTop = ({ state, taskActions, members, getUserInfo, homeworkData }) => 
                         }까지
                     </h3>
                     <pre>{homework_description}</pre>
-                    {console.log(homework_description)}
                 </div>
                 <div className="file">
                     <div className="file-input">

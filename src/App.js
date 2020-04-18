@@ -35,6 +35,8 @@ const App = () => {
                 const code = error.response.status;
                 if (code === 401 || code === 410)
                     history.push("/");
+                else if (code === 404)
+                    history.push("/404");
             })
         }
     }, []);

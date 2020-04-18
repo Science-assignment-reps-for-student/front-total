@@ -65,25 +65,66 @@ export const reparseDate = (parsedDate) => {
     return `${year}-${month}-${day}`;
 }
 
-export const getUserInfo = (url, accessToken) => {
+export const isDateAllow = (date) => {
+    const value = Object.values(date);
+    let flag = true;
+    value.map(e => {
+        if(e.length < 10){
+            flag = false;
+        }
+        return e;
+    })
+    return flag;
+}
+
+export const isDataAllow = (title,content,type,date) => {
+    if(title.length < 1){
+        return false;
+    } else if(content.length < 1){
+        return false;
+    } else if(type === -1){
+        return false;
+    } else if(!isDateAllow(date)){
+        return false;
+    }
+     else {
+        return true;
+    }
+}
+
+export const isFile = (obj) => {
+    if(obj.type){
+        return true;
+    } else {
+        return false;
+    }
+}
+
+export const isAllFile = (array) => {
+    let flag = true;
+    array.map((e)=>{
+        isFile(e) ? flag = true : flag = false;
+        return e;
+    });
+    return flag;
+}
+
+export const getUserInfo = (url,accessToken) => {
     const header = {
         headers: {
             "Authorization": accessToken,
         }
     }
-    return new Promise((resolve, reject) => {
-        axios.get(url, header)
-        .then((e) => {
+    return new Promise((resolve,reject)=> {
+        axios.get(url,header)
+        .then((e)=> {
             const userType = e.data.userType;
-            if (!userType) {
-                reject();
-            } else if(userType !== 0){
-                resolve(true);
-            } else {
+            if(userType === 0){
                 resolve(false);
             }
+            resolve(true);
         })
-        .catch((e) => {
+        .catch((e)=> {
             reject(e);
         })
     })
@@ -92,7 +133,7 @@ export const getUserInfo = (url, accessToken) => {
 export const getIsExpiration = (err) => {
     try {
         const statusCode = err.response.status;
-        if (statusCode === 401 || statusCode === 422) {
+        if(statusCode === 401 || statusCode === 410 || statusCode === 422){
             return true;
         } else {
             return false;
