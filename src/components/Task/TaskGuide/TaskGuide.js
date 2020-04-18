@@ -64,16 +64,7 @@ const TaskGuide = ({ state, taskActions, setHomework, setHomeworkDataInState }) 
             />)
         };
         return list;
-    }, [curPage, state, setHomework, setHomeworkDataInState]);
-    const createList = useCallback(() => {
-        if (!listDatas || typeof listDatas !== "object") return;
-        if (search.trim() === "") {
-            return dispatchList(listDatas);
-        } else {
-            const copy = [...listDatas].filter(item => item.homeworkTitle.indexOf(search) !== -1);
-            return copy;
-        }
-    }, [listDatas, curPage, setHomework, search]);
+    }, [listDatas, curPage, state, setHomework, setHomeworkDataInState]);
     const setAllPageList = useCallback(() => {
         const isOnePage = (Math.floor(listDatas.length / 8) && listDatas.length % 8 !== 0);
         isOnePage ? setAllPages(Math.floor(listDatas.length / 8) + 1) : setAllPages(1);
@@ -122,18 +113,6 @@ const TaskGuide = ({ state, taskActions, setHomework, setHomeworkDataInState }) 
                 <div>
                     <div className="task-guide-top">
                         <h1>과제 안내</h1>
-                        <div>
-                            <div>
-                                <input 
-                                    type="text" 
-                                    onChange={(e) => {
-                                        searchChange(e);
-                                    }} 
-                                    value={search}
-                                />
-                            </div>
-                            <div><button>검색</button></div>
-                        </div>
                     </div>
                     <div className="task-guide-table">
                         <table>
