@@ -54,11 +54,11 @@ const TaskGuide = ({ state, taskActions, setHomework, setHomeworkDataInState }) 
     const createList = useCallback(() => {
         const list = [];
         for (let i = (curPage * 8) - 7; i <= curPage * 8; i++) { // (1 ~ 8) * n ~~
-            if (i > _list.length) break;
+            if (i > listDatas.length) break;
             list.push(<List
                 key={i}
                 state={state}
-                data={_list[i - 1]}
+                data={listDatas[i - 1]}
                 setHomework={setHomework}
                 setHomeworkDataInState={setHomeworkDataInState}s
             />)
