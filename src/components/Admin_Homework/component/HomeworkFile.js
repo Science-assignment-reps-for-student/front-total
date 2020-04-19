@@ -3,7 +3,10 @@ import * as S from '../style/HomeworkStyle';
 import  { fileImg }  from '../imgs';
 import { HomeworkFileContent } from '../component';
 
-const HomeworkFile = ({ file,fileChange }) => {
+const HomeworkFile = ({ 
+    file,
+    fileChange 
+}) => {
 
     const setBuffer = useCallback((fileBuffer,fileLength) => {
         let buffer = [];
@@ -16,6 +19,12 @@ const HomeworkFile = ({ file,fileChange }) => {
         return buffer;
     },[file])
 
+    const deleteFile = useCallback((fileArray,name)=> {
+        console.log(fileArray);
+        const buffer = fileArray.filter((file)=> file.name !== name);
+        fileChange(buffer);
+    },[fileChange])
+
     const inputChange = useCallback((e) => {
         const fileBuffer = e.target.files;
         const fileLength = fileBuffer.length;
@@ -23,38 +32,33 @@ const HomeworkFile = ({ file,fileChange }) => {
         fileChange(buffer);
     },[fileChange,setBuffer])
     
-
-    const buttonClickHandler = useCallback(() => {
-        fileChange([]);
-    },[fileChange])
-
-    const deleteButtonClickHandler = useCallback(() => {
-        fileChange([]);
-    },[fileChange])
+    const setFileComponent = useCallback((file) => {
+        const buffer = file.map((e)=>{
+            return <HomeworkFileContent 
+                deleteFile={deleteFile}
+                file={file}
+            >
+                { e.name }
+            </HomeworkFileContent>
+        })
+        return buffer;
+    },[deleteFile])
 
     return (
         <>
             <S.HomeworkFile>
+                <label>
                     {
-                        file.length ? 
-                        file.map((e)=>{
-                            return <HomeworkFileContent>
-                                { e.file_name ? e.file_name : e.name }
-                            </HomeworkFileContent>
-                        }) : 
+                        file.length > 0 ? 
+                        setFileComponent(file) :
                         <div>
                             <img src={fileImg} alt="file"/>
                             첨부파일
                         </div>
                     }
-            </S.HomeworkFile>
-            <S.HomeworkFileLabel>
-                <label>
-                    <div onClick={buttonClickHandler}>파일 수정</div>
                     <input multiple onChange={inputChange} type="file"/>
                 </label>
-                <div onClick={deleteButtonClickHandler}>파일 삭제</div>
-            </S.HomeworkFileLabel>
+            </S.HomeworkFile>
         </>
     )
 }

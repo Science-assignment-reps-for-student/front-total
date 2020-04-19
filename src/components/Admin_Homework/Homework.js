@@ -210,7 +210,8 @@ const Admin_Homework = ({
 
     const setHomework = () => {
         const data = setData();
-        if(isDataAllow(title,content,type,date)){
+        console.log(category);
+        if(isDataAllow(title,content,category,date)){
             axios.post(homeworkURL,data,header)
             .then(()=> {
                 history.push('/Admin');
