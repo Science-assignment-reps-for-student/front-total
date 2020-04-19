@@ -142,20 +142,13 @@ export const BoardCommentContent = styled.div `
                 font-weight: 600;
             }
             > span.content {
-                display: ${props => props.isFix ? "none" : "block"};
-            }
-            > input {
-                display: ${props => props.isFix ? "block" : "none"};
-                width: 100%;
-                outline: none;
-                border: none;   
-                font-size: 15px;
+                display: block;
             }
         }
         > div {
-            width: 20%;
+            width: 18%;
             display:flex;
-            justify-content:flex-end;
+            justify-content:flex-start;
             > div {
                 display: flex;
                 color: #858585;
@@ -165,6 +158,7 @@ export const BoardCommentContent = styled.div `
                     display: flex;
                     align-items: center;
                     > span.delete {
+                        border-left: 1px solid #858585;
                         border-right: 1px solid #858585;
                     }
                     > span {

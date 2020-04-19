@@ -227,12 +227,14 @@ export const MainNav = styled.div`
 `
 
 export const MainClassCheckbox = styled.div`
-    padding: 10px;
-    display: flex;
-    align-items: center;
-    > span {
-        font-weight: 600;
-        font-size: 13px;
+    > label {
+        padding: 10px;
+        display: flex;
+        align-items: center;
+        > span {
+            font-weight: 600;
+            font-size: 13px;
+        }
     }
 `
 

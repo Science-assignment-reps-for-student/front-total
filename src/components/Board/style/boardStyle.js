@@ -53,6 +53,7 @@ export const BoardGuide = styled.main`
                     justify-content: center;
                     align-items: center;
                     color: white;
+                    cursor: pointer;
                 }
             }
         }

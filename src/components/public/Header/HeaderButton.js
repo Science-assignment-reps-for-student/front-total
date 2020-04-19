@@ -17,6 +17,9 @@ const HeaderButton = ({ children, page, history, actions, isCheck }) => {
             accessTokenChange("");
             localStorage.clear();
             history.push('/Admin/Login');
+        },
+        board: () => {
+            history.push('board')
         }
     }
     

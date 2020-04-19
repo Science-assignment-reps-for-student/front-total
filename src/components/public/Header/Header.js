@@ -19,6 +19,7 @@ const Header = ({ isCheck, history }) => {
                                         <HeaderButton page="main" actions={actions}>제출현황</HeaderButton>
                                         <HeaderButton page="make" actions={actions}>과제생성</HeaderButton>
                                         <HeaderButton isCheck={isCheck} page="qna" actions={actions}>QnA</HeaderButton>
+                                        <HeaderButton isCheck={isCheck} page="board" actions={actions}>게시판</HeaderButton>
                                     </>
                                 )
                             }

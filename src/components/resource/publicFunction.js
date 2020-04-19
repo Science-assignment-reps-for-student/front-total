@@ -113,6 +113,8 @@ export const getUserInfo = (url,accessToken) => {
     const header = {
         headers: {
             "Authorization": accessToken,
+            "Cache-Control": "no-cache, no-store, must-revalidate",
+            Pragma: "no-cache"
         }
     }
     return new Promise((resolve,reject)=> {
