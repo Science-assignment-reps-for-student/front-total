@@ -4,6 +4,7 @@ import * as S from './styles';
 import { Login } from '../Login';
 import { SignUp } from '../SignUp';
 import { MyProfile, HomeWorkList, HomeWorkBoardList } from './component';
+import { Popup } from '../public';
 import logo from './img/SCARFS.png';
 import Background from './img/background.png';
 import scrollDown from './img/scrollDown.png';
@@ -12,6 +13,35 @@ import scrollDown2 from './img/scrollDown2.png';
 import loginButton from './img/loginButton.png';
 import logoutButton from './img/logOutButton.png';
 import signUpButton from './img/signUpButton.png';
+import ApiDefault from '../utils';
+
+Date.prototype.yyyymmdd = function() {
+    var mm = this.getMonth() + 1;
+    var dd = this.getDate();
+    return [
+        this.getFullYear(),
+        (mm > 9 ? '' : '0') + mm,
+        (dd > 9 ? '' : '0') + dd
+    ].join('');
+}; 
+
+function getCookie(name) {
+    var cookieName = name + "=";
+    var x = 0;
+    while ( x <= document.cookie.length ) {
+       var y = (x+cookieName.length);
+       if ( document.cookie.substring( x, y ) == cookieName) {
+        let lastChrCookie=document.cookie.indexOf(";", y);
+          if (lastChrCookie == -1)
+             lastChrCookie = document.cookie.length;
+          return decodeURI(document.cookie.substring(y, lastChrCookie));
+       }
+       x = document.cookie.indexOf(" ", x ) + 1;
+       if ( x == 0 )
+          break;
+       }
+    return "";
+ }
 
 const Main = ({ state, actions, taskActions, taskState, setHomeworkDataInState, setIsLogin }) => {
     const scrollButon = useRef();
@@ -23,7 +53,19 @@ const Main = ({ state, actions, taskActions, taskState, setHomeworkDataInState, 
         signup: false
     });
     const [homework, setHomework] = useState([]);
-
+    const [popupOn, setPopupOn] = useState(getCookie(`popup${new Date().yyyymmdd()}`) !== 'end');
+    const [content, setContent] = useState('');
+    useEffect(() => {
+        ApiDefault.get('notice', {
+            headers: {
+                Authorization: state.accessToken
+            }
+        }).then(res => {
+            setContent(res.data.notice);
+        }).catch(err => {
+            console.log(err);
+        });
+    }, []);
     const changePage = useCallback(() => {
         if (state.logged) {
             try {
@@ -137,6 +179,13 @@ const Main = ({ state, actions, taskActions, taskState, setHomeworkDataInState, 
             </S.MainBackground>
             {modalOn.signup === true && <SignUp modalOn={modalOn} setModalOn={setModalOn} />}
             {modalOn.login === true && <Login state={state} actions={actions} modalOn={modalOn} setModalOn={setModalOn} taskActions={taskActions} setIsLogin={setIsLogin} />}
+            {popupOn && 
+            <Popup
+                popupOn={popupOn}
+                setPopupOn={setPopupOn}
+                content={content}
+            />
+            }
         </>
     );
 };
