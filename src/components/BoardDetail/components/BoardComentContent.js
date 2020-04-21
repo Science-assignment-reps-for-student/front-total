@@ -79,6 +79,7 @@ const BoardCommentContent =  ({
                             deleteCoCommentHandler={deleteCoCommentHandler}
                             comment={commentData}
                             commentChange={dataChange}
+                            key={content+id}
                         />
                     })
                 }

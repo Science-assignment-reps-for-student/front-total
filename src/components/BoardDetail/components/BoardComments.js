@@ -32,6 +32,7 @@ const BoardComments = ({
                         userInfo={userInfo}
                         deleteCoCommentHandler={deleteCoCommentHandler}
                         deleteCommentHandler={deleteCommentHandler}
+                        key={description+comment_id}
                     />
                 })
             }

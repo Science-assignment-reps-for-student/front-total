@@ -130,6 +130,11 @@ export const BoardCommentContent = styled.div `
         justify-content: space-between;
         border-bottom: 0.5px solid #858585;
         box-shadow: 1px 1px 2px 0px #858585;
+        > img {
+            width: 20px;
+            height: 20px;
+            margin: 10px;
+        }
         > p {
             display: flex;
             font-size: 15px;
@@ -173,7 +178,7 @@ export const BoardCommentContent = styled.div `
         }
     }
     > div.children {
-        width: 95%;
+        width: 100%;
     }
 `
 

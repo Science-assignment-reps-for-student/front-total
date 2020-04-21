@@ -1,5 +1,6 @@
 import React from 'react';
 import * as S from '../style/BoardDetailStyle';
+import arrow from '../../public/imgs/arrow.png';
 const BoardCoCommentContent =  ({ 
     name, 
     date, 
@@ -22,6 +23,7 @@ const BoardCoCommentContent =  ({
     return (
         <S.BoardCommentContent key={id}>
             <div className="comment">
+                <img src={arrow} alt="arrow" className="arrow"/>
                 <p>
                     <span className="name">{name}</span>
                     <span className="content">{content}</span>

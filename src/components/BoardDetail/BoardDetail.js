@@ -49,9 +49,12 @@ const BoardDetail = ({ state, getUserInfo, history, taskActions }) => {
         getBoardInfo(number)
         .then((response)=> {
             const data = response.data;
-            console.log(data);
             data.created_at = data.created_at.split("T")[0];// 시간 이상하게 나오는거 일시적인 처리
             boardInfoChange(data);
+        })
+        .catch((err)=> {
+            errorTypeCheck(err,refreshToken,taskActions,history);
+            history.push('/board');
         })
     }
     const gofixBoardPage = (id) => {
@@ -70,7 +73,7 @@ const BoardDetail = ({ state, getUserInfo, history, taskActions }) => {
                 history.push('/board');
             })
             .catch((err)=> {
-                alert('권한이 없습니다.')
+                alert('오류가 발생했습니다. 다시 시도해 주세요.')
             })
         }
     }
@@ -94,7 +97,6 @@ const BoardDetail = ({ state, getUserInfo, history, taskActions }) => {
         getComments(id)
         .then((data)=> {
             commentChange(data);
-            console.log(data);
         })
         .catch((err)=> {
             errorTypeCheck(err,refreshToken,taskActions,history);

@@ -12,13 +12,14 @@ const Board = ({ state, getUserInfo, history, taskActions }) => {
     const [classNum, classNumChange] = useState();
     const [postList, postListChange] = useState([])
     const [isLoading, isLoadChange] = useState(false);
-    const [page, pageChange] = useState(0);
+    const [page, pageChange] = useState(-1);
     const createList = (postList) => {
         let buffer = [];
             const pageMaxComponent = 8;
+            console.log(isLoading);
+            console.log(postList)
             for(let i = getComponentCount();i < getComponentCount() + pageMaxComponent;i++){
-                if(!postList[i]){break}
-                else if(isLoading){break}
+                if(!postList[i] || isLoading){break}
                 const { title, writer, created_at , viewCount, board_id } = postList[i];
                 const time = created_at.split('T')[0];
                 buffer.push(
@@ -40,7 +41,13 @@ const Board = ({ state, getUserInfo, history, taskActions }) => {
             list.push(<li 
                     key={i} 
                     className={page === i ? "clicked" : ""}
-                    onClick={() =>  {pageChange(i); isLoadChange(true)}}
+                    onClick={() =>  {
+                        if(page === i){
+                            return;
+                        }
+                        pageChange(i); 
+                        isLoadChange(true);
+                    }}
                 >
                     <span>{i+1}</span>
                 </li>
@@ -50,12 +57,10 @@ const Board = ({ state, getUserInfo, history, taskActions }) => {
     }
 
     const setPageNext = (page) => {
-        if(page + 1 >= getPageMax()) { return; }
         pageChange(page + 1);
     }
 
     const setPageCurrent = (page) => {
-        if(page - 1 === -1) { return; }
         pageChange(page - 1);
     }
 
@@ -141,6 +146,10 @@ const Board = ({ state, getUserInfo, history, taskActions }) => {
     useEffect(()=> {
         isLoadChange(false);
     },[postList,page])
+
+    useEffect(()=> {
+        console.log(isLoading);
+    },[isLoading])
 
 
     return (
