@@ -58,13 +58,14 @@ const Header = styled.header`
     padding: 0 4px;
     > span {
         font-size: 14px;
-        padding-top: 3px;
         box-sizing: border-box;
     }
     > button {
+        background-color: white;
         outline: none;
         cursor: pointer;
-        border-radius: 4px;
+        border: 1px solid rgb(197, 197, 197);
+        border-radius: 6px;
         padding-bottom: 4px;
     }
     color: #333;
@@ -97,6 +98,7 @@ const Footer = styled.p`
     color: white;
     > span {
         font-size: 14px;
+        height: 100%;
         padding-top: 3px;
     }
 `;
