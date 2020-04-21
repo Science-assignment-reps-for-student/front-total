@@ -37,8 +37,9 @@ const TaskBottom = ({ state, taskActions, homeworkData, members, setMembers, get
     const addFileList = useCallback(() => {
         const fileName = fileInput.current.files[0].name;
         const lastIdxOfDot = fileName.lastIndexOf(".");
-        if (fileName.slice(lastIdxOfDot, fileName.length) !== ".hwp") {
-            alert("파일명은 \'.hwp\' 만 가능합니다.");
+        const access = [".hwp", ".jpg", ".png", ".jpeg", ".pptx", ".word", ".pdf"];
+        if (access.some((ext) => ext === fileName.slice(lastIdxOfDot, fileName.length)) === false) {
+            alert("파일명은 \'.hwp .jpg .png .jpeg .pptx .word .pdf\' 만 가능합니다.");
             throw "Invalid file extenstion";
         }
         files.map((file) => { if (file.name === fileName) throw "Duplicate filename."; })
@@ -95,7 +96,7 @@ const TaskBottom = ({ state, taskActions, homeworkData, members, setMembers, get
             else if (code === 410)
                 getAccessTokenUsingRefresh(state, taskActions);
             else if (code === 415)
-                alert("파일 확장자는 \".hwp\"만 가능합니다. ")
+                alert("파일 확장자는 \".hwp .jpg .png .jpeg .pptx .word .pdf\"만 가능합니다. ")
         })
         setFiles([]);
     }, [fileInput, files, state]);
@@ -169,26 +170,26 @@ const TaskBottom = ({ state, taskActions, homeworkData, members, setMembers, get
                         <h4>팀원</h4>
                         {
                             (listDatas.some((data) => (data.id === +homeworkId && data.submissionStatus)) ?
-                            (homework_type !== 0 && homeworkId !== "undefined") && <Link to={`/task/${homeworkId}/evaluation`}>평가하러 가기</Link> : 
-                            Object.keys(members).length === 0 ?
-                                <>
-                                    <input type="text" ref={teamTitleInput} placeholder="팀 명을 입력해주세요." />
-                                    <button onClick={createTeamRequest}>
-                                        <img src={plus} alt="plus-member" />
-                                        <span>팀 생성</span>
-                                    </button>
-                                </> :
-                                <>
-                                    {userInfo.userNumber === members.leaderNumber &&
-                                        <>
-                                            <button onClick={deleteTeamRequest}>팀 삭제</button>
-                                            <button onClick={onClickToggleModal}>
-                                                <img src={plus} alt="plus-member" />
-                                                <span>팀원 추가</span>
-                                            </button>
-                                        </>
-                                    }
-                                </>
+                                (homework_type !== 0 && homeworkId !== "undefined") && <Link to={`/task/${homeworkId}/evaluation`}>평가하러 가기</Link> :
+                                Object.keys(members).length === 0 ?
+                                    <>
+                                        <input type="text" ref={teamTitleInput} placeholder="팀 명을 입력해주세요." />
+                                        <button onClick={createTeamRequest}>
+                                            <img src={plus} alt="plus-member" />
+                                            <span>팀 생성</span>
+                                        </button>
+                                    </> :
+                                    <>
+                                        {userInfo.userNumber === members.leaderNumber &&
+                                            <>
+                                                <button onClick={deleteTeamRequest}>팀 삭제</button>
+                                                <button onClick={onClickToggleModal}>
+                                                    <img src={plus} alt="plus-member" />
+                                                    <span>팀원 추가</span>
+                                                </button>
+                                            </>
+                                        }
+                                    </>
                             )
                         }
                     </div>
