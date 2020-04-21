@@ -54,14 +54,14 @@ const Main = ({ state, actions, taskActions, taskState, setHomeworkDataInState, 
     });
     const [homework, setHomework] = useState([]);
     const [popupOn, setPopupOn] = useState(getCookie(`popup${new Date().yyyymmdd()}`) !== 'end');
-    const [content, setContent] = useState('');
+    const [notice, setNotice] = useState('');
     useEffect(() => {
         ApiDefault.get('notice', {
             headers: {
                 Authorization: state.accessToken
             }
         }).then(res => {
-            setContent(res.data.notice);
+            setNotice(res.data);
         }).catch(err => {
             console.log(err);
         });
@@ -183,7 +183,7 @@ const Main = ({ state, actions, taskActions, taskState, setHomeworkDataInState, 
             <Popup
                 popupOn={popupOn}
                 setPopupOn={setPopupOn}
-                content={content}
+                notice={notice}
             />
             }
         </>
