@@ -1,40 +1,48 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { BoardComment, BoardCommentInput } from '../components';
 
-const BoardComments = () => {
-    const [data, dataChange] = useState([
-        {
-            name: "강신희",
-            content: "강신희 바보",
-            date: "2020-03-23",
-            isMine: true,
-            cocomment: []
-        },
-        {
-            name: "강신희",
-            content: "강신희 바보",
-            date: "2020-03-23",
-            isMine: false,
-            cocomment: [
-                {
-                    name: "강신희",
-                    content: "강신희 바보",
-                    date: "2020-03-23",
-                    isMine: true,
-                    cocomment: []
-                }
-            ]
-        }
-    ]);
+const BoardComments = ({ 
+    comment, 
+    commentChange, 
+    updateComment, 
+    updateCoComment,
+    deleteComment,
+    deleteCoComment,
+    getCoComment,
+    userInfo,
+    deleteCommentHandler,
+    deleteCoCommentHandler,
+}) => {
+
     return (
         <>
             {
-                data.map((comment)=> {
-                    const { name, content, date, isMine, cocomment } = comment;
-                    return <BoardComment name={name} content={content} date={date} isMine={isMine} comments={cocomment}/>
+                comment.map((comment)=> {
+                    const { writer, description, created_at, comment_id } = comment;
+                    const date = created_at.split("T")[0]
+                    return <BoardComment 
+                        name={writer} 
+                        content={description} 
+                        date={date}
+                        id={comment_id} 
+                        updateCoComment={updateCoComment}
+                        deleteCoComment={deleteCoComment}
+                        deleteComment={deleteComment}
+                        getCoComment={getCoComment}
+                        userInfo={userInfo}
+                        deleteCoCommentHandler={deleteCoCommentHandler}
+                        deleteCommentHandler={deleteCommentHandler}
+                        key={description+comment_id}
+                    />
                 })
             }
-            <BoardCommentInput commentData={data} dataChange={dataChange} isCheck={true}/>
+            <BoardCommentInput 
+                commentData={comment}   
+                dataChange={commentChange} 
+                isCheck={true} 
+                updateComment={updateComment}
+                userInfo={userInfo}
+            />
         </>
     )
 }

@@ -73,7 +73,7 @@ export const Header = styled.div`
         }
         
         > div {
-            width: 15vw;
+            width: 20vw;
             @media ${device.laptop} {
                 width: 30vw;
             }

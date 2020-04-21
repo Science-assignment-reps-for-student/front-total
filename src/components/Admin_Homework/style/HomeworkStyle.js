@@ -169,9 +169,9 @@ export const HomeworkDayInput = styled.input`
 `
 
 
-export const HomeworkFile = styled.div`
+export const HomeworkFile = styled.label`
     cursor: default;
-    width:100%;
+    width: 100%;
     height: 80px;
     display: flex;
     flex-wrap: wrap;
@@ -187,28 +187,40 @@ export const HomeworkFile = styled.div`
     }
     > div {
         display: flex;
+        flex-wrap: wrap;
         justify-content: center;
-        width: 100%;
-        > img {
-            width: 11px;
-            height: 11px;
+        > div {
+            display: flex;
+            justify-content: center;
+            width: 100%;
+            > img {
+                width: 11px;
+                height: 11px;
+            }
         }
     }
-    > p {
-        border: 1px solid black;
-        font-size: 11px;
-        padding: 5px;
-        display: flex;
-        align-items: center;
-        margin: 2px;
-        width: auto;
-        overflow-wrap: break-word; 
-        
-        > span {
-            font-size: 13px;
-        }
+    > input {
+        display: none;
     }
     > label {
+        > p {
+            > div {
+                border: 1px solid black;
+                font-size: 11px;
+                padding: 5px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                margin: 2px;
+                width: auto;
+                overflow-wrap: break-word; 
+                
+                > span {
+                    font-size: 13px;
+                    margin: 2px;
+                }
+            }
+        }
         > input {
             display: none;
         }

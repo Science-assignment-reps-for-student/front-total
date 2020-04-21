@@ -1,8 +1,23 @@
 import React from 'react'
 
-const HomeworkFileContent = ({children}) => {
+const HomeworkFileContent = ({
+    children,
+    deleteFile,
+    file,
+}) => {
+    const deleteClickHandler = (event) => {
+        event.preventDefault();
+        deleteFile(file,children);
+    }
     return (
-        <p>{children}</p>
+        <p key={children}>
+            <div>
+                {children}
+                <span onClick={deleteClickHandler}>
+                    ❌
+                </span>
+            </div>
+        </p>
     )
 }
 
