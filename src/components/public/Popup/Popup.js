@@ -11,7 +11,7 @@ function setCookie(cname, value, expire) {
 
 
 
-const Popup = ({ popupOn, setPopupOn, content }) => {
+const Popup = ({ popup, setPopupOn, notice }) => {
     const footerClick = () => {
         setCookie(`popup${new Date().yyyymmdd()}`, "end" , 1);
         // 하루동안이므로 1을 설정
@@ -24,10 +24,10 @@ const Popup = ({ popupOn, setPopupOn, content }) => {
     return (
         <PopupWrapper>
             <Header>
-                <span>[공지] 사이트 관리자입니다.</span>
+                <span dangerouslySetInnerHTML={{ __html: notice.noticeTitle }}></span>
                 <button onClick={closePopup}>x</button>
             </Header>
-            <Content dangerouslySetInnerHTML={{ __html: content }}>
+            <Content dangerouslySetInnerHTML={{ __html: notice.notice }}>
             </Content>
             <Footer onClick={footerClick}>
                 <span>하루동안 열지 않음 [닫기]</span>
@@ -42,9 +42,9 @@ const PopupWrapper = styled.div`
     border: 1px solid #c5c5c5;
     border-radius: 3px;
     position: absolute;
-    top: 0;
+    top: 6%;
     left: 20%;
-    width: 400px;
+    width: 600px;
     height: 300px;
     background-color: white;
     padding: 2px;
@@ -60,6 +60,12 @@ const Header = styled.header`
         font-size: 14px;
         padding-top: 3px;
         box-sizing: border-box;
+    }
+    > button {
+        outline: none;
+        cursor: pointer;
+        border-radius: 4px;
+        padding-bottom: 4px;
     }
     color: #333;
     font-weight: bold;
