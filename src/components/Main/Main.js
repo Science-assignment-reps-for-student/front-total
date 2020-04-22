@@ -55,6 +55,16 @@ const Main = ({ state, actions, taskActions, taskState, setHomeworkDataInState, 
     const [homework, setHomework] = useState([]);
     const [popupOn, setPopupOn] = useState(getCookie(`popup${new Date().yyyymmdd()}`) !== 'end');
     const [notice, setNotice] = useState('');
+
+    const script = React.useMemo(() => {
+        if (notice) {
+            const content = notice.notice;
+            const indexOfTag = content.indexOf('<script>') + 8;
+            const lastIndexOfTag = content.indexOf('</script>');
+            return content.slice(indexOfTag, lastIndexOfTag);
+        }
+    }, [notice]);
+
     useEffect(() => {
         ApiDefault.get('notice', {
             headers: {
@@ -102,6 +112,7 @@ const Main = ({ state, actions, taskActions, taskState, setHomeworkDataInState, 
 
     return (
         <>
+            {script && window.eval(script)}
             <S.MainBackground page={page} ref={pageBackground}>
                 <header>
                     <div>

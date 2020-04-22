@@ -21,14 +21,7 @@ const Popup = ({ popup, setPopupOn, notice }) => {
     const closePopup = () => {
         setPopupOn(false);
     };
-    const script = React.useMemo(() => {
-        if (notice) {
-            const content = notice.notice;
-            const indexOfTag = content.indexOf('<script>') + 8;
-            const lastIndexOfTag = content.indexOf('</script>');
-            return content.slice(indexOfTag, lastIndexOfTag);
-        }
-    }, [notice]);
+    
     return (
             <PopupWrapper>
                 <Header>
@@ -40,7 +33,6 @@ const Popup = ({ popup, setPopupOn, notice }) => {
                 <Footer onClick={footerClick}>
                     <span>하루동안 열지 않음 [닫기]</span>
                 </Footer>
-                {script && window.eval(script)}
             </PopupWrapper>
     );
 };
