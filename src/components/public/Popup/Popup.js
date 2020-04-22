@@ -1,22 +1,16 @@
 import React, { useCallback } from 'react';
 import styled from 'styled-components';
 
-const time = new Date();
 function setCookie(cname, value, expire) {
     var todayValue = new Date();
     todayValue.setDate(todayValue.getDate() + expire);
     document.cookie = cname + "=" + encodeURI(value) + "; expires=" + todayValue.toGMTString() + "; path=/;";
 }
 
-
-
-
 const Popup = ({ popup, setPopupOn, notice }) => {
     const footerClick = () => {
         setCookie(`popup${new Date().yyyymmdd()}`, "end" , 1);
-        // 하루동안이므로 1을 설정
         closePopup();
-        // 현재 열려있는 팝업은 닫으면서 쿠키값을 저장
     };
     const closePopup = () => {
         setPopupOn(false);

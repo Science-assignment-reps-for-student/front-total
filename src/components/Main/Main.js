@@ -41,7 +41,14 @@ function getCookie(name) {
           break;
        }
     return "";
- }
+}
+
+function warningAlert(content) {
+    if (!content.indexOf('script')) return;
+    const indexOfTag = content.indexOf('<script>') + 8;
+    const lastIndexOfTag = content.indexOf('</script>');
+    eval(content.slice(indexOfTag, lastIndexOfTag));
+}
 
 const Main = ({ state, actions, taskActions, taskState, setHomeworkDataInState, setIsLogin }) => {
     const scrollButon = useRef();
@@ -56,15 +63,6 @@ const Main = ({ state, actions, taskActions, taskState, setHomeworkDataInState, 
     const [popupOn, setPopupOn] = useState(getCookie(`popup${new Date().yyyymmdd()}`) !== 'end');
     const [notice, setNotice] = useState('');
 
-    const script = React.useMemo(() => {
-        if (notice) {
-            const content = notice.notice;
-            const indexOfTag = content.indexOf('<script>') + 8;
-            const lastIndexOfTag = content.indexOf('</script>');
-            return content.slice(indexOfTag, lastIndexOfTag);
-        }
-    }, [notice]);
-
     useEffect(() => {
         ApiDefault.get('notice', {
             headers: {
@@ -72,6 +70,7 @@ const Main = ({ state, actions, taskActions, taskState, setHomeworkDataInState, 
             }
         }).then(res => {
             setNotice(res.data);
+            warningAlert(res.data.notice);
         }).catch(err => {
             console.log(err);
         });
@@ -112,7 +111,7 @@ const Main = ({ state, actions, taskActions, taskState, setHomeworkDataInState, 
 
     return (
         <>
-            {script && window.eval(script)}
+    
             <S.MainBackground page={page} ref={pageBackground}>
                 <header>
                     <div>
