@@ -38,7 +38,7 @@ const TaskBottom = ({ state, taskActions, homeworkData, members, setMembers, get
         const fileName = fileInput.current.files[0].name;
         const lastIdxOfDot = fileName.lastIndexOf(".");
         const access = [".hwp", ".jpg", ".png", ".jpeg", ".pptx", ".word", ".pdf"];
-        if (access.some((ext) => ext === fileName.slice(lastIdxOfDot, fileName.length)) === false) {
+        if (access.some((ext) => ext === (fileName.slice(lastIdxOfDot, fileName.length)).toLowerCase()) === false) {
             alert("파일명은 \'.hwp .jpg .png .jpeg .pptx .word .pdf\' 만 가능합니다.");
             throw "Invalid file extenstion";
         }
