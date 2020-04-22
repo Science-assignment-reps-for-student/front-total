@@ -95,7 +95,7 @@ export const MainWrapper = styled.main`
                 width: 400px;
                 > span {
                     font-family: 'Roboto';
-                    font-size: 14px;
+                    font-size: 16px;
                     font-weight: bold;
                     color: #1A1A1A;
                     margin-bottom: 4px;
