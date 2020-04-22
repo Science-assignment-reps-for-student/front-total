@@ -142,6 +142,13 @@ const QnA = ({ stomp, state, actions, isLogin, getUserInfo }) => {
         if (stomp && my.userId) {
             try {
                 stomp.subscribe(`/receive/${my.userId}`, (msg) => {
+                    axios({
+                        url: `${limServer}/message/${my.userId}`,
+                        data: msg,
+                        headers: {
+                            "Authorization": accessToken
+                        }
+                    })
                     setBuffer({ ...buffer, chat: JSON.parse(msg.body) });
                     scrollBufChange();
                 });
@@ -149,6 +156,13 @@ const QnA = ({ stomp, state, actions, isLogin, getUserInfo }) => {
             } catch {
                 stomp.onConnect = () => {
                     stomp.subscribe(`/receive/${my.userId}`, (msg) => {
+                        axios({
+                            url: `${limServer}/message/${my.userId}`,
+                            data: msg,
+                            headers: {
+                                "Authorization": accessToken
+                            }
+                        })
                         setBuffer({ ...buffer, chat: JSON.parse(msg.body) });
                         scrollBufChange();
                     });
