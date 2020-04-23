@@ -24,7 +24,7 @@ const BoardDetail = ({ state, getUserInfo, history, taskActions }) => {
                 setComments(number);
             })
             .catch((err)=> {
-                errorTypeCheck(err,refreshToken,taskActions,history);
+                history.push('/board');
             })
         } else {
             history.push('/');

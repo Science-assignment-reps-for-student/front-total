@@ -27,7 +27,7 @@ const BoardInput = ({
                 userInfoChange(data);
             })
             .catch((err)=> {
-                errorTypeCheck(err,refreshToken,taskActions,history,"/");
+                history.push('/');
             })
         } else {
             history.push('/');

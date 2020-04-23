@@ -16,8 +16,6 @@ const Board = ({ state, getUserInfo, history, taskActions }) => {
     const createList = (postList) => {
         let buffer = [];
             const pageMaxComponent = 8;
-            console.log(isLoading);
-            console.log(postList)
             for(let i = getComponentCount();i < getComponentCount() + pageMaxComponent;i++){
                 if(!postList[i] || isLoading){break}
                 const { title, writer, created_at , viewCount, board_id } = postList[i];
@@ -147,9 +145,6 @@ const Board = ({ state, getUserInfo, history, taskActions }) => {
         isLoadChange(false);
     },[postList,page])
 
-    useEffect(()=> {
-        console.log(isLoading);
-    },[isLoading])
 
 
     return (
