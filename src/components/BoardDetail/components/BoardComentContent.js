@@ -26,13 +26,16 @@ const BoardCommentContent =  ({
         }
     },[])
     const deleteButtonClickHandler = () => {
-        deleteComment(id)
-        .then(()=> {
-            deleteCommentHandler(id);
-        })
-        .catch(()=> {
-            alert("권한이 없습니다.");
-        })
+        const isAble = window.confirm("정말로 삭제하겠습니까?");
+        if(isAble){
+            deleteComment(id)
+            .then(()=> {
+                deleteCommentHandler(id);
+            })
+            .catch(()=> {
+                alert("권한이 없습니다.");
+            })
+        }
     }
     return (
         <S.BoardCommentContent key={id}>

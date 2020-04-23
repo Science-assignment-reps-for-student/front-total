@@ -12,13 +12,16 @@ const BoardCoCommentContent =  ({
     commentChange,
 })=> {
     const deleteButtonClickHandler = () => {
-        deleteCoComment(id)
-        .then(()=> {
-            deleteCoCommentHandler(comment,commentChange,id);
-        })
-        .catch(()=> {
-            alert("권한이 없습니다.")
-        })
+        const isAble = window.confirm("정말로 삭제하겠습니까?");
+        if(isAble){
+            deleteCoComment(id)
+            .then(()=> {
+                deleteCoCommentHandler(comment,commentChange,id);
+            })
+            .catch(()=> {
+                alert("권한이 없습니다.")
+            })
+        }
     }
     return (
         <S.BoardCommentContent key={id}>

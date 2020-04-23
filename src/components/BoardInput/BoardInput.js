@@ -60,6 +60,7 @@ const BoardInput = ({
     }
     const classNumselectHandler = (event) => {
         const value = event.target.value;
+        console.log(value)
         classNumChange(value);
     }
     const setBoard = (title,describe,imgs,classNum) => {
@@ -69,7 +70,7 @@ const BoardInput = ({
             }
         }
         const data = setData(title,describe,imgs,classNum);
-        if(isAble(title,describe)){
+        if(isAble(title,describe,classNum)){
             Axios.post(
                 `${wooServer}/board`,
                 data,
@@ -98,8 +99,9 @@ const BoardInput = ({
         }
         return data;
     }
-    const isAble = (title,describe) => {
-        if(title && describe){
+    const isAble = (title,describe,classNum) => {
+        if(classNum === "반 선택") return false;
+        if(title && describe && classNum){
             return true;
         }
         return false;
