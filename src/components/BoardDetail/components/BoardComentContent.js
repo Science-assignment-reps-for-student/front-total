@@ -34,7 +34,6 @@ const BoardCommentContent =  ({
             alert("권한이 없습니다.");
         })
     }
-    console.log(deleteCoComment)
     return (
         <S.BoardCommentContent key={id}>
             <div className="comment">

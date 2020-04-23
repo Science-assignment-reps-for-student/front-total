@@ -4,7 +4,7 @@ import * as S from './styles';
 import { Login } from '../Login';
 import { SignUp } from '../SignUp';
 import { MyProfile, HomeWorkList, HomeWorkBoardList } from './component';
-import { Popup } from '../public';
+import Popup from '../public/Popup/Popup';
 import logo from './img/SCARFS.png';
 import Background from './img/background.png';
 import scrollDown from './img/scrollDown.png';

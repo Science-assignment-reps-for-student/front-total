@@ -129,7 +129,7 @@ const Board = ({ state, getUserInfo, history, taskActions }) => {
                 setUserClass(data);
             })
             .catch((err)=> {
-                errorTypeCheck(err,refreshToken,taskActions,history,"/");
+                history.push('/');
             })
         } else {
             history.push('/');

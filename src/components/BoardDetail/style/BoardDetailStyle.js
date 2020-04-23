@@ -145,6 +145,7 @@ export const BoardCommentContent = styled.div `
             }
             > span.name {
                 font-weight: 600;
+                min-width: 50px;
             }
             > span.content {
                 display: block;
