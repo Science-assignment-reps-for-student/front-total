@@ -37,9 +37,9 @@ const TaskBottom = ({ state, taskActions, homeworkData, members, setMembers, get
     const addFileList = useCallback(() => {
         const fileName = fileInput.current.files[0].name;
         const lastIdxOfDot = fileName.lastIndexOf(".");
-        const access = [".hwp", ".jpg", ".png", ".jpeg", ".pptx", ".word", ".pdf"];
+        const access = [".hwp", ".jpg", ".png", ".jpeg", ".pptx", ".word", ".pdf", ".zip"];
         if (access.some((ext) => ext === (fileName.slice(lastIdxOfDot, fileName.length)).toLowerCase()) === false) {
-            alert("파일명은 \'.hwp .jpg .png .jpeg .pptx .word .pdf\' 만 가능합니다.");
+            alert("파일명은 \'.hwp .jpg .png .jpeg .pptx .word .pdf .zip\' 만 가능합니다.");
             throw "Invalid file extenstion";
         }
         files.map((file) => { if (file.name === fileName) throw "Duplicate filename."; })
@@ -96,7 +96,7 @@ const TaskBottom = ({ state, taskActions, homeworkData, members, setMembers, get
             else if (code === 410)
                 getAccessTokenUsingRefresh(state, taskActions);
             else if (code === 415)
-                alert("파일 확장자는 \".hwp .jpg .png .jpeg .pptx .word .pdf\"만 가능합니다. ")
+                alert("파일 확장자는 \".hwp .jpg .png .jpeg .pptx .word .pdf .zip\"만 가능합니다. ")
         })
         setFiles([]);
     }, [fileInput, files, state]);
