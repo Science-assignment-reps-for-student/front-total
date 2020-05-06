@@ -7,7 +7,12 @@ import { errorTypeCheck } from '../resource/publicFunction';
 import Axios from 'axios';
 
 const Board = ({ state, getUserInfo, history, taskActions }) => {
-    const { limServer, wooServer, accessToken, refreshToken } = state;
+    const { 
+        limServer, 
+        wooServer, 
+        accessToken, 
+        refreshToken 
+    } = state;
     const [userInfo, userInfoChange] = useState({});
     const [classNum, classNumChange] = useState();
     const [postList, postListChange] = useState([])
@@ -127,7 +132,7 @@ const Board = ({ state, getUserInfo, history, taskActions }) => {
                 setUserClass(data);
             })
             .catch((err)=> {
-                history.push('/');
+                errorTypeCheck(err,refreshToken,taskActions,history,"/");
             })
         } else {
             history.push('/');

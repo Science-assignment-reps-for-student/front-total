@@ -20,8 +20,7 @@ const HomeworkFile = ({
     },[file])
 
     const deleteFile = useCallback((fileArray,name)=> {
-        console.log(fileArray);
-        const buffer = fileArray.filter((file)=> file.name !== name);
+        const buffer = fileArray.filter((file)=> file.name !== name && file.file_name !== name);
         fileChange(buffer);
     },[fileChange])
 
@@ -33,12 +32,13 @@ const HomeworkFile = ({
     },[fileChange,setBuffer])
     
     const setFileComponent = useCallback((file) => {
+        console.log("setFile")
         const buffer = file.map((e)=>{
             return <HomeworkFileContent 
                 deleteFile={deleteFile}
                 file={file}
             >
-                { e.name }
+                { e.name || e.file_name }
             </HomeworkFileContent>
         })
         return buffer;
