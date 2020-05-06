@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Header } from '../Header';
 import * as S from './style/boardStyle';
 import { BoardComponent } from './components';
@@ -18,6 +18,7 @@ const Board = ({ state, getUserInfo, history, taskActions }) => {
     const [postList, postListChange] = useState([])
     const [isLoading, isLoadChange] = useState(false);
     const [page, pageChange] = useState(-1);
+    const selectBox = useRef();
     const createList = (postList) => {
         let buffer = [];
             const pageMaxComponent = 8;
@@ -78,6 +79,7 @@ const Board = ({ state, getUserInfo, history, taskActions }) => {
 
     const selectChangeHandler = ({ target }) => {
         const value = target.value;
+        localStorage.setItem('page',value);
         classNumChange(value);
     }
 
@@ -87,11 +89,30 @@ const Board = ({ state, getUserInfo, history, taskActions }) => {
 
     const setUserClass = (userData) => {
         if(userData.userType !== 0){
-            classNumChange(1); 
+            const history = localStorage.getItem('page');
+            if(history){
+                classNumChange(history); 
+            } else {
+                classNumChange(1); 
+            }
         } else {
             const userClass = getUserClass(userData.userNumber);
             classNumChange(userClass);
         }
+    }
+
+    const sortPostList = (postList) => {
+        const buffer = objectToArray(Object.assign({}, postList));
+        console.log(buffer);
+        buffer.sort((current,next)=>{
+            if(current.created_at > next.created_at){
+                return -1;
+            } else if(current.created_at < next.created_at){
+                return 1;
+            }
+            return 0;
+        })
+        return buffer;
     }
 
     const getBoard = (classNum) => 
@@ -103,7 +124,9 @@ const Board = ({ state, getUserInfo, history, taskActions }) => {
         }
         Axios.get(`${wooServer}/board/?class_number=${classNum}`,header)
         .then(({ data })=> {
-            resolve(data);
+            console.log(data);
+            const buffer = sortPostList(data);
+            resolve(buffer);
         })
         .catch((err)=> {
             reject(err);
@@ -119,6 +142,18 @@ const Board = ({ state, getUserInfo, history, taskActions }) => {
         .catch((err)=> {
             errorTypeCheck(err,refreshToken,taskActions,history,"/");
         })
+    }
+
+    const objectToArray = (object) => {
+        let buffer = [], count = 0;
+        while(true){
+            if(!object[count]){
+                break;
+            }
+            buffer.push(object[count])
+            count++;
+        }
+        return buffer;
     }
 
     useEffect(()=> {
@@ -150,7 +185,12 @@ const Board = ({ state, getUserInfo, history, taskActions }) => {
         isLoadChange(false);
     },[postList,page])
 
-
+    useEffect(()=> {
+        const history = localStorage.getItem('page');
+        if(history){
+            selectBox.current.selectedIndex = history - 1;
+        }
+    },[selectBox])
 
     return (
         <>
@@ -162,7 +202,7 @@ const Board = ({ state, getUserInfo, history, taskActions }) => {
                         <div>
                             {
                                 userInfo.userType !== 0 ?
-                                <S.BoardDropdown onChange={selectChangeHandler}>
+                                <S.BoardDropdown onChange={selectChangeHandler} ref={selectBox}>
                                     <option value="1">1반</option>
                                     <option value="2">2반</option>
                                     <option value="3">3반</option>

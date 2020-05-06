@@ -60,7 +60,7 @@ export const TaskTop = styled.div`
         min-height: 300px;
         > div.desc {
             padding: 24px;
-            width: 600px;
+            width: 90%;
             > h3 {
                 margin-bottom: 8px;
                 font-size: 17px;
@@ -68,7 +68,10 @@ export const TaskTop = styled.div`
             }
             > p {
                 line-height: 2;
+                width: 100%;
                 font-size: 15px;
+                white-space: pre-line;
+                overflow-wrap: break-word;
             }
             > div {
                 display: flex;

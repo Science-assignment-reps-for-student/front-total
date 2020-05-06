@@ -194,7 +194,6 @@ const BoardDetail = ({ state, getUserInfo, history, taskActions }) => {
         })
     })
     const comentDeleteHandler = (id) => {
-        console.log(comment, id);
         const buffer = [...comment].filter((comment)=> comment.comment_id !== id);
         console.log(buffer);
         commentChange(buffer);

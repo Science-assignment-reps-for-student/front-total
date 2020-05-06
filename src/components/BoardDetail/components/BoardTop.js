@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import * as S from '../style/BoardDetailStyle';
-import axios from 'axios';
 
 const BoardTop = ({ 
     title, 
