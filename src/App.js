@@ -45,7 +45,8 @@ const App = () => {
         return axios.get(`${limServer}/user`, {
             headers: {
                 "Content-Type": "application/json",
-                "Authorization": accessToken
+                "Authorization": accessToken,
+                "Cache-Control": "no-store",
             }
         })
     }, []);
