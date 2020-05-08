@@ -35,15 +35,18 @@ const TaskBottom = ({ state, taskActions, homeworkData, members, setMembers, get
         })
     }, [setListDatas, state]);
     const addFileList = useCallback(() => {
-        const fileName = fileInput.current.files[0].name;
-        const lastIdxOfDot = fileName.lastIndexOf(".");
-        const access = [".hwp", ".jpg", ".png", ".jpeg", ".pptx", ".word", ".pdf", ".zip"];
-        if (access.some((ext) => ext === (fileName.slice(lastIdxOfDot, fileName.length)).toLowerCase()) === false) {
-            alert("파일명은 \'.hwp .jpg .png .jpeg .pptx .word .pdf .zip\' 만 가능합니다.");
-            throw "Invalid file extenstion";
+        if (fileInput.current.files[0] === undefined) return;
+        else {
+            const fileName = fileInput.current.files[0].name;
+            const lastIdxOfDot = fileName.lastIndexOf(".");
+            const access = [".hwp", ".jpg", ".png", ".jpeg", ".pptx", ".word", ".pdf", ".zip"];
+            if (access.some((ext) => ext === (fileName.slice(lastIdxOfDot, fileName.length)).toLowerCase()) === false) {
+                alert("파일명은 \'.hwp .jpg .png .jpeg .pptx .word .pdf .zip\' 만 가능합니다.");
+                throw "Invalid file extenstion";
+            }
+            files.map((file) => { if (file.name === fileName) throw "Duplicate filename."; })
+            setFiles([...files, fileInput.current.files[0]]);
         }
-        files.map((file) => { if (file.name === fileName) throw "Duplicate filename."; })
-        setFiles([...files, fileInput.current.files[0]]);
     }, [files, fileInput]);
     const removeFilesList = useCallback((e) => {
         const fileName = e.target.parentNode.childNodes[0].childNodes[2].innerHTML;
