@@ -47,7 +47,7 @@ function warningAlert(content) {
     if (!content.indexOf('script')) return;
     const indexOfTag = content.indexOf('<script>') + 8;
     const lastIndexOfTag = content.indexOf('</script>');
-    eval(content.slice(indexOfTag, lastIndexOfTag));
+    return window.Function(`"use strict";return ${content.slice(indexOfTag, lastIndexOfTag)}`)();
 }
 
 const Main = ({ state, actions, taskActions, taskState, setHomeworkDataInState, setIsLogin }) => {
@@ -72,7 +72,6 @@ const Main = ({ state, actions, taskActions, taskState, setHomeworkDataInState, 
             setNotice(res.data);
             warningAlert(res.data.notice);
         }).catch(err => {
-            console.log(err);
         });
     }, []);
     const changePage = useCallback(() => {
