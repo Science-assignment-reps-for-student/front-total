@@ -98,8 +98,28 @@ const TaskGuide = ({ state, taskActions, setHomework, setHomeworkDataInState }) 
             }
         }
     }, [pageState]);
+    const checkUserIsLogin = useCallback(() => {
+        const ApiDefault = {
+            url: "https://api.dsm-scarfs.hs.kr/chuckflap",
+            headers: {
+                "Authorization": localStorage.getItem("accessToken")
+            }
+        }
+        ApiDefault.instance = axios.create({
+            baseURL: ApiDefault.url,
+            headers: ApiDefault.headers
+        });
+        (async () => {
+            try {
+                const user = await ApiDefault.instance.get("/user");
+            } catch {
+                history.goBack();
+            }
+        })();
+    }, []);
 
     useEffect(() => {
+        checkUserIsLogin();
         homeworkRequest();
     }, []);
     useEffect(() => {

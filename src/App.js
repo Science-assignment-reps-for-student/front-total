@@ -51,11 +51,25 @@ const App = () => {
         })
     }, []);
 
-    useEffect(() => {
-        if (localStorage.getItem("accessToken")) {
-            setIsLogin(true);
-            setSocket();
+    const checkUserIsLogin = useCallback(() => {
+        const ApiDefault = {
+            url: "https://api.dsm-scarfs.hs.kr/chuckflap",
+            headers: {
+                "Authorization": localStorage.getItem("accessToken")
+            }
         }
+        ApiDefault.instance = axios.create({
+            baseURL: ApiDefault.url, 
+            headers: ApiDefault.headers
+        });
+        (async () => {
+            try {
+                const user = await ApiDefault.instance.get("/user");
+                setIsLogin(true);
+            } catch (error) {
+                console.error(error);
+            }
+        })();
     }, []);
 
     const setSocket = () => {
@@ -72,10 +86,15 @@ const App = () => {
                 console.log("error");
             },//error
             ()=> {//close
-                setTimeout(setSocket(),5000);
+                setTimeout(setSocket(), 5000);
             }
         );
     }
+
+    useEffect(() => {
+        checkUserIsLogin();
+        setSocket();
+    }, []);
 
     const getNotificationPermission = () => {
         if (!("Notification" in window)) {
@@ -154,6 +173,8 @@ const App = () => {
                                                                                 render={() =>
                                                                                         <TaskGuide
                                                                                         state={taskState}
+                                                                                        isLogin={isLogin}
+                                                                                        setIsLogin={setIsLogin}
                                                                                         getUserInfo={getUserInfo}
                                                                                         setHomework={setHomework}
                                                                                         taskActions={taskActions}

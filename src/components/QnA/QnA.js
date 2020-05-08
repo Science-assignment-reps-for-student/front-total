@@ -90,12 +90,28 @@ const QnA = ({ stomp, state, actions, isLogin, getUserInfo }) => {
         stomp.send(`/send/${my.userId}`, {}, stringedData);
         chatInput.current.focus();
     }, [state, stomp, my]);
+    const checkUserIsLogin = useCallback(() => {
+        const ApiDefault = {
+            url: "https://api.dsm-scarfs.hs.kr/chuckflap",
+            headers: {
+                "Authorization": localStorage.getItem("accessToken")
+            }
+        }
+        ApiDefault.instance = axios.create({
+            baseURL: ApiDefault.url,
+            headers: ApiDefault.headers
+        });
+        (async () => {
+            try {
+                const user = await ApiDefault.instance.get("/user");
+            } catch {
+                history.goBack();
+            }
+        })();
+    }, []);
 
     useEffect(() => {
-        if (accessToken === null) {
-            alert("로그인 후 이용해주세요.");
-            history.push("/");
-        }
+        checkUserIsLogin();
     }, []);
     useEffect(() => {
         if (isLogin) {
