@@ -103,7 +103,6 @@ const Board = ({ state, getUserInfo, history, taskActions }) => {
 
     const sortPostList = (postList) => {
         const buffer = objectToArray(Object.assign({}, postList));
-        console.log(buffer);
         buffer.sort((current,next)=>{
             if(current.created_at > next.created_at){
                 return -1;
@@ -124,7 +123,6 @@ const Board = ({ state, getUserInfo, history, taskActions }) => {
         }
         Axios.get(`${wooServer}/board/?class_number=${classNum}`,header)
         .then(({ data })=> {
-            console.log(data);
             const buffer = sortPostList(data);
             resolve(buffer);
         })
