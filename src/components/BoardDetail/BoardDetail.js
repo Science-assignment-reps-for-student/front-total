@@ -216,6 +216,7 @@ const BoardDetail = ({ state, getUserInfo, history, taskActions }) => {
                         fixClickHandler={gofixBoardPage}
                         deleteClickHandler={deleteBoard}
                         imgs={boardInfo.file_id}
+                        isMine={boardInfo.is_mine}
                     />
                     <BoardComments
                         comment={comment}

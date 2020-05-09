@@ -42,7 +42,7 @@ const BoardCoCommentContent =  ({
                             </>
                         }
                     </div>
-                    </div>
+                </div>
             </div> 
         </S.BoardCommentContent>
     )

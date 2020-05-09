@@ -144,7 +144,6 @@ export const BoardCommentContent = styled.div `
             width: 80%;
             > span {
                 margin: 10px;
-                text-align: center;
             }
             > span.name {
                 font-weight: 600;
@@ -152,12 +151,17 @@ export const BoardCommentContent = styled.div `
             }
             > span.content {
                 display: block;
+                line-height: 1.5;
             }
         }
         > div {
             width: 18%;
             display:flex;
             justify-content:flex-start;
+            height: 100%;
+            align-items: flex-start;
+            padding: 10px;
+            box-sizing: border-box;
             > div {
                 display: flex;
                 color: #858585;

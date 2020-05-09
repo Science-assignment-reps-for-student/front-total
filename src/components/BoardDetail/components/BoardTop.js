@@ -10,6 +10,7 @@ const BoardTop = ({
     deleteClickHandler,
     board_id,
     imgs = [],
+    isMine,
 }) => {
     return (
         <S.TaskTop className="task-top">
@@ -21,8 +22,14 @@ const BoardTop = ({
                     <ul>
                         <li>{name}</li>
                         <li><span>{created_at}</span></li>
-                        <li onClick={()=> fixClickHandler(board_id)}>수정</li>
-                        <li onClick={()=> deleteClickHandler(board_id)}>삭제</li>
+                        {
+                            isMine ? 
+                            <>
+                                <li onClick={()=> fixClickHandler(board_id)}>수정</li>
+                                <li onClick={()=> deleteClickHandler(board_id)}>삭제</li>
+                            </> :
+                            ""
+                        }
                     </ul>
                 </nav>
             </div>
