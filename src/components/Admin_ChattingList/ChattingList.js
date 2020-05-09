@@ -1,18 +1,39 @@
-import React, { useEffect, useState, useCallback } from 'react';
+import React, { 
+    useEffect, 
+    useState, 
+    useCallback 
+} from 'react';
 import * as S from './style/ChattingListStyle';
 import { Header } from '../public/Header';
 import { BackgroundWhite } from '../public/Background';
-import { ListComponent } from './components';
+import { 
+    ListComponent,
+    SearchModal,
+} from './components';
 import axios from 'axios';
-import { messageURL, getUserInfoURL } from '../resource/serverURL';
-import { isDayOver, errorTypeCheck, getUserInfo, getSubscribe } from '../resource/publicFunction';
+import { 
+    messageURL, 
+    getUserInfoURL 
+} from '../resource/serverURL';
+import { 
+    isDayOver, 
+    errorTypeCheck, 
+    getUserInfo, 
+    getSubscribe 
+} from '../resource/publicFunction';
 import { withRouter } from 'react-router-dom'; 
 
-const ChattingList = ({ actions, state, history, stomp }) => {
+const ChattingList = ({ 
+    actions, 
+    state, 
+    history, 
+    stomp 
+}) => {
     const { accessToken, refreshToken } = state;
     const [messageList, _listChange] = useState([]);
     const [page, _pageChange] = useState(0);
     const [isSubscribe, _subscribeChange] = useState(false); 
+    const [isModalOn, modalChange] = useState(false);
     const header = {
         headers: {
             "Authorization": accessToken,
@@ -75,7 +96,15 @@ const ChattingList = ({ actions, state, history, stomp }) => {
                     userName,
                     userNumber
                 } = messageList[i];
-                buffer.push(<ListComponent name={userName} number={userNumber} userId={userId} isNew={!show} text={message} date={isDayOver(messageTime)}/>)
+                buffer.push(<ListComponent 
+                    name={userName} 
+                    number={userNumber} 
+                    userId={userId} 
+                    isNew={!show} 
+                    text={message} 
+                    date={isDayOver(messageTime)}
+                    key={userId}
+                />)
             } else {
                 break;
             }
@@ -90,7 +119,7 @@ const ChattingList = ({ actions, state, history, stomp }) => {
     const setButton = () => {
         let buffer = [];
         for(let i=1; getButtonNumber(messageList, i); i++){
-            buffer.push(<div onClick={()=> {pageChange(i-1)}}>{i}</div>)
+            buffer.push(<div onClick={()=> {pageChange(i-1)}} key={i}>{i}</div>)
         }
         return buffer;
     }
@@ -103,17 +132,37 @@ const ChattingList = ({ actions, state, history, stomp }) => {
         }
     }
 
+    const modalOnButttonClickHandler = () => {
+        modalChange(true);
+    }
+
     return (
         <>
             <Header actions={actions} state={state}/>
             <BackgroundWhite img={true}/>
+            {
+                isModalOn ? 
+                    <SearchModal 
+                        modalChange={modalChange}
+                        accessToken={accessToken}
+                    /> 
+                    : ""
+            }
             <S.ChattingListBackground>
-                <h2>Q&A</h2>
-                <hr/>
                 <div className="wrapper">
                     <S.ChattingListBody>
+                        <div className="listHeader">
+                            <h2>Q&A</h2>
+                            <button onClick={modalOnButttonClickHandler}>새대화</button>
+                        </div>
                         <div>
-                            <ListComponent name="이름" number="학번" date="최근 날짜" text="최근 대화" isHeader={true}/>
+                            <ListComponent 
+                                name="이름" 
+                                number="학번" 
+                                date="최근 날짜" 
+                                text="최근 대화" 
+                                isHeader={true}
+                            />
                             {!isEmpty(messageList) ? setMessageList() : "" }
                         </div>  
                     </S.ChattingListBody>
