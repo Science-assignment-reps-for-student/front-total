@@ -3,6 +3,7 @@ export const getUserInfoURL = "https://api.dsm-scarfs.hs.kr/chuckflap/user";
 export const refreshAccessTokenURL = "https://api.dsm-scarfs.hs.kr/chuckflap/auth";
 export const messageURL = "https://api.dsm-scarfs.hs.kr/chuckflap/message";
 export const socketURL = "https://api.dsm-scarfs.hs.kr/chuckflap/socket";
+export const chatUserListURL = "https://api.dsm-scarfs.hs.kr/chuckflap/search"
 
 export const getFileCodeURL = "https://api.dsm-scarfs.hs.kr/t-bone/files";
 export const homeworkURL = "https://api.dsm-scarfs.hs.kr/t-bone/homework";
