@@ -69,10 +69,13 @@ const TaskTop = ({ state, taskActions, members, getUserInfo, homeworkData }) => 
     }, [history, state, homeworkData]);
 
     useEffect(() => {
-        getUserInfo(limServer, accessToken)
-            .then((response) => {
-                setUserInfo(response.data);
-            })
+        if (typeof getUserInfo(limServer, accessToken) === "undefined") return;
+        else {
+            getUserInfo(limServer, accessToken)
+                .then((response) => {
+                    setUserInfo(response.data);
+                })
+        }
     }, []);
 
     return (

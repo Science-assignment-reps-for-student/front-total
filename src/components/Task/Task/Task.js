@@ -61,7 +61,7 @@ const Task = ({ state, taskActions, members, setMembers, getUserInfo, homeworkDa
     }, []);
     useEffect(() => {
         if (Object.keys(homeworkData).length === 0) {
-            if (typeof accessToken === "object") return;
+            if (typeof accessToken === "object") return;    
             setHomeworkDataInState(wooServer, accessToken, homeworkId);
         }
     }, [homeworkId]);

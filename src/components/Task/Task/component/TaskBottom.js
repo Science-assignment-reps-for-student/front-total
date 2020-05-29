@@ -153,10 +153,13 @@ const TaskBottom = ({ state, taskActions, homeworkData, members, setMembers, get
 
 
     useEffect(() => {
-        getUserInfo(limServer, accessToken)
-            .then((response) => {
-                setUserInfo(response.data);
-            })
+        if (typeof getUserInfo(limServer, accessToken) === "undefined") return;
+        else {
+            getUserInfo(limServer, accessToken)
+                .then((response) => {
+                    setUserInfo(response.data);
+                })
+        }
         homeworkRequest();
     }, []);
     useEffect(() => {

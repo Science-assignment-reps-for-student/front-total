@@ -18,6 +18,7 @@ const App = () => {
     const [homeworkData, setHomeworkData] = useState({});
     const [socket, socketChange] = useState();
     const [stomp, stompChange] = useState();
+    const [maintenance, setMaintenance] = useState(false);
 
     const setHomework = useCallback((data) => { setHomeworkData(data) }, []);
     const setHomeworkDataInState = useCallback((wooServer, accessToken, homeworkId) => {
@@ -59,7 +60,7 @@ const App = () => {
             }
         }
         ApiDefault.instance = axios.create({
-            baseURL: ApiDefault.url, 
+            baseURL: ApiDefault.url,
             headers: ApiDefault.headers
         });
         (async () => {
@@ -80,128 +81,135 @@ const App = () => {
         stomp.connect(
             {},
             {},
-            ()=> { 
+            () => {
             },
-            ()=> {
+            () => {
                 console.log("error");
             },//error
-            ()=> {//close
+            () => {//close
                 setTimeout(setSocket(), 5000);
             }
         );
     }
 
+    const isMaintenance = () => {
+        axios.get("http://54.180.174.253:5410/sirloin/maintenance")
+        .catch(err => {
+            if (typeof err.response === "undefined") return;
+            if (err.response.status === 503) {
+                setMaintenance(true);
+            }
+        })
+    }
+
     useEffect(() => {
+        isMaintenance();
         checkUserIsLogin();
         setSocket();
     }, []);
 
-    const getNotificationPermission = () => {
-        if (!("Notification" in window)) {
-            alert("데스크톱 알림을 지원하지 않는 브라우저입니다.");
-        }
-        Notification.requestPermission(function (result) {
-            if(result === 'denied') {
-                alert('알림을 차단하셨습니다.\n브라우저의 사이트 설정에서 변경하실 수 있습니다.');
-                return false;
-            }
-        });
-    }
-
     return (
         <TaskProvider>
-                <TaskConsumer>
-                    {
-                        ({ taskActions, taskState }) => {
-                            return (
-                                <AccessTokenProvider>
-                                        <AccessTokenConsumer>
-                                            {
-                                                ({ actions, state }) => {
-                                                    return (
-                                                        <AuthProvider>
-                                                            <AuthConsumer>
-                                                                {
-                                                                    ({ authState, authActions }) =>
-                                                                        <>
-                                                                            <Global />
+            <TaskConsumer>
+                {
+                    ({ taskActions, taskState }) => {
+                        return (
+                            <AccessTokenProvider>
+                                <AccessTokenConsumer>
+                                    {
+                                        ({ actions, state }) => {
+                                            return (
+                                                <AuthProvider>
+                                                    <AuthConsumer>
+                                                        {
+                                                            ({ authState, authActions }) =>
+                                                                <>
+                                                                    <Global />
+                                                                    {
+                                                                        maintenance ? <Fixing /> :
                                                                             <Switch>
                                                                                 <Route
-                                                                                path="/qna"
-                                                                                render={() =>
+                                                                                    path="/fixing"
+                                                                                    render={() =>
+                                                                                        <Fixing />
+                                                                                    }
+                                                                                />
+                                                                                <Route
+                                                                                    path="/qna"
+                                                                                    render={() =>
                                                                                         <QnA
-                                                                                        stomp={stomp}
-                                                                                        state={taskState}
-                                                                                        isLogin={isLogin}
-                                                                                        actions={taskActions}
-                                                                                        getUserInfo={getUserInfo}
+                                                                                            stomp={stomp}
+                                                                                            state={taskState}
+                                                                                            isLogin={isLogin}
+                                                                                            actions={taskActions}
+                                                                                            getUserInfo={getUserInfo}
                                                                                         />
                                                                                     }
-                                                                                    />
+                                                                                />
                                                                                 <Route
-                                                                                path="/task/:homeworkId/evaluation"
-                                                                                render={() =>
+                                                                                    path="/task/:homeworkId/evaluation"
+                                                                                    render={() =>
                                                                                         <PeerEvaluation
-                                                                                        state={taskState}
-                                                                                        members={members}
-                                                                                        setMembers={setMembers}
-                                                                                        getUserInfo={getUserInfo}
-                                                                                        taskActions={taskActions}
-                                                                                        homeworkData={homeworkData}
-                                                                                        setHomeworkDataInState={setHomeworkDataInState}
+                                                                                            state={taskState}
+                                                                                            members={members}
+                                                                                            setMembers={setMembers}
+                                                                                            getUserInfo={getUserInfo}
+                                                                                            taskActions={taskActions}
+                                                                                            homeworkData={homeworkData}
+                                                                                            setHomeworkDataInState={setHomeworkDataInState}
                                                                                         />
                                                                                     }
-                                                                                    />
-                                                                                <Route
-                                                                                exact
-                                                                                path="/task/:homeworkId"
-                                                                                render={() =>
-                                                                                        <Task
-                                                                                        state={taskState}
-                                                                                        members={members}
-                                                                                        setMembers={setMembers}
-                                                                                        getUserInfo={getUserInfo}
-                                                                                        taskActions={taskActions}
-                                                                                        homeworkData={homeworkData}
-                                                                                        setHomeworkDataInState={setHomeworkDataInState}
-                                                                                        />
-                                                                                    }
-                                                                                    />
-                                                                                <Route
-                                                                                exact
-                                                                                path="/task"
-                                                                                render={() =>
-                                                                                        <TaskGuide
-                                                                                        state={taskState}
-                                                                                        isLogin={isLogin}
-                                                                                        setIsLogin={setIsLogin}
-                                                                                        getUserInfo={getUserInfo}
-                                                                                        setHomework={setHomework}
-                                                                                        taskActions={taskActions}
-                                                                                        setHomeworkDataInState={setHomeworkDataInState}
-                                                                                        />
-                                                                                    }
-                                                                                    />
-                                                                                <Route 
-                                                                                        path="/board/:number" 
-                                                                                        render={()=> <BoardDetail
-                                                                                        state={taskState}
-                                                                                        getUserInfo={getUserInfo}
-                                                                                        isLogin={isLogin}
-                                                                                        taskActions={taskActions}
-                                                                                    />}
                                                                                 />
-                                                                                <Route 
+                                                                                <Route
                                                                                     exact
-                                                                                    path="/board" 
-                                                                                    render={()=> <Board
+                                                                                    path="/task/:homeworkId"
+                                                                                    render={() =>
+                                                                                        <Task
+                                                                                            state={taskState}
+                                                                                            members={members}
+                                                                                            setMembers={setMembers}
+                                                                                            getUserInfo={getUserInfo}
+                                                                                            taskActions={taskActions}
+                                                                                            homeworkData={homeworkData}
+                                                                                            setHomeworkDataInState={setHomeworkDataInState}
+                                                                                        />
+                                                                                    }
+                                                                                />
+                                                                                <Route
+                                                                                    exact
+                                                                                    path="/task"
+                                                                                    render={() =>
+                                                                                        <TaskGuide
+                                                                                            state={taskState}
+                                                                                            isLogin={isLogin}
+                                                                                            setIsLogin={setIsLogin}
+                                                                                            getUserInfo={getUserInfo}
+                                                                                            setHomework={setHomework}
+                                                                                            taskActions={taskActions}
+                                                                                            setHomeworkDataInState={setHomeworkDataInState}
+                                                                                        />
+                                                                                    }
+                                                                                />
+                                                                                <Route
+                                                                                    path="/board/:number"
+                                                                                    render={() => <BoardDetail
                                                                                         state={taskState}
                                                                                         getUserInfo={getUserInfo}
                                                                                         isLogin={isLogin}
                                                                                         taskActions={taskActions}
                                                                                     />}
                                                                                 />
-                                                                                <Route path="/write/:number" render={()=> 
+                                                                                <Route
+                                                                                    exact
+                                                                                    path="/board"
+                                                                                    render={() => <Board
+                                                                                        state={taskState}
+                                                                                        getUserInfo={getUserInfo}
+                                                                                        isLogin={isLogin}
+                                                                                        taskActions={taskActions}
+                                                                                    />}
+                                                                                />
+                                                                                <Route path="/write/:number" render={() =>
                                                                                     <BoardFix
                                                                                         state={taskState}
                                                                                         getUserInfo={getUserInfo}
@@ -209,49 +217,50 @@ const App = () => {
                                                                                         taskActions={taskActions}
                                                                                     />}
                                                                                 />
-                                                                                <Route path="/write" render={()=> 
-                                                                                    <BoardInput 
+                                                                                <Route path="/write" render={() =>
+                                                                                    <BoardInput
                                                                                         state={taskState}
                                                                                         getUserInfo={getUserInfo}
                                                                                         isLogin={isLogin}
                                                                                         taskActions={taskActions}
                                                                                     />}
                                                                                 />
-                                                                                <Route path="/admin/login" render={() => <AdminLogin actions={actions}/>} />
-                                                                                <Route path="/admin/make" render={() => <Homework state={state} actions={actions} type="Make" stomp={stomp}/>} />
-                                                                                <Route path="/admin/revise/:homeworkNum" render={() => <Homework state={state} actions={actions} type="Fix" stomp={stomp}/>}/>
-                                                                                <Route path="/Admin/ChattingList" render={()=> <ChattingList state={state} actions={actions} stomp={stomp}/>} />
-                                                                                <Route path="/Admin/Chatting/:userId" render={()=> <AdminChatting state={state} actions={actions} stomp={stomp}/>}/>
-                                                                                <Route exact path="/Admin" render={() => <AdminMain state={state} actions={actions} stomp={stomp}/>} />
+                                                                                <Route path="/admin/login" render={() => <AdminLogin actions={actions} />} />
+                                                                                <Route path="/admin/make" render={() => <Homework state={state} actions={actions} type="Make" stomp={stomp} />} />
+                                                                                <Route path="/admin/revise/:homeworkNum" render={() => <Homework state={state} actions={actions} type="Fix" stomp={stomp} />} />
+                                                                                <Route path="/Admin/ChattingList" render={() => <ChattingList state={state} actions={actions} stomp={stomp} />} />
+                                                                                <Route path="/Admin/Chatting/:userId" render={() => <AdminChatting state={state} actions={actions} stomp={stomp} />} />
+                                                                                <Route exact path="/Admin" render={() => <AdminMain state={state} actions={actions} stomp={stomp} />} />
                                                                                 <Route
                                                                                     exact
                                                                                     path="/"
                                                                                     render={() =>
                                                                                         <Main
-                                                                                        state={authState}
-                                                                                        actions={authActions}
-                                                                                        taskActions={taskActions}
-                                                                                        taskState={taskState}
-                                                                                        setHomeworkDataInState={setHomeworkDataInState}
-                                                                                        setIsLogin={setIsLogin}
+                                                                                            state={authState}
+                                                                                            actions={authActions}
+                                                                                            taskActions={taskActions}
+                                                                                            taskState={taskState}
+                                                                                            setHomeworkDataInState={setHomeworkDataInState}
+                                                                                            setIsLogin={setIsLogin}
                                                                                         />}
                                                                                 />
                                                                                 <Route component={NoMatch} />
                                                                             </Switch>
-                                                                        </>
-                                                                }
-                                                            </AuthConsumer>
-                                                        </AuthProvider>
-                                                    );
-                                                }
-                                            }
-                                        </AccessTokenConsumer>
-                                    </AccessTokenProvider>
-                            );
-                        }
+                                                                    }
+                                                                </>
+                                                        }
+                                                    </AuthConsumer>
+                                                </AuthProvider>
+                                            );
+                                        }
+                                    }
+                                </AccessTokenConsumer>
+                            </AccessTokenProvider>
+                        );
                     }
-                </TaskConsumer>
-            </TaskProvider>
+                }
+            </TaskConsumer>
+        </TaskProvider>
     )
 };
 
