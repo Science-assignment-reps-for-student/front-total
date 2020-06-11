@@ -8,11 +8,11 @@ import { Header } from '../../components';
 
 const selfReducer = (state, action) => {
     switch (action.type) {
-        case "scientificAccuracy":
+        case "scientificAccuracy-self":
             return { ...state, scientificAccuracy: +action.score };
-        case "communication":
+        case "communication-self":
             return { ...state, communication: +action.score };
-        case "attitude":
+        case "attitude-self":
             return { ...state, attitude: +action.score };
         default:
             return state;
@@ -43,7 +43,7 @@ const PeerEvaluation = ({ state, taskActions, members, setMembers, getUserInfo, 
     const [evaluationData, setEvaluationData] = useState({
         type: 0,
         title: "[팀] 정우영의 전구공장",
-        selfType: ["scientificAccuracy", "communication", "attitude"],
+        selfType: ["scientificAccuracy-self", "communication-self", "attitude-self"],
         selfData: [
             {
                 title: "과학적 정확성",
@@ -77,6 +77,7 @@ const PeerEvaluation = ({ state, taskActions, members, setMembers, getUserInfo, 
     });
 
     useEffect(() => {
+        // if ()
         if (members.members === undefined) return;
         else {
             const copy = { ...evaluationData };
@@ -136,7 +137,7 @@ const PeerEvaluation = ({ state, taskActions, members, setMembers, getUserInfo, 
         const list = evaluationData.peerStudents.map((student, i) => {
             return (
                 <div key={i}>
-                    <p className="evaluated-name" data-userId={student.userId}>{student.userNumber} {student.userName}</p>
+                    <p className="evaluated-name" data-userid={student.userId}>{student.userNumber} {student.userName}</p>
                     {evaluationData.peerData.map((data, j) => {
                         return (
                             <InputList
@@ -223,7 +224,7 @@ const PeerEvaluation = ({ state, taskActions, members, setMembers, getUserInfo, 
         }).catch((error) => {
             if (typeof error.response === "undefined") return;
             const code = error.response.status;
-            if (code === 403)
+            if (code === 403 || code === 404)
                 history.push("/");
             else if (code === 410)
                 getAccessTokenUsingRefresh(state, taskActions);
