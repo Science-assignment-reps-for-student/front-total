@@ -126,7 +126,7 @@ const App = () => {
                                                                 <>
                                                                     <Global />
                                                                     {
-                                                                        maintenance ? <Fixing /> :
+                                                                        // maintenance ? <Fixing /> :
                                                                             <Switch>
                                                                                 <Route
                                                                                     path="/fixing"
