@@ -7,11 +7,6 @@ import axios from 'axios';
 
 const expecteReducer = (state, action) => {
     switch (action.type) {
-        case "test":
-            return {
-                ...state,
-                [action.type]: action.data
-            }
         case "top":
             return {
                 ...state,
@@ -45,7 +40,7 @@ const Fixing = () => {
                 case 500:
                     return;
                 case 503:
-                    setMaintenance(res.data.finish_at)
+                    setMaintenance(res.data.finish_at);
                     break;
                 default:
                     break;
@@ -58,7 +53,6 @@ const Fixing = () => {
         const date = new Date(maintenance);
         expectedTimeDispatch({ type: "top", data: `${date.getMonth() + 1}월 ${date.getDate()}일 ${date.getHours() - 9}시 ${date.getMinutes()}분` });
         expectedTimeDispatch({ type: "bottom", data: `${date.getHours() - 9}:${date.getMinutes()}, ${date.getMonth() + 1}월 ${date.getDate()}일` });
-        expectedTimeDispatch({ type: "test", data: "qweqweqwe"})
     }, [maintenance]);
 
     useEffect(() => {

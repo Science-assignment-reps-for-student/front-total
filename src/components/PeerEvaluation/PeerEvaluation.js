@@ -42,7 +42,7 @@ const PeerEvaluation = ({ state, taskActions, members, setMembers, getUserInfo, 
     let [test, setTest] = useState();
     const [evaluationData, setEvaluationData] = useState({
         type: 0,
-        title: "[팀] 정우영의 전구공장",
+        title: "",
         selfType: ["scientificAccuracy-self", "communication-self", "attitude-self"],
         selfData: [
             {
@@ -60,10 +60,10 @@ const PeerEvaluation = ({ state, taskActions, members, setMembers, getUserInfo, 
         peerData: [
             {
                 title: "공동체(협력)",
-                subTitle: `실험에 적극적으로 참여하였으며 맡은 역할을 충실히 참여하였는가?`,
+                subTitle: `모둠 활동(기후변화과학 인포그래픽 제작 활동)에 적극적으로 참여하였는가?\n맡은 역할을 충실히 참여하였는가?`,
             }, {
                 title: "의사소통",
-                subTitle: `실험 과정에서 수시로 대화하며 의견을 나누었는가?\n실험 과정과 결과 등을 다른 모둠원에게 쉽게 설명할 수 있는가?`,
+                subTitle: `모둠원들과 함께 문제 해결을 함께 고민하기 위해 다양한 의견을 제시하는 등 모둠 활동에 기여하였는가?`,
             }
         ],
         peerStudents: (!(members.members === undefined) && members.leaderNumber === my.userNumber) ?
@@ -76,46 +76,22 @@ const PeerEvaluation = ({ state, taskActions, members, setMembers, getUserInfo, 
                 ]
     });
 
-    useEffect(() => {
-        // if ()
-        if (members.members === undefined) return;
-        else {
-            const copy = { ...evaluationData };
-            if (+members.leaderNumber === +my.userNumber) {
-                copy.peerStudents = members.members;
-                setEvaluationData(copy);
-            } else {
-                copy.peerStudents = [
-                    ...Array.from(members.members).filter((member) => +member.userNumber !== +my.userNumber),
-                    { userId: members.leaderId, userNumber: members.leaderNumber, userName: members.leaderName }
-                ];
-                setEvaluationData(copy);
-            }
-        }
-    }, [members, members.members, my]);
-
     const [seflState, selfDispatch] = useReducer(selfReducer, {
         scientificAccuracy: 0,
         communication: 0,
         attitude: 0
     });
     const [peerState, setPeerState] = useState([]);
-    useEffect(() => {
-        if (Object.keys(members).length === 0) return;
-        else {
-            setPeerState(members.members.map(() => {
-                return { cooperation: 0, communication: 0 };
-            }));
-        }
-    }, [members]);
+
     const peerStateChange = useCallback((e) => {
-        const score = e.target.dataset.score, type = e.target.dataset.type, num = e.target.dataset.num, copy = [...peerState];
+        const { score, type, num } = e.target.dataset, copy = [...peerState];
         copy[num][type] = +score;
         setPeerState(copy);
     }, [peerState]);
 
     const selfReducerHandler = useCallback((e) => {
-        selfDispatch({ type: e.target.dataset.type, score: e.target.dataset.score })
+        const { type, score } = e.target.dataset;
+        selfDispatch({ type: type, score: score })
     }, [selfDispatch]);
     const getSelfList = useCallback(() => {
         const list = evaluationData.selfData.map((data, i) => {
@@ -242,6 +218,31 @@ const PeerEvaluation = ({ state, taskActions, members, setMembers, getUserInfo, 
         if (homeworkData.homework_type !== 0)
             teamRequestGet();
     }, [homeworkData]);
+    useEffect(() => {
+        if (Object.keys(members).length === 0) return;
+        else {
+            setPeerState(members.members.map(() => {
+                return { cooperation: 0, communication: 0 };
+            }));
+        }
+    }, [members]);
+    useEffect(() => {
+        // if ()
+        if (members.members === undefined) return;
+        else {
+            const copy = { ...evaluationData };
+            if (+members.leaderNumber === +my.userNumber) {
+                copy.peerStudents = members.members;
+                setEvaluationData(copy);
+            } else {
+                copy.peerStudents = [
+                    ...Array.from(members.members).filter((member) => +member.userNumber !== +my.userNumber),
+                    { userId: members.leaderId, userNumber: members.leaderNumber, userName: members.leaderName }
+                ];
+                setEvaluationData(copy);
+            }
+        }
+    }, [members, members.members, my]);
 
     return (
         <>
