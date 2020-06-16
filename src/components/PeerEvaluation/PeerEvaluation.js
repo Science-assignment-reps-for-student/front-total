@@ -39,7 +39,6 @@ const PeerEvaluation = ({ state, taskActions, members, setMembers, getUserInfo, 
     const { homeworkId } = useParams();
     const [my, setMy] = useState({});
 
-    let [test, setTest] = useState();
     const [evaluationData, setEvaluationData] = useState({
         type: 0,
         title: "",
@@ -71,7 +70,7 @@ const PeerEvaluation = ({ state, taskActions, members, setMembers, getUserInfo, 
             members.members === undefined ?
                 [] :
                 [
-                    ...Array.from(members.members).filter((member) => member.userNumber !== my.number),
+                    [...members.members].filter((member) => member.userNumber !== my.number),
                     { userId: members.leaderId, userNumber: members.leaderNumber, userName: members.leaderName }
                 ]
     });
@@ -187,7 +186,7 @@ const PeerEvaluation = ({ state, taskActions, members, setMembers, getUserInfo, 
                     getAccessTokenUsingRefresh(state, taskActions);
             })
         })
-    }, [homeworkId, state, peerState]);
+    }, [evaluationData, homeworkId, state, peerState]);
     const teamRequestGet = useCallback(() => {
         if (typeof homeworkId === "undefined") return;
         axios.get(`${limServer}/team?homeworkId=${homeworkId}`, {
@@ -208,6 +207,7 @@ const PeerEvaluation = ({ state, taskActions, members, setMembers, getUserInfo, 
     }, [homeworkId, state, setMembers]);
 
     useEffect(() => {
+        if (typeof getUserInfo(limServer, accessToken) === "undefined") return;
         getUserInfo(limServer, accessToken).then((response) => {
             setMy(response.data);
         })
