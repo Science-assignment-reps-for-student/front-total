@@ -74,7 +74,6 @@ const PeerEvaluation = ({ state, taskActions, members, setMembers, getUserInfo, 
                     { userId: members.leaderId, userNumber: members.leaderNumber, userName: members.leaderName }
                 ]
     });
-
     const [seflState, selfDispatch] = useReducer(selfReducer, {
         scientificAccuracy: 0,
         communication: 0,
@@ -82,17 +81,16 @@ const PeerEvaluation = ({ state, taskActions, members, setMembers, getUserInfo, 
     });
     const [peerState, setPeerState] = useState([]);
 
-    const peerStateChange = useCallback((e) => {
+    const peerStateChange = (e) => {
         const { score, type, num } = e.target.dataset, copy = [...peerState];
         copy[num][type] = +score;
         setPeerState(copy);
-    }, [peerState]);
-
-    const selfReducerHandler = useCallback((e) => {
+    };
+    const selfReducerHandler = (e) => {
         const { type, score } = e.target.dataset;
         selfDispatch({ type: type, score: score })
-    }, [selfDispatch]);
-    const getSelfList = useCallback(() => {
+    };
+    const getSelfList = () => {
         const list = evaluationData.selfData.map((data, i) => {
             return (
                 <li key={i}>
@@ -107,8 +105,8 @@ const PeerEvaluation = ({ state, taskActions, members, setMembers, getUserInfo, 
             )
         });
         return list;
-    }, [evaluationData]);
-    const getPeerList = useCallback(() => {
+    };
+    const getPeerList = () => {
         const list = evaluationData.peerStudents.map((student, i) => {
             return (
                 <div key={i}>
@@ -129,8 +127,8 @@ const PeerEvaluation = ({ state, taskActions, members, setMembers, getUserInfo, 
             )
         });
         return list;
-    }, [evaluationData, my, members]);
-    const submitSelfEvaluation = useCallback(() => {
+    };
+    const submitSelfEvaluation = () => {
         axios({
             method: "POST",
             url: `${limServer}/evaluation-self`,
@@ -161,9 +159,10 @@ const PeerEvaluation = ({ state, taskActions, members, setMembers, getUserInfo, 
         }).finally(() => {
             history.go(-1);
         })
-    }, [homeworkId, state, seflState]);
-    const submitPeerEvaluation = useCallback(() => {
+    };
+    const submitPeerEvaluation = () => {
         evaluationData.peerStudents.map((student, i) => {
+            console.log("peerSubmit", i);
             axios({
                 method: "POST",
                 url: `${limServer}/evaluation-mutual`,
@@ -186,8 +185,8 @@ const PeerEvaluation = ({ state, taskActions, members, setMembers, getUserInfo, 
                     getAccessTokenUsingRefresh(state, taskActions);
             })
         })
-    }, [evaluationData, homeworkId, state, peerState]);
-    const teamRequestGet = useCallback(() => {
+    };
+    const teamRequestGet = () => {
         if (typeof homeworkId === "undefined") return;
         axios.get(`${limServer}/team?homeworkId=${homeworkId}`, {
             headers: {
@@ -204,7 +203,7 @@ const PeerEvaluation = ({ state, taskActions, members, setMembers, getUserInfo, 
             else if (code === 410)
                 getAccessTokenUsingRefresh(state, taskActions);
         })
-    }, [homeworkId, state, setMembers]);
+    };
 
     useEffect(() => {
         if (typeof getUserInfo(limServer, accessToken) === "undefined") return;
