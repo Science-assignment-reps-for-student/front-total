@@ -16,7 +16,7 @@ const TaskBottom = ({ state, taskActions, homeworkData, members, setMembers, get
     const [userInfo, setUserInfo] = useState({});
     const [listDatas, setListDatas] = useState([]);
 
-    const homeworkRequest = useCallback(() => {
+    const homeworkRequest = () => {
         if (typeof accessToken === "object") return;
         axios.get(`${limServer}/homework`, {
             headers: {
@@ -33,8 +33,8 @@ const TaskBottom = ({ state, taskActions, homeworkData, members, setMembers, get
             else if (code === 410)
                 getAccessTokenUsingRefresh(state, taskActions);
         })
-    }, [setListDatas, state]);
-    const addFileList = useCallback(() => {
+    };
+    const addFileList = () => {
         if (fileInput.current.files[0] === undefined) return;
         else {
             const fileName = fileInput.current.files[0].name;
@@ -47,15 +47,15 @@ const TaskBottom = ({ state, taskActions, homeworkData, members, setMembers, get
             files.map((file) => { if (file.name === fileName) throw "Duplicate filename."; })
             setFiles([...files, fileInput.current.files[0]]);
         }
-    }, [files, fileInput]);
-    const removeFilesList = useCallback((e) => {
+    };
+    const removeFilesList = (e) => {
         const fileName = e.target.parentNode.childNodes[0].childNodes[2].innerHTML;
         const removeIdx = files.findIndex((file) => file.name === fileName);
         const copy = [...files];
         copy.splice(removeIdx, 1);
         setFiles(copy);
-    }, [files, fileInput]);
-    const modifyHomeworkReuqest = useCallback((fd) => {
+    };
+    const modifyHomeworkReuqest = (fd) => {
         axios.put(`${wooServer}/${homework_type === 1 ? "multi" : "single"}/${homeworkId}`, fd, {
             headers: {
                 "Authorization": `Bearer ${accessToken}`,
@@ -68,8 +68,8 @@ const TaskBottom = ({ state, taskActions, homeworkData, members, setMembers, get
             if (code === 412)
                 alert("숙제가 제출되지 않았습니다. 숙제를 먼저 제출하여주십시오.");
         })
-    }, []);
-    const onClickSubmitFiles = useCallback(() => {
+    };
+    const onClickSubmitFiles = () => {
         if (files.length === 0) return alert("파일을 1개 이상 추가해주세요.");
         let fd = new FormData();
         files.map((file) => {
@@ -102,8 +102,8 @@ const TaskBottom = ({ state, taskActions, homeworkData, members, setMembers, get
                 alert("파일 확장자는 \".hwp .jpg .png .jpeg .pptx .word .pdf .zip\"만 가능합니다. ")
         })
         setFiles([]);
-    }, [fileInput, files, state]);
-    const createTeamRequest = useCallback(() => {
+    };
+    const createTeamRequest = () => {
         if (teamTitleInput.current.value.trim() === "")
             return alert("팀 명을 입력해주세요.");
         if (typeof accessToken === "object") return;
@@ -127,8 +127,8 @@ const TaskBottom = ({ state, taskActions, homeworkData, members, setMembers, get
             else if (code === 410)
                 getAccessTokenUsingRefresh(state, taskActions);
         })
-    }, [homeworkId, state, teamTitleInput]);
-    const deleteTeamRequest = useCallback(() => {
+    };
+    const deleteTeamRequest = () => {
         if (!window.confirm("정말로 팀을 삭제하시겠습니까?")) return;
         if (typeof accessToken === "object") return;
         axios({
@@ -149,8 +149,7 @@ const TaskBottom = ({ state, taskActions, homeworkData, members, setMembers, get
             else if (code === 410)
                 getAccessTokenUsingRefresh(state, taskActions);
         })
-    }, [state, members]);
-
+    };
 
     useEffect(() => {
         if (typeof getUserInfo(limServer, accessToken) === "undefined") return;
