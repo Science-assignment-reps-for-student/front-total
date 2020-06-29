@@ -59,13 +59,13 @@ const MainTeamClass = ({
                         <div>
                             <AccessTokenConsumer>
                                 {
-                                    ({ state, actions}) => {
+                                    ({ state, actions }) => {
                                         return <MainTeamList 
-                                        state={state} 
-                                        actions={actions} 
-                                        teamList={teamList} 
-                                        text="팀 과제" 
-                                        contentId={contentId}
+                                            state={state} 
+                                            actions={actions} 
+                                            teamList={teamList} 
+                                            text="팀 과제" 
+                                            contentId={contentId}
                                         />
                                     }
                                 }

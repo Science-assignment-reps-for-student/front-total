@@ -173,8 +173,9 @@ export const MainClassCoutColoredBar = styled.div`
 `
 
 export const MainListContent = styled.tr`
-    background: "white";
     font-size: 14px;
+    position: relative;
+    width: 100%;
     height: ${props => props.isHeader ? 35 : 25}px;
     &:nth-child(odd){
         background-color: #F5F5F5;
@@ -288,7 +289,7 @@ export const MainLoadingContent = styled.div`
     .ldio-dlvqi1wu39l > div div:nth-child(6) {
         width: 80px;
         height: 80px;
-        background: #f1f2f3;
+        background: #F5F5F5;
         border-radius: 50%;
     }.ldio-dlvqi1wu39l > div div:nth-child(3) {
     transform: translate(-50%,-50%) rotate(45deg)
@@ -302,7 +303,7 @@ export const MainLoadingContent = styled.div`
     height: 200px;
     display: inline-block;
     overflow: hidden;
-    background: #f1f2f3;
+    background: #F5F5F5;
     }
     .ldio-dlvqi1wu39l {
     width: 100%;
