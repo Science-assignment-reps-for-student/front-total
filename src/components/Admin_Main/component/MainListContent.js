@@ -1,11 +1,11 @@
 import React, { useState, useCallback } from 'react';
 import * as S from '../style/MainStyle';
-import { download } from '../imgs'
 const MainListContent = ({ 
     number, 
     name, 
     isChecked, 
-    getFile 
+    getFile,
+    isTeam,
 }) => {
     const [mouseOver, mouseOverChange] = useState(false);
     const mouseOverHandler = useCallback((event)=> {
@@ -20,7 +20,7 @@ const MainListContent = ({
             onMouseOut={mouseOutHandler}
         >
             {
-                mouseOver ? 
+                mouseOver && !isTeam ? 
                 <td 
                 className="hoverable" 
                 onClick={()=>{getFile(number)}}

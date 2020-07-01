@@ -76,7 +76,7 @@ const MainTeamClass = ({
                         <AccessTokenConsumer>
                                 {
                                     ({ state }) => {
-                                        return <MainList studentList={studentList} state={state} text="상호평가"/>
+                                        return <MainList studentList={studentList} state={state} text="상호평가" isTeam={true}/>
                                     }
                                 }   
                         </AccessTokenConsumer>

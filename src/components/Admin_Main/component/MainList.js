@@ -13,7 +13,8 @@ const MainList = ({
     text, 
     contentId, 
     state, 
-    actions 
+    actions,
+    isTeam,
 }) => {
 
     const { accessToken, refreshToken } = state;
@@ -93,7 +94,7 @@ const MainList = ({
                     </S.MainListContent>
                     {
                         studentList.map(({user_name,user_number,submit}) => 
-                            <MainListContent name={user_name} number={user_number} isChecked={submit} getFile={getFileCode}/>)
+                            <MainListContent name={user_name} number={user_number} isChecked={submit} getFile={getFileCode} isTeam={isTeam}/>)
                     }
                 </tbody>
             </table>

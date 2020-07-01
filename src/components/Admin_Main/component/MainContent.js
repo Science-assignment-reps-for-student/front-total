@@ -24,7 +24,7 @@ const MainContent = ({
     history, 
     fileDownload, 
     created_at, 
-    getExcelFile 
+    getExcelFile,
 }) => {
 
     const classDataKey = Object.keys(classData);
@@ -144,7 +144,7 @@ const MainContent = ({
                 <h2>{getTitle(type,title)}</h2>
                 <div onClick={(e)=> e.stopPropagation()} className="buttonWrapper">
                     <S.MainFixButton onClick={()=> {history.push(`/Admin/revise/${contentId}`)}}><img src={edit} alt=""/>수정</S.MainFixButton>
-                    {type === 0 ? "" : <S.MainFixButton onClick={() => {getExcelFile(contentId)}}><img src={excel} alt=""/>엑셀</S.MainFixButton>}
+                    <S.MainFixButton onClick={() => {getExcelFile(contentId)}}><img src={excel} alt=""/>엑셀</S.MainFixButton>
                     <S.MainFixButton onClick={()=>{fileDownload(contentId)}}><img src={download} alt=""/>파일</S.MainFixButton>
                 </div>
             </div>
